@@ -1,0 +1,15 @@
+name = Somi
+description = Smart Office Management Interface
+package = "somi"
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2015-01-17
+version = "7.x"
+core = "7.x"
+project = "somi"
+datestamp = "1421524381"
+
+files[] = views/somi.views.inc
+files[] = views/handlers/somi_views_handler_field_gravatar_image.inc
+
+

@@ -1,0 +1,197 @@
+<?php
+
+/**
+ * @file
+ * Drush integration for the devel module.
+ */
+
+/**
+ * Implements hook_drush_command().
+ */
+function somi_drush_command() {
+  $items['somi-manager'] = array(
+    'description' => dt('Check access to node (e.g. reception door) in context of SOMI.'),
+    'arguments' => array(
+      '$id' => dt('Id of the rfid tag that attempting access the node.'),
+    ),
+  );
+
+  return $items;
+}
+
+/**
+ * Logs somi events.
+ * @param $context
+ * @param $access
+ */
+function somi_log_event($context, $access) {
+  // Prevent fault if log failed (missing table, etc).
+  try {
+    $log_fq_limit = $context['time'] - 3;
+    // seconds, log couldn't be created frequently more than onece per 3 seconds.
+    $query = db_query("select * from log WHERE uid = '{$context['uid']}' AND access >= $log_fq_limit;");
+
+    if (!$query->rowCount()) {
+      db_query("insert into log (uid, access) values('{$context['uid']}', {$context['time']});");
+    }
+  }
+  catch (Exception $e) {
+    // Do nothing.
+  }
+
+  somi_slack_webhook_trigger($context['uid'], $context, $access);
+}
+
+/**
+ * A command callback.
+ */
+function drush_somi_manager($id = NULL) {
+  $time = time();
+
+  // If no path is provided by the user, set our default path.
+  $rank = '[0-9ABCDEF]{2,2}';
+  $validate_pattern = "/$rank:$rank:$rank:$rank/";
+
+  if (!empty($id) && preg_match($validate_pattern, $id)) {
+    ob_clean();
+
+    module_load_include('inc', 'somi', 'somi.pages');
+
+    $account = somi_get_user_by_rfid($id);
+    $access = somi_access_handler($id);
+
+    if ($access) {
+      echo "granted";
+    }
+    else {
+      echo "denied";
+    }
+
+    $context = array(
+      'uid' => $account->uid,
+      'name' => $account->name,
+      'time' => $time,
+      'mail' => $account->mail,
+      'card' => $id,
+    );
+
+    somi_log_event($context, $access);
+  }
+}
+
+/**
+ * Slack Web Hooks Integration.
+ */
+function somi_slack_webhook_trigger($id, $context, $status) {
+  $pid = pcntl_fork();
+
+  // Parent process should immediately response to hardware.
+  if ($pid === -1 || $pid > 0) {
+    return;
+  }
+
+  // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+  fclose(STDIN);
+  fclose(STDOUT);
+  fclose(STDERR);
+
+  // Child process continues HTTP Slack API invocation.
+  $slack_webhook_url = array(
+    "https://hooks.slack.com/services/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",
+    "https://hooks.slack.com/services/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",
+  );
+
+  $somi_base_url = 'http://somi.qajedi.ru';
+
+  $slack_bot_name = "Smart Office";
+
+  $i20_logo_url = "http://i20.biz/sites/all/themes/gki20/logo.png";
+
+  $somi_chart_url = "$somi_base_url/chart";
+  $somi_user_chart_url = "$somi_base_url/somi/chart";
+  $somi_user_chart_url = is_numeric($id) ? "$somi_user_chart_url/$id" : $somi_chart_url;
+
+  $somi_user_name = $context['name'];
+  $somi_user_mail_hash = md5($context['mail']);
+
+  $color = $status ? '' : '"color": "danger",';
+  $status_msg = $status ? 'доступ разрешен' : 'доступ запрещен';
+  $node = "ресепшен";
+  $event = "запрос доступа";
+  $card = $context['card'];
+  $time = date('H:i:s d.m', $context['time']);
+  $short_time = date('H:i:s', $context['time']);
+
+  $slack_payload = <<< EOS
+{
+	"icon_url":	"$i20_logo_url",
+	"username":	"$slack_bot_name",
+	"text": "<$somi_chart_url|$short_time  /  $somi_user_name  /  $node>",
+	"mrkdwn": true,
+	"attachments":	[
+		{
+    	$color
+			"thumb_url":	"http://www.gravatar.com/avatar/$somi_user_mail_hash",
+			"author_name":	"$somi_user_name",
+			"author_link":	"$somi_user_chart_url",
+			"author_icon":	"http://www.gravatar.com/avatar/$somi_user_mail_hash",
+			"fields": [
+				{
+					"title": "Идентификатор:",
+					"value": "$id",
+					"short": true
+				},
+				{
+					"title": "Идентификатор карты:",
+					"value": "$card",
+					"short": true
+				},
+				{
+					"title": "событие:",
+					"value": "$event",
+					"short": true
+				},
+				{
+					"title": "узел:",
+					"value": "$node",
+					"short": true
+				},
+				{
+					"title": "статус:",
+					"value": "$status_msg",
+					"short": true
+				},
+				{
+					"title": "время:",
+					"value": "$time",
+					"short": true
+				}
+			]
+
+		}
+	]
+}
+EOS;
+
+  $params = http_build_query(['payload' => $slack_payload]);
+
+  // Send event to all listeners.
+  foreach ($slack_webhook_url as $webhook_url) {
+    $defaults = array(
+      CURLOPT_URL => $webhook_url,
+      CURLOPT_POST => TRUE,
+      CURLOPT_POSTFIELDS => $params,
+    );
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, $defaults);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    curl_exec($ch);
+    curl_close($ch);
+  }
+
+  exit;
+}
