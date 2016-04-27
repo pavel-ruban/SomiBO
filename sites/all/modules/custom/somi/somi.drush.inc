@@ -15,6 +15,9 @@ function somi_drush_command() {
       '$id' => dt('Id of the rfid tag that attempting access the node.'),
     ),
   );
+  $items['somi-reset-crystalls-accounts'] = array(
+    'description' => dt('Resets All Users Crystall Debet Accounts.'),
+  );
 
   return $items;
 }
@@ -40,6 +43,77 @@ function somi_log_event($context, $access) {
   }
 
   somi_slack_webhook_trigger($context['uid'], $context, $access);
+}
+
+/**
+ * A command callback.
+ */
+function drush_somi_reset_crystalls_accounts() {
+  // Set the batch operations.
+  $batch = array(
+    'title' => dt('Updating users crystalls debet accounts'),
+    'operations' => array(
+      array(
+        'somi_reset_crystalls_accounts_batch',
+        array()
+      ),
+    ),
+  );
+  batch_set($batch);
+  drush_backend_batch_process();
+}
+
+/**
+ * @param $context
+ */
+function somi_reset_crystalls_accounts_batch(&$context) {
+  if (!isset($context['results']['uids'])) {
+    $query = db_select('users', 'u');
+    $query->addField('u', 'uid');
+    $query->condition('status', 1);
+    $uids = $query->execute()->fetchCol();
+
+    $context['results']['uids'] = $uids;
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($uids);
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+
+    $context['message'] = 'Preparing data for operations, found ' . $context['sandbox']['max'] . ' active users.';
+
+    return;
+  }
+
+  $chunk = array_slice($context['results']['uids'], $context['sandbox']['progress'], 30);
+  $source_uid = 1;
+  $roles = user_roles();
+
+  foreach ($chunk as $uid) {
+    if ($account = user_load($uid)) {
+      switch (TRUE) {
+        case array_search('top', $roles) !== FALSE && user_has_role(array_search('top', $roles), $account):
+          somi_set_user_crystalls($account->uid, SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          break;
+
+        case array_search('core', $roles) !== FALSE && user_has_role(array_search('core', $roles), $account):
+          somi_set_user_crystalls($account->uid, SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          break;
+
+        case array_search('active', $roles) !== FALSE && user_has_role(array_search('active', $roles), $account):
+          somi_set_user_crystalls($account->uid, SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          break;
+
+        default:
+          somi_set_user_crystalls($account->uid, SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          break;
+      }
+    }
+
+    $context['sandbox']['progress']++;
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = 'Updating Users Debets Crystall Accoutns (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+  }
 }
 
 /**

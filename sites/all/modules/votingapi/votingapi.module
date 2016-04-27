@@ -539,7 +539,7 @@ function votingapi_votingapi_storage_standard_results($entity_type, $entity_id) 
   foreach ($results as $result) {
     $cache[$result->tag][$result->value_type]['count'] = $result->value_count;
     $cache[$result->tag][$result->value_type]['average'] = $result->value_sum / $result->value_count;
-    if ($result->value_type == 'points') {
+    if (in_array($result->value_type, ['points', 'crystalls', 'crystalls_debet'])) {
       $cache[$result->tag][$result->value_type]['sum'] = $result->value_sum;
     }
   }

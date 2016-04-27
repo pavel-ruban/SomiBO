@@ -2,6 +2,11 @@
 
 define('SOMI_MODULE_PATH', drupal_get_path('module', 'somi'));
 
+const SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 50;
+const SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 30;
+const SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 20;
+const SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 10;
+
 require_once "somi.field.inc";
 
 /**
@@ -76,7 +81,7 @@ function somi_ctools_plugin_api($owner, $api) {
  * @param $value
  * @param string $vote_type
  */
-function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls') {
+function somi_add_user_crystalls($uid, $value, $vote_type = 'crystalls') {
   $vote = array(
     'value' => $value,
     'value_type' => $vote_type,
@@ -106,6 +111,40 @@ function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls') {
 
 /**
  * @param $uid
+ * @param $value
+ * @param string $vote_type
+ */
+function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls', $source_uid = NULL) {
+  $vote = array(
+    'value' => $value,
+    'value_type' => $vote_type,
+    'entity_type' => 'user',
+    'entity_id' => $uid,
+  );
+
+  $criteria = array(
+    'entity_type' => 'user',
+    'entity_id' => $uid,
+    'value_type' => $vote_type,
+  );
+
+  if (!$source_uid) {
+    $criteria += array(
+      'vote_source' => ip_address(),
+    );
+  }
+
+  var_dump([$uid, $vote, $source_uid]);
+  $votes[] = $vote;
+  $criterias[] = $criteria;
+
+  votingapi_set_votes($votes, $criterias);
+
+  votingapi_recalculate_results('user', $uid, TRUE);
+}
+
+/**
+ * @param $uid
  * @param string $vote_type
  * @return mixed
  */
@@ -121,8 +160,8 @@ function somi_get_user_crystalls($uid, $vote_type = 'crystalls') {
       )
     );
 
-    if (!empty($crystalls_count[0])) {
-      $crystalls_count = $crystalls_count[0]['value'];
+    if (!empty($crystalls_count[2])) {
+      $crystalls_count = $crystalls_count[2]['value'];
 
     }
     else {
