@@ -71,3 +71,66 @@ function somi_ctools_plugin_api($owner, $api) {
   }
 }
 
+/**
+ * @param $uid
+ * @param $value
+ * @param string $vote_type
+ */
+function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls') {
+  $vote = array(
+    'value' => $value,
+    'value_type' => $vote_type,
+    'entity_type' => 'user',
+    'entity_id' => $uid,
+  );
+
+  $criteria = array(
+    'entity_type' => 'user',
+    'entity_id' => $uid,
+    'value_type' => $vote_type,
+  );
+
+  if (!$uid) {
+    $criteria += array(
+      'vote_source' => ip_address(),
+    );
+  }
+
+  $votes[] = $vote;
+  $criterias[] = $criteria;
+
+  votingapi_add_votes($votes, $criterias);
+
+  votingapi_recalculate_results('user', $uid, TRUE);
+}
+
+/**
+ * @param $uid
+ * @param string $vote_type
+ * @return mixed
+ */
+function somi_get_user_crystalls($uid, $vote_type = 'crystalls') {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage[$vote_type][$uid])) {
+    $crystalls_count = votingapi_select_results(
+      array(
+        'entity_id' => $uid,
+        'entity_type' => 'user',
+        'value_type' => $vote_type,
+      )
+    );
+
+    if (!empty($crystalls_count[0])) {
+      $crystalls_count = $crystalls_count[0]['value'];
+
+    }
+    else {
+      $crystalls_count = 0;
+    }
+
+    $storage[$vote_type][$uid] = $crystalls_count;
+  }
+
+  return $storage[$vote_type][$uid];
+}

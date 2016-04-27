@@ -20,5 +20,25 @@ function somi_views_data() {
     ),
   );
 
+  $data['users']['crystalls'] = array(
+    'field' => array(
+      'title' => t('Crystalls Count'),
+      'help' => t('Shows crystalls of the user.'),
+      'handler' => 'somi_views_handler_field_user_crystalls',
+      'group' => 'somi',
+      'real field' => 'uid',
+    ),
+  );
+
+  $data['users']['crystalls_debet'] = array(
+    'field' => array(
+      'title' => t('Crystalls Debet Count'),
+      'help' => t('Shows crystalls debet of the user.'),
+      'handler' => 'somi_views_handler_field_user_debet_crystalls',
+      'group' => 'somi',
+      'real field' => 'uid',
+    ),
+  );
+
   return $data;
 }
