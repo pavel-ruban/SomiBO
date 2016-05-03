@@ -675,3 +675,44 @@ form .jcrop-holder {
 #site-logo img {
   height: 70px;
 }
+
+#edit-machine-name-wrapper {
+  height: auto;
+}
+
+.common-admin-menu-level-2.single-item ul li {
+  border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+}
+
+a.green.device-link {
+  color: #00aa00;
+  font-weight: bold;
+}
+
+a.red.device-link {
+  color: #ff2f00;
+  font-weight: bold;
+}
+
+span.crystalls-count {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 31px;
+  float: left;
+  display: inline-block;
+}
+
+.view-users.view-display-id-accounts div.field-name-field-image {
+  float: left;
+}
+
+.pane-somi-user-account-data div.field-name-field-image {
+  float: left;
+}
+
+.page-admin table tr.negative td,
+.page-admin table tr.negative {
+  background: #FFF3F3;
+}

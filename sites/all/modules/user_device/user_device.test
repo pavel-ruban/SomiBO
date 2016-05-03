@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Tests for user_device.module.
+ */
+
+class UserDeviceTestCase extends DrupalWebTestCase {
+
+  /**
+   * Return info about current testCase.
+   *
+   * @return array
+   */
+  public static function getInfo() {
+    return [
+      'name' => 'User device',
+      'description' => 'Test User device CRUD actions.',
+      'group' => 'Module',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function setUp() {
+    // Set up modules to be enabled.
+    parent::setUp(['user_device']);
+  }
+
+  /**
+   * Test device creation.
+   */
+  function testDeviceCRUD() {
+    $device = new stdClass();
+    $fingerprint = uniqid();
+    $device->fingerprint = $fingerprint;
+    $data = ['some' => 'data'];
+    $device->data = $data;
+
+    $account = new stdClass();
+    $account->uid = 10;
+
+    $new_device = user_device_create($device, $account);
+    $this->assertNotNull($new_device->did, 'Device id is fulfilled');
+    $this->assertEqual($new_device->uid, $account->uid, 'Owner properly set up');
+    $this->assertEqual($new_device->data, $data, 'Serialized data is successfully deserialized');
+
+    $device_from_db = user_device_load($new_device->did);
+    $this->assertNotNull($device_from_db, 'Device successfully stored');
+    $this->assertEqual($device_from_db->fingerprint, $fingerprint, 'Fingerprint matched');
+
+    $device_from_db = user_device_load_by_fingerprint($fingerprint);
+    $this->assertNotNull($device_from_db, 'Device successfully found by fingerprint');
+    $this->assertEqual($device_from_db->did, $new_device->did, 'Fingerprint matched');
+
+    user_device_delete($new_device->did);
+    $device_from_db = user_device_load($new_device->did);
+    $this->assertFalse($device_from_db, 'Device successfully deleted');
+  }
+
+  /**
+   * Test device creation.
+   */
+  function testDeviceLoadMultiple() {
+    $fingerprints = [
+      uniqid(),
+      uniqid()
+    ];
+
+    $dids = [];
+    $account = new stdClass();
+    $account->uid = 10;
+    foreach ($fingerprints as $fingerprint) {
+      $device = new stdClass();
+      $device->fingerprint = $fingerprint;
+      $data = ['some' => 'data'];
+      $device->data = $data;
+
+      $new_device = user_device_create($device, $account);
+      $dids[] = $new_device->did;
+    }
+
+    $loaded_devices = user_device_load_multiple($dids);
+    $this->assertEqual(count($dids), count($loaded_devices), 'All devices loaded');
+    foreach ($loaded_devices as $loaded_device) {
+      $this->assertTrue(in_array($loaded_device->did, $dids), 'Device ID matched');
+    }
+  }
+}

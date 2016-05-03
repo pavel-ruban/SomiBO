@@ -1,0 +1,11 @@
+name = User device
+description = "API module to store user devices"
+core = 7.x
+
+files[] = user_device.test
+; Information added by Drupal.org packaging script on 2016-03-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "user_device"
+datestamp = "1458887344"
+

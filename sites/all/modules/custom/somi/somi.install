@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ *
+ * Install routines for module somi.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function somi_install() {
+}
+
+/**
+ * @param $schema
+ */
+function somi_schema_alter(&$schema) {
+  // Add field to existing schema.
+  $schema['votingapi_vote']['fields']['message'] = array(
+    'type' => 'varchar',
+    'length' => 1024,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Message contains vote details',
+  );
+}
+
+/**
+ * Adds column message to votingapi_votes table.
+ * @param $context
+ */
+function somi_update_7000() {
+}

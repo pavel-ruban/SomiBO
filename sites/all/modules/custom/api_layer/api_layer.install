@@ -1,0 +1,125 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function api_layer_schema() {
+  $schema['users_social'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'provider' => array(
+        'type' => 'varchar',
+        'length' => 16,
+        'not null' => TRUE,
+      ),
+      'social_id' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'social_name' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'social_data' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'default' => NULL,
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+    ),
+    'unique keys' => array(
+      'id' => array('provider', 'social_id'),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Helper to get all custom fields definition.
+ */
+function api_layer_user_custom_fields() {
+  $fields = [];
+  $fields['display_name'] = [
+    'info' => [
+      'type' => 'varchar',
+      'length' => 60,
+      'not null' => FALSE,
+      'default' => NULL,
+      'description' => 'User display name',
+    ],
+  ];
+  $fields['refresh_token'] = [
+    'info' => [
+      'type' => 'char',
+      'length' => 255,
+      'not null' => FALSE,
+      'default' => NULL,
+      'description' => 'Refresh token',
+    ],
+    'keys' => [
+      'refresh_token' => ['refresh_token'],
+    ]
+  ];
+
+  return $fields;
+}
+
+/**
+ * Implements hook_schema_alter().
+ */
+function api_layer_schema_alter(&$schema) {
+  foreach (api_layer_user_custom_fields() as $field_name => $field) {
+    $schema['users']['fields'][$field_name] = $field['info'];
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function api_layer_install() {
+  foreach (api_layer_user_custom_fields() as $field_name => $field) {
+    if (!db_field_exists('users', $field_name)) {
+      db_add_field(
+        'users',
+        $field_name,
+        $field['info'],
+        $field['keys']
+      );
+    }
+  }
+
+  if (!db_field_exists('sessions', 'device_id')) {
+    db_add_field(
+      'sessions',
+      'device_id',
+      array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+      )
+    );
+  }
+}

@@ -87,24 +87,31 @@ function somi_reset_crystalls_accounts_batch(&$context) {
   $chunk = array_slice($context['results']['uids'], $context['sandbox']['progress'], 30);
   $source_uid = 1;
   $roles = user_roles();
+  $msg = 'Ежемесячное обновление кристаллов I20';
+  $currency = taxonomy_term_load(SOMI_I20_CRYSTALLS_CURRENCY_TID)->name;
 
   foreach ($chunk as $uid) {
     if ($account = user_load($uid)) {
       switch (TRUE) {
         case array_search('top', $roles) !== FALSE && user_has_role(array_search('top', $roles), $account):
-          somi_set_user_crystalls($account->uid, SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          $message = t($msg . ' для роли :role', [':role' => 'top']);
+
+          somi_set_user_crystalls($account->uid, SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
           break;
 
         case array_search('core', $roles) !== FALSE && user_has_role(array_search('core', $roles), $account):
-          somi_set_user_crystalls($account->uid, SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          $message = t($msg . ' для роли :role', [':role' => 'core']);
+          somi_set_user_crystalls($account->uid, SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
           break;
 
         case array_search('active', $roles) !== FALSE && user_has_role(array_search('active', $roles), $account):
-          somi_set_user_crystalls($account->uid, SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          $message = t($msg . ' для роли :role', [':role' => 'active']);
+          somi_set_user_crystalls($account->uid, SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
           break;
 
         default:
-          somi_set_user_crystalls($account->uid, SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $vote_type = 'crystalls_debet', $source_uid);
+          $message = t($msg . ' для роли :role', [':role' => 'авторизованный пользователь']);
+          somi_set_user_crystalls($account->uid, SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
           break;
       }
     }

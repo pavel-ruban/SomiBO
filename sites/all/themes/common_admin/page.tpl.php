@@ -24,7 +24,7 @@
     </div>
   <?php endif;?>
   <?php if (!empty($common_admin_menu_level_2)) :?>
-    <div class="common-admin-menu-level-2">
+    <div class="common-admin-menu-level-2<?php echo !empty($admin_menu_level_2_single) ? ' single-item' : '';?>">
       <?php print $common_admin_menu_level_2; ?>
     </div>
   <?php endif;?>

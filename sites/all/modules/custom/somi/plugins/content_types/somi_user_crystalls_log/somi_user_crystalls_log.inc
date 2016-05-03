@@ -117,7 +117,7 @@ function somi_user_crystalls_log_content_type_render($subtype, $conf, $panel_arg
           'title' => $account->name,
           'alt' => $account->name,
         )
-      ) . '<span class="crystalls-count">' .somi_get_user_crystalls($account->uid, $vote_type) . '</span>';
+      ) . '<span class="crystalls-count">' . somi_get_user_account_balance($account->uid, $vote_type) . '</span>';
       $rows[] = $row;
     }
 

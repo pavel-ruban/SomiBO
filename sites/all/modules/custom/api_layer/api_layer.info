@@ -1,0 +1,7 @@
+name = API layer
+description = Provide intergation of lightwight out-of-drupal API with Drupal.
+package = API
+version = VERSION
+core = 7.x
+
+dependencies[] = user_device

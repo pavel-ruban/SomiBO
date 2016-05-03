@@ -1,0 +1,229 @@
+<?php
+
+/**
+ * @file
+ * Main logic of CRUD actions with users' devices.
+ */
+
+/**
+ * Create a new device and attach it to a user.
+ *
+ * @param \stdClass $device
+ * @param \stdClass $account
+ *   Device owner
+ *
+ * @return \stdClass
+ * @throws \Exception
+ */
+function user_device_create(stdClass $device, $account = NULL) {
+  // Actually only fingerprint is required.
+  if (empty($device->fingerprint)) {
+    throw new Exception('Fingerprint is missed');
+  }
+
+  $device->uid = $account && $account->uid ? $account->uid : 0;
+  $device->created = REQUEST_TIME;
+  $device->hour = isset($device->hour) ? $device->hour : intval(date('H'));
+  $device->data = serialize($device->data);
+
+  $did = db_insert('users_devices')
+    ->fields((array) $device)
+    ->execute();
+
+  $device = user_device_load($did);
+  return $device;
+}
+
+/**
+ * Helper to find device by some conditions.
+ *
+ * @param array $conditions
+ *
+ * @return \stdClass|NULL
+ */
+function _user_device_load(array $conditions) {
+  $devices = _user_device_load_multiple($conditions);
+  return $devices ? reset($devices) : NULL;
+}
+
+/**
+ * Load set of devices by a set of conditions.
+ *
+ * @param array $conditions
+ *
+ * @return array
+ */
+function _user_device_load_multiple(array $conditions) {
+  $query = db_select('users_devices', 'd');
+  $query->fields('d', []);
+  foreach ($conditions as $name => $value) {
+    $query->condition($name, $value);
+  }
+  $results = $query->execute();
+
+  $devices = [];
+  foreach ($results as $device) {
+    // Always un-wrap serialized data.
+    if ($device->data) {
+      $device->data = unserialize($device->data);
+    }
+    else {
+      $device->data = [];
+    }
+    $devices[] = $device;
+  }
+
+  return $devices;
+}
+
+/**
+ * Load device by ID.
+ *
+ * @param int $did
+ *
+ * @return \stdClass|NULL
+ */
+function user_device_load($did) {
+  return _user_device_load(['did' => $did]);
+}
+
+/**
+ * Load set of devices by IDs.
+ *
+ * @param array $dids
+ *
+ * @return array
+ */
+function user_device_load_multiple(array $dids) {
+  return _user_device_load_multiple(['did' => $dids]);
+}
+
+/**
+ * Load device by unique fingerprint.
+ *
+ * @param string $fingerprint
+ *
+ * @return \stdClass|NULL
+ */
+function user_device_load_by_fingerprint($fingerprint) {
+  return _user_device_load(['fingerprint' => $fingerprint]);
+}
+
+/**
+ * Load device by os and push token unique pair.
+ *
+ * @param string $os
+ * @param string $push_provider
+ * @param string $push_token
+ *
+ * @return \stdClass|NULL
+ */
+function user_device_load_by_push_token($os, $push_provider, $push_token) {
+  $params = [
+    'os' => $os,
+    'push_provider' => $push_provider,
+    'push_token' => $push_token,
+  ];
+
+  return _user_device_load($params);
+}
+
+/**
+ * Update specified device only if some data were changed.
+ *
+ * @param \stdClass $device
+ * @param array $update_fields
+ *
+ * @return \stdClass
+ */
+function user_device_update(stdClass $device, array $update_fields) {
+  $original_device = clone $device;
+
+  foreach ($update_fields as $name => $value) {
+    $device->{$name} = $value;
+  }
+
+  if ($device != $original_device) {
+    $device->data = serialize($device->data);
+    db_update('users_devices')
+      ->fields((array) $device)
+      ->condition('did', $device->did)
+      ->execute();
+  }
+
+  return $device;
+}
+
+/**
+ * Helper to delete devices with specified conditions
+ *
+ * @param array $conditions
+ */
+function _user_device_delete(array $conditions) {
+  if ($conditions) {
+    $query = db_delete('users_devices');
+
+    foreach ($conditions as $name => $value) {
+      $query->condition($name, $value);
+    }
+
+    $query->execute();
+  }
+}
+
+/**
+ * Delete device by device ID.
+ *
+ * @param int $did
+ */
+function user_device_delete($did) {
+  _user_device_delete(['did' => $did]);
+}
+
+/**
+ * Implements hook_user_delete().
+ *
+ * @param \stdClass $account
+ *   The account that is being deleted.
+ */
+function user_device_user_delete($account) {
+  _user_device_delete(['uid' => $account->uid]);
+}
+
+/**
+ * Look up for a device by set of params.
+ *
+ * @param string $fingerprint
+ * @param string $os
+ * @param string $push_provider
+ * @param string $push_token
+ *
+ * @return \stdClass|NULL
+ */
+function user_device_find($fingerprint, $os, $push_provider, $push_token) {
+  $device = user_device_load_by_push_token($os, $push_provider, $push_token);
+  // If push token already present, most possible it's the same user/device but with re-installed/changed fingerprint.
+  // Push token most probably more unique than fingerprint.
+  if (!$device) {
+    $device = user_device_load_by_fingerprint($fingerprint);
+  }
+
+  return $device;
+}
+
+/**
+ * Retrieve all available tokens per provider.
+ *
+ * @param $os
+ * @param $push_provider
+ *
+ * @return array
+ */
+function user_device_get_tokens($os, $push_provider) {
+  $query = db_select('users_devices', 'd');
+  $query->fields('d', ['push_token']);
+  $query->isNotNull('d.push_token');
+  $query->condition('os', $os);
+  $query->condition('push_provider', $push_provider);
+  return $query->execute()->fetchCol();
+}

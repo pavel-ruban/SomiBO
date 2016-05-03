@@ -1,0 +1,97 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the User device module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function user_device_schema() {
+  $schema['users_devices'] = array(
+    'fields' => array(
+      'did' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Owner of a device',
+      ),
+      'fingerprint' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'Unique device fingerprint',
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'os' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Name of client\'s OS (i.e. iOS)',
+      ),
+      'client_version' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Version of client\'s OS (i.e. 9 for iOS 9)',
+      ),
+      'push_provider' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Provider for push messaging (i.e. Android has custom providers)',
+      ),
+      'push_token' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Device push token specific for OS',
+      ),
+      'app_version' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Version of client\'s app (i.e. 2.0 for some mobile app)',
+      ),
+      'hour' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Number of hour (0-23). Could be used to determine better delivery time',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Serialized data about device (i.e. OS version)',
+      ),
+    ),
+    'indexes' => array(
+      'uid' => array('uid'),
+      'push_token' => array('os', 'push_provider', 'push_token'),
+      'hour' => array('hour'),
+    ),
+    'unique keys' => array(
+      'fingerprint' => array('fingerprint'),
+    ),
+    'primary key' => array('did'),
+  );
+
+  return $schema;
+}

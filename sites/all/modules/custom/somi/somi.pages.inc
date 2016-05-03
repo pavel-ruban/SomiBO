@@ -40,6 +40,39 @@ function somi_get_user_by_rfid($id) {
   return $storage[$id];
 }
 
+/**
+ * Page callback: Displays add taxonomy links for available content types.
+ */
+function somi_taxonomy_add_page($check = FALSE) {
+  static $items;
+
+  if (empty($items)) {
+    $vocs = taxonomy_vocabulary_get_names();
+    $items = array();
+    foreach ($vocs as $machine_name => $voc) {
+      if (user_access("edit terms in $machine_name")) {
+        $items[] = array(
+          'localized_options  ' => [],
+          'description' => '',
+          'href' => "admin/structure/taxonomy/{$machine_name}/add",
+          'title' => "Add {$voc->name}",
+        );
+      }
+    }
+  }
+
+  if (!empty($check)) {
+    return count($items);
+  }
+  else {
+    if (count($items) == 1) {
+      drupal_goto("admin/structure/taxonomy/{$machine_name}/add");
+    } else {
+      return theme('node_add_list', array('content' => $items));
+    }
+  }
+}
+
 function somi_get_rfid_by_id($id) {
   $storage = &drupal_static(__FUNCTION__);
 

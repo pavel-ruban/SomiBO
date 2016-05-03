@@ -1,0 +1,7 @@
+<?php
+
+/**
+ * @file
+ *
+ * No API logic should be here. Only bridges with Drupal hooks and etc.
+ */

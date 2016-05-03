@@ -1,0 +1,179 @@
+{
+  "auth/post": {
+    "@comment": "Initial user registration",
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "type": "object",
+          "properties": {
+            "access_token": {
+              "type": "object",
+              "properties": {
+                "token_type": {"type": "string"},
+                "expires_in": {"type": "number"},
+                "value": {"type": "string"}
+              }
+            }
+          }
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "number"},
+            "refresh_token": {"type": "string"},
+            "display_name": {"type": "string", "optional": true},
+            "is_new_user": {"type": "boolean"}
+          }
+        }
+      }
+    }
+  },
+  "auth/put": {
+    "@comment": "Refresh the user auth data",
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "type": "object",
+          "properties": {
+            "access_token": {
+              "type": "object",
+              "properties": {
+                "token_type": {"type": "string"},
+                "expires_in": {"type": "number"},
+                "value": {"type": "string"}
+              }
+            }
+          }
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "number"},
+            "refresh_token": {"type": "string"},
+            "display_name": {"type": "string", "optional": true},
+            "is_new_user": {"type": "boolean"}
+          }
+        }
+      }
+    }
+  },
+  "users/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": {"type": "number"},
+              "name": {"type": "string"},
+              "role": {
+                "type": "string"
+              },
+              "email": {"type": "string"},
+              "slackName": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "user/accounts/post": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "number"},
+              "balance": {"type": "number"},
+              "currency": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "user/%uid/account/%id/balance/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "balance": {"type": "number"},
+        "currency": {"type": "string"}
+      }
+    }
+  },
+  "user/account/balance/post": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "balance": {"type": "number"}
+      }
+    }
+  },
+  "crystal/op/validate/post": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "initiator" : {
+          "type": "object",
+          "properties" : {
+            "balance" : {"type": "number"},
+            "uid": {"type": "number"}
+          }
+        },
+        "recipients" : {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {"type": "string"},
+              "balance": {"type": "number"},
+              "uid": {"type": "number"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "user/account/balance/add/post": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "initiator" : {
+          "type": "object",
+          "properties" : {
+            "balance" : {"type": "number"},
+            "uid": {"type": "number"}
+          }
+        },
+        "recipients" : {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {"type": "string"},
+              "balance": {"type": "number"},
+              "uid": {"type": "number"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "": {}
+}

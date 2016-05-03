@@ -532,14 +532,16 @@ function votingapi_votingapi_storage_standard_results($entity_type, $entity_id) 
   $sql  = "SELECT v.value_type, v.tag, ";
   $sql .= "COUNT(v.value) as value_count, SUM(v.value) as value_sum  ";
   $sql .= "FROM {votingapi_vote} v ";
-  $sql .= "WHERE v.entity_type = :type AND v.entity_id = :id AND v.value_type IN ('points', 'crystalls', 'crystalls_debet', 'percent') ";
+  $values = array_merge(["'points'", "'percent'"], somi_get_currencies_tids());
+  $values_condition = implode(', ', $values);
+  $sql .= "WHERE v.entity_type = :type AND v.entity_id = :id AND v.value_type IN ($values_condition)";
   $sql .= "GROUP BY v.value_type, v.tag";
   $results = db_query($sql, array(':type' => $entity_type, ':id' => $entity_id));
 
   foreach ($results as $result) {
     $cache[$result->tag][$result->value_type]['count'] = $result->value_count;
     $cache[$result->tag][$result->value_type]['average'] = $result->value_sum / $result->value_count;
-    if (in_array($result->value_type, ['points', 'crystalls', 'crystalls_debet'])) {
+    if (in_array($result->value_type, $values)) {
       $cache[$result->tag][$result->value_type]['sum'] = $result->value_sum;
     }
   }

@@ -103,6 +103,13 @@ function common_admin_preprocess_page(&$vars) {
       unset($admin_level_2['subject_array']);
       unset($admin_level_2['subject']);
       $vars['common_admin_menu_level_2'] = drupal_render($admin_level_2);
+
+      if (!empty($admin_level_2['content']['#content'])) {
+        $count = count(element_children($admin_level_2['content']['#content']));
+        if ($count == 1) {
+          $vars['admin_menu_level_2_single'] = TRUE;
+        }
+      }
     }
   }
 
@@ -499,6 +506,35 @@ function common_admin_preprocess_entity(&$vars, $hook) {
       $function = 'common_admin_preprocess_' . $item;
       if (function_exists($function)) {
         $function($vars);
+      }
+    }
+  }
+}
+
+/**
+ * Process variables for views-view.tpl.php.
+ */
+function common_admin_preprocess_views_view_table(&$vars) {
+  if (isset($vars['theme_hook_suggestion'])) {
+    $function = 'common_admin_preprocess_' . $vars['theme_hook_suggestion'];
+    if (function_exists($function)) {
+      $function($vars);
+    }
+  }
+}
+
+/**
+ * Process variables for views-view-table--models-dashboard--models.tpl.php.
+ */
+function common_admin_preprocess_views_view_table__users__accounts(&$vars) {
+  $currencies = somi_get_currencies();
+
+  foreach ($vars['rows'] as $delta => &$row) {
+    foreach ($currencies as $currency) {
+      $key = drupal_strtolower($currency);
+      $row[$key] = somi_get_account_data_by_currencry($currency, $vars['view']->result[$delta]->uid);
+      if (empty($vars['header'][$key])) {
+        $vars['header'][$key] = t($currency);
       }
     }
   }

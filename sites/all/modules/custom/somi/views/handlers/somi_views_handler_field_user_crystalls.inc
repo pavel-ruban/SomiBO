@@ -14,7 +14,7 @@ class somi_views_handler_field_user_crystalls extends views_handler_field {
   function render($values) {
     if ($value = $this->get_value($values)) {
 
-      $crystalls_count = somi_get_user_crystalls($value);
+      $crystalls_count = somi_get_user_account_balance($value);
 
       return theme('image_style',
         array(

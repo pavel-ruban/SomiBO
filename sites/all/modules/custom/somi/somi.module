@@ -7,7 +7,13 @@ const SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 30;
 const SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 20;
 const SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 10;
 
+const SOMI_I20_CRYSTALLS_CURRENCY_TID = 8;
+const SOMI_CRYSTALLS_CURRENCY_TID = 7;
+
+const SOMI_VOCABULARY_CURRENCIES = 'currencies';
+
 require_once "somi.field.inc";
+require_once 'somi.menu_position.inc';
 
 /**
  * Implements hook_menu.
@@ -23,6 +29,37 @@ function somi_menu() {
     'description' => 'Ajax callback for view loading.',
     'type' => MENU_CALLBACK,
     'file' => 'somi.pages.inc',
+  );
+
+  $items['admin/content/taxonomies/add-term'] = array(
+    'title' => t('Add Taxonomy Term'),
+    'page callback' => 'somi_taxonomy_add_page',
+    'access callback' => array('somi_taxonomy_add_page_access'),
+    'file' => 'somi.pages.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_page_delivery_callback_alter().
+ * To highlight menu links by custom rules.
+ */
+function somi_page_delivery_callback_alter() {
+  // Check if some rule should be triggered & activate it.
+  if (isset($GLOBALS['theme']) && $GLOBALS['theme'] == variable_get('admin_theme', 'common_admin')) {
+    somi_menu_position_execute_rules();
+  }
+}
+
+function somi_theme() {
+  $items = array();
+  $path = SOMI_MODULE_PATH . '/theme';
+
+  $items['somi_account_data'] = array(
+    'path' => $path,
+    'render element' => 'content',
+    'template' => 'somi-account-data',
   );
 
   return $items;
@@ -81,18 +118,19 @@ function somi_ctools_plugin_api($owner, $api) {
  * @param $value
  * @param string $vote_type
  */
-function somi_add_user_crystalls($uid, $value, $vote_type = 'crystalls') {
+function somi_add_user_account_balance($target_uid, $value, $currency_tid, $message = '', $uid = NULL) {
   $vote = array(
     'value' => $value,
-    'value_type' => $vote_type,
+    'value_type' => $currency_tid,
     'entity_type' => 'user',
-    'entity_id' => $uid,
+    'entity_id' => $target_uid,
+    'message' => $message,
   );
 
   $criteria = array(
     'entity_type' => 'user',
-    'entity_id' => $uid,
-    'value_type' => $vote_type,
+    'entity_id' => $target_uid,
+    'value_type' => $currency_tid,
   );
 
   if (!$uid) {
@@ -100,32 +138,38 @@ function somi_add_user_crystalls($uid, $value, $vote_type = 'crystalls') {
       'vote_source' => ip_address(),
     );
   }
+  else {
+    $vote['uid'] = $criteria['uid'] = $uid;
+  }
 
   $votes[] = $vote;
   $criterias[] = $criteria;
 
   votingapi_add_votes($votes, $criterias);
 
-  votingapi_recalculate_results('user', $uid, TRUE);
+  votingapi_recalculate_results('user', $target_uid, TRUE);
 }
 
 /**
  * @param $uid
  * @param $value
- * @param string $vote_type
+ * @param string $currency
  */
-function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls', $source_uid = NULL) {
+function somi_set_user_crystalls($target_uid, $value, $currency, $message = '', $source_uid = NULL) {
+  $currency_tid = somi_get_currency_tid($currency);
+
   $vote = array(
     'value' => $value,
-    'value_type' => $vote_type,
+    'value_type' => $currency_tid,
     'entity_type' => 'user',
-    'entity_id' => $uid,
+    'message' => $message,
+    'entity_id' => $target_uid,
   );
 
   $criteria = array(
     'entity_type' => 'user',
-    'entity_id' => $uid,
-    'value_type' => $vote_type,
+    'entity_id' => $target_uid,
+    'value_type' => $currency_tid,
   );
 
   if (!$source_uid) {
@@ -134,29 +178,27 @@ function somi_set_user_crystalls($uid, $value, $vote_type = 'crystalls', $source
     );
   }
 
-  var_dump([$uid, $vote, $source_uid]);
   $votes[] = $vote;
   $criterias[] = $criteria;
 
   votingapi_set_votes($votes, $criterias);
-
-  votingapi_recalculate_results('user', $uid, TRUE);
+  votingapi_recalculate_results('user', $target_uid, TRUE);
 }
 
 /**
  * @param $uid
- * @param string $vote_type
+ * @param string $currency
  * @return mixed
  */
-function somi_get_user_crystalls($uid, $vote_type = 'crystalls') {
+function somi_get_user_account_balance($uid, $currency_tid = NULL) {
   $storage = &drupal_static(__FUNCTION__);
 
-  if (!isset($storage[$vote_type][$uid])) {
+  if (!isset($storage[$currency_tid][$uid])) {
     $crystalls_count = votingapi_select_results(
       array(
         'entity_id' => $uid,
         'entity_type' => 'user',
-        'value_type' => $vote_type,
+        'value_type' => $currency_tid,
       )
     );
 
@@ -168,8 +210,152 @@ function somi_get_user_crystalls($uid, $vote_type = 'crystalls') {
       $crystalls_count = 0;
     }
 
-    $storage[$vote_type][$uid] = $crystalls_count;
+    $storage[$currency_tid][$uid] = $crystalls_count;
   }
 
-  return $storage[$vote_type][$uid];
+  return $storage[$currency_tid][$uid];
+}
+
+/**
+ * Check access to page.
+ */
+function somi_taxonomy_add_page_access() {
+  module_load_include('inc', 'somi', 'somi.pages');
+
+  return somi_taxonomy_add_page(TRUE);
+}
+
+/**
+ * @return array
+ */
+function somi_get_currencies() {
+  $storage = &drupal_static(__FUNCTION__, NULL);
+  if (!isset($storage)) {
+    $vocabulary = taxonomy_vocabulary_machine_name_load(SOMI_VOCABULARY_CURRENCIES);
+    $currencies = db_select('taxonomy_term_data', 't')
+      ->fields('t', array('name'))
+      ->condition('vid', $vocabulary->vid)
+      ->orderBy('weight')
+      ->execute()
+      ->fetchCol();
+
+    $storage = $currencies;
+  }
+
+  return $storage;
+}
+
+/**
+ * @param null $currency
+ * @return bool
+ */
+function somi_get_currency_image($currency = NULL) {
+  $storage = &drupal_static(__FUNCTION__, []);
+
+  if (!empty($currency)) {
+    $currencies = somi_get_currencies();
+
+    if (in_array($currency, $currencies)) {
+      if (!isset($storage[$currency])) {
+        $currency_term = taxonomy_get_term_by_name($currency, SOMI_VOCABULARY_CURRENCIES);
+        $currency_term = reset($currency_term);
+        $view = taxonomy_term_view($currency_term);
+
+        $storage[$currency] = render($view['field_image']);
+      }
+
+      return $storage[$currency];
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * @param null $currency
+ * @return bool
+ */
+function somi_get_currency_tid($currency = NULL) {
+  $storage = &drupal_static(__FUNCTION__, []);
+
+  if (!empty($currency)) {
+    $currencies = somi_get_currencies();
+
+    if (in_array($currency, $currencies)) {
+      if (!isset($storage[$currency])) {
+        $currency_term = taxonomy_get_term_by_name($currency, SOMI_VOCABULARY_CURRENCIES);
+        $currency_term = reset($currency_term);
+
+        $storage[$currency] = $currency_term->tid;
+      }
+
+      return $storage[$currency];
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * @return array
+ */
+function somi_get_currencies_tids() {
+  $storage = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($storage)) {
+    $currencies = somi_get_currencies();
+    
+    foreach ($currencies as $currency) {
+      $currency_term = taxonomy_get_term_by_name($currency, SOMI_VOCABULARY_CURRENCIES);
+      $currency_term = reset($currency_term);
+
+      $storage[] = $currency_term->tid;
+    }
+  }
+
+  return $storage;
+}
+
+function somi_get_account_data_by_currencry($currency = NULL, $uid = NULL) {
+  $storage = &drupal_static(__FUNCTION__, []);
+
+  global $theme;
+
+  $is_admin = $theme == 'common_admin' ? TRUE : FALSE;
+
+  if (!empty($currency)) {
+    $currencies = somi_get_currencies();
+
+    if (in_array($currency, $currencies) && !empty($uid)) {
+      if (!isset($storage[$currency][$uid])) {
+        $currency_tid = somi_get_currency_tid($currency);
+        $account_value = somi_get_user_account_balance($uid, $currency_tid);
+
+        $account_image = somi_get_currency_image($currency);
+
+        $storage[$currency][$uid] = theme('somi_account_data', [
+          'image' => somi_get_currency_tid($currency)
+            ? l($account_image, ($is_admin ? "admin/user/$uid/account/" : "user/$uid/") . somi_get_currency_tid($currency), ['html' => TRUE])
+            : $account_image,
+          'value' => $account_value
+        ]);
+      }
+
+      return $storage[$currency][$uid];
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function somi_permission() {
+  return array(
+    'perform manual account operations' => array(
+      'title' => t('Perform manual account operations'),
+      'description' => t('Lets users to change users accounts.'),
+    ),
+  );
 }
