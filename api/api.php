@@ -91,6 +91,7 @@ function api_methods() {
       'callback' => 'api_user_account_balance_add_post',
       'dependencies' => array(
         'somi',
+        'taxonomy',
         'votingapi',
       ),
     ) + $base,
@@ -871,55 +872,51 @@ function api_crystal_op_validate_post() {
 function api_user_account_balance_add_post() {
   global $user;
 
-  if (!empty($user->uid)) {
-    $data = api_request_data();
-    $response = ['initiator' => [], 'recipients' => []];
-
-    if (!empty($data->user->email)) {
-      $initiator = user_load_by_mail($data->user->email);
-
-      // Credit crystals from user account as he gave them.
-      somi_add_user_account_balance(
-        $initiator->uid,
-        SOMI_I20_CRYSTALLS_CURRENCY_TID,
-        -1 * $data->user->crystals_amount,
-        $data->msg,
-        $initiator->uid
-      );
-
-      $crystals_amount = somi_get_user_account_balance($initiator->uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
-
-      $response['initiator']['balance'] = $crystals_amount;
-      $response['initiator']['uid'] = $initiator->uid;
-
-      foreach ($data->recipients as $recipient) {
-        if (($account = user_load_by_mail($recipient->email))) {
-          // Debet crystals.
-          somi_add_user_account_balance(
-            $account->uid,
-            SOMI_CRYSTALLS_CURRENCY_TID,
-            $recipient->amount,
-            $data->msg,
-            $initiator->uid
-          );
-
-          $response['recipients'][] = [
-            'balance' => somi_get_user_account_balance($account->uid, SOMI_CRYSTALLS_CURRENCY_TID),
-            'uid' => $account->uid,
-            'email' => $recipient->email,
-          ];
-        }
-        else {
-          throw new ApiException("Пользователь с адресом {$recipient->email} не может быть найден в Drupal API.");
-        }
-      }
-    }
-    else {
-      throw new ApiException("Электронная почта пользователя который проводит сделку не доступна.");
-    }
-  }
-  else {
+  $prefix = 'Slack Event: ';
+  if (empty($user->uid)) {
     throw new ApiException("Пользователь не авторизован.");
+  }
+  $data = api_request_data();
+  $response = ['initiator' => [], 'recipients' => []];
+
+  if (empty($data->user->email)) {
+    throw new ApiException("Электронная почта пользователя который проводит сделку не доступна.");
+  }
+  $initiator = user_load_by_mail($data->user->email);
+
+  // Credit crystals from user account as he gave them.
+  somi_add_user_account_balance(
+    $initiator->uid,
+    -1 * $data->user->crystals_amount,
+    SOMI_I20_CRYSTALLS_CURRENCY_TID,
+    $prefix . $data->msg,
+    $initiator->uid
+  );
+
+  $crystals_amount = somi_get_user_account_balance($initiator->uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+
+  $response['initiator']['balance'] = $crystals_amount;
+  $response['initiator']['uid'] = $initiator->uid;
+
+  foreach ($data->recipients as $recipient) {
+    if (!($account = user_load_by_mail($recipient->email))) {
+      throw new ApiException("Пользователь с адресом {$recipient->email} не может быть найден в Drupal API.");
+    }
+
+    // Debet crystals.
+    somi_add_user_account_balance(
+      $account->uid,
+      $recipient->amount,
+      SOMI_CRYSTALLS_CURRENCY_TID,
+      $prefix . $data->msg,
+      $initiator->uid
+    );
+
+    $response['recipients'][] = [
+      'balance' => somi_get_user_account_balance($account->uid, SOMI_CRYSTALLS_CURRENCY_TID),
+      'uid' => $account->uid,
+      'email' => $recipient->email,
+    ];
   }
 
   return $response;
