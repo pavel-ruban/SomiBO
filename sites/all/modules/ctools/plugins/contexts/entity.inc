@@ -37,7 +37,7 @@ function ctools_context_entity_get_children($plugin, $parent) {
   $plugins = array();
   foreach ($entities as $entity_type => $entity) {
     $child_plugin = $plugin;
-    $child_plugin['title'] = $entity['label'];
+    $child_plugin['title'] = !empty($entity['label']) ? $entity['label'] : '';
     $child_plugin['keyword'] = $entity_type;
     $child_plugin['context name'] = $entity_type;
     $child_plugin['name'] = $parent . ':' . $entity_type;

@@ -28,7 +28,7 @@ function somi_field_formatter_view($entity_type, $entity, $field, $instance, $la
         if ($node = node_load($item['target_id'])) {
           $wrapper = entity_metadata_wrapper('node', $node);
           $device_type = $wrapper->field_type->value()->name;
-          $device_id = $wrapper->field_id->value();
+          $device_id = $wrapper->title->value();
 
           $options = array(
             'attributes' => array(

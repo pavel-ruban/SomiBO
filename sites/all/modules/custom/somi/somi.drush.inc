@@ -95,25 +95,39 @@ function somi_reset_crystalls_accounts_batch(&$context) {
       switch (TRUE) {
         case array_search('top', $roles) !== FALSE && user_has_role(array_search('top', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'top']);
-
-          somi_set_user_crystalls($account->uid, SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
+          $limit = SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
           break;
 
         case array_search('core', $roles) !== FALSE && user_has_role(array_search('core', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'core']);
-          somi_set_user_crystalls($account->uid, SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
+          $limit = SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
           break;
 
         case array_search('active', $roles) !== FALSE && user_has_role(array_search('active', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'active']);
-          somi_set_user_crystalls($account->uid, SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
+          $limit = SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
           break;
 
         default:
           $message = t($msg . ' для роли :role', [':role' => 'авторизованный пользователь']);
-          somi_set_user_crystalls($account->uid, SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT, $currency, $message, $source_uid);
+          $limit = SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
           break;
       }
+    }
+
+    $balance = somi_get_user_account_balance($account->uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+
+    if ($balance < $limit) {
+      $new_amount = $limit - $balance;
+
+    }
+    elseif ($balance > $limit) {
+      $new_amount = -1 * ($balance - $limit);
+    }
+
+    if (!empty($new_amount)) {
+      somi_add_user_account_balance($account->uid, $new_amount, SOMI_I20_CRYSTALLS_CURRENCY_TID, $message, $source_uid);
+      unset($new_amount);
     }
 
     $context['sandbox']['progress']++;

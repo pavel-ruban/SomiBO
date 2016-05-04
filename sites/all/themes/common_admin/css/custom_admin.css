@@ -716,3 +716,24 @@ span.crystalls-count {
 .page-admin table tr.negative {
   background: #FFF3F3;
 }
+
+.not-logged-in form#user-login input {
+  width: 480.2px;
+  box-sizing: border-box;
+}
+
+form#user-login input[type="submit"] {
+  width: auto;
+}
+
+.not-logged-in div.messages {
+  width: 482px;
+  margin: 0 auto 20px;
+}
+
+form#user-register-form,
+form#user-pass,
+form#user-login {
+  width: 500px;
+  margin: 0 auto;
+}

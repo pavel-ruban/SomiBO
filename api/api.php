@@ -839,7 +839,9 @@ function api_crystal_op_validate_post() {
       $response['initiator']['uid'] = $initiator->uid;
 
       if ($data->user->crystals_amount > $crystals_amount) {
-        throw new ApiException("Недостаточно кристаллов для совершения сделки, на вашем счёте $crystals_amount кристалла.");
+        $error['code'] = 33;
+        $error['message'] = "Недостаточно кристаллов для совершения сделки, на вашем счёте $crystals_amount кристалла.";
+        $response['error'] = $error;
       }
 
       foreach ($data->recipients as $recipient_email) {

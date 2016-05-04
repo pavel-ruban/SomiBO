@@ -32,7 +32,7 @@ function ctools_argument_entity_id_get_children($original_plugin, $parent) {
   $plugins = array();
   foreach ($entities as $entity_type => $entity) {
     $plugin = $original_plugin;
-    $plugin['title'] = t('@entity: ID', array('@entity' => $entity['label']));
+    $plugin['title'] = t('@entity: ID', array('@entity' => !empty($entity['label']) ? $entity['label'] : ''));
     $plugin['keyword'] = $entity_type;
     $plugin['description'] = t('Creates @entity context from an ID argument.', array('@entity' => $entity_type));
     $plugin['name'] = $parent . ':' . $entity_type;

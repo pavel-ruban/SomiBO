@@ -145,6 +145,14 @@
               "uid": {"type": "number"}
             }
           }
+        },
+        "error": {
+          "type": "object",
+          "optional": true,
+          "properties": {
+            "code" : {"type": "number"},
+            "message" : {"type": "string"}
+          }
         }
       }
     }

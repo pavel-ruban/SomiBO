@@ -155,9 +155,7 @@ function somi_add_user_account_balance($target_uid, $value, $currency_tid, $mess
  * @param $value
  * @param string $currency
  */
-function somi_set_user_crystalls($target_uid, $value, $currency, $message = '', $source_uid = NULL) {
-  $currency_tid = somi_get_currency_tid($currency);
-
+function somi_set_user_account_balance($target_uid, $value, $currency_tid, $message = '', $source_uid = NULL) {
   $vote = array(
     'value' => $value,
     'value_type' => $currency_tid,
@@ -358,4 +356,25 @@ function somi_permission() {
       'description' => t('Lets users to change users accounts.'),
     ),
   );
+}
+
+/**
+ * Redirects to user login form.
+ */
+function somi_init() {
+  if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q'])) {
+    drupal_goto('/user');
+  }
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function somi_admin_paths() {
+  if (variable_get('somi_front_admin_theme', 1)) {
+    $paths = array(
+      '*' => TRUE,
+    );
+    return $paths;
+  }
 }

@@ -93,6 +93,15 @@ function common_admin_preprocess_page(&$vars) {
       $admin_level_1 = menu_tree_build($config);
       unset($admin_level_1['subject_array']);
       unset($admin_level_1['subject']);
+
+      if (user_is_logged_in()) {
+        foreach (element_children($admin_level_1['content']['#content']) as $key) {
+          if (in_array($admin_level_1['content']['#content'][$key]['#title'], ['Войти', 'Восстановить пароль'])) {
+            unset($admin_level_1['content']['#content'][$key]);
+          }
+        }
+      }
+
       $vars['common_admin_menu_level_1'] = drupal_render($admin_level_1);
     }
 
