@@ -865,6 +865,25 @@ function api_crystal_op_validate_post() {
     throw new ApiException("Пользователь не авторизован.");
   }
 
+  // Add item to the queue. It will be passed to RabbitMQ later, when user will be enough crystals for opertations,
+  // and nodejs bot will check the queue and remind user that he is able to perform operation.
+  if (!empty($response['error'])) {
+    // Store attempt to give crystals to remind it later.
+    $queue = DrupalQueue::get(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
+    $queue->createQueue();
+
+    $op = new StdClass();
+    $op->time = time();
+    $op->uid = $initiator->uid;
+    $op->slack_id = $data->user->id;
+    $op->attempt_crystals_amount = $data->user->crystals_amount;
+    $op->crystals_old_amount = $crystals_amount;
+    $op->crystals_recipient_quantity = $data->user->crystals_per_recipient;
+    $op->raw_message = $data->message;
+
+    $queue->createItem($op);
+  }
+
   return $response;
 }
 
@@ -891,7 +910,7 @@ function api_user_account_balance_add_post() {
     $initiator->uid,
     -1 * $data->user->crystals_amount,
     SOMI_I20_CRYSTALLS_CURRENCY_TID,
-    $prefix . $data->msg,
+    $prefix . $data->message,
     $initiator->uid
   );
 
@@ -910,7 +929,7 @@ function api_user_account_balance_add_post() {
       $account->uid,
       $recipient->amount,
       SOMI_CRYSTALLS_CURRENCY_TID,
-      $prefix . $data->msg,
+      $prefix . $data->message,
       $initiator->uid
     );
 
