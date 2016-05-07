@@ -15,6 +15,7 @@ const SOMI_VOCABULARY_CURRENCIES = 'currencies';
 const SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME = 'somi_crystals_failed_ops';
 
 require_once "somi.field.inc";
+require_once "somi.tools.inc";
 require_once 'somi.menu_position.inc';
 
 require_once DRUPAL_ROOT . '/sites/all/libraries/rabbitmq/vendor/autoload.php';

@@ -840,7 +840,9 @@ function api_crystal_op_validate_post() {
 
       if ($data->user->crystals_amount > $crystals_amount) {
         $error['code'] = 33;
-        $error['message'] = "Недостаточно кристаллов для совершения сделки, на вашем счёте $crystals_amount кристалла.";
+        $goods = plural_str($crystals_amount, 'кристалл', 'кристалла', 'кристаллов');
+
+        $error['message'] = "Недостаточно кристаллов для совершения сделки, на вашем счёте $crystals_amount $goods.";
         $response['error'] = $error;
       }
 
