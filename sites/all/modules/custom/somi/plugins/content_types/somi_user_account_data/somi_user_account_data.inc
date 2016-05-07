@@ -154,6 +154,9 @@ function somi_user_account_data_content_type_render($subtype, $conf, $panel_args
           ['target_uid' => $account->uid, 'currency' => $currency]
         );
       }
+      else {
+        $account_form = '';
+      }
 
       // Get account history.
       $account_operations = votingapi_select_votes(
@@ -173,8 +176,12 @@ function somi_user_account_data_content_type_render($subtype, $conf, $panel_args
         $row = [];
         $row[] = $negative ? 'Кредит' : 'Дебет';
 
-        $row[] = !empty($operation['uid'])
-          ? user_load($operation['uid'])->name
+        if (!empty($operation['uid'])) {
+          $source_account = user_load($operation['uid']);
+        }
+
+        $row[] = !empty($source_account->name)
+          ? $source_account->name
           : t('аноним');
 
         $row[] = $operation['value'];
