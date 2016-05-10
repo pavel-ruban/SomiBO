@@ -9,7 +9,7 @@ function somi_get_user_by_rfid($id) {
 
   if (!isset($storage[$id])) {
     $query = db_select('node', 'i');
-    $query->addField('rt', 'nid', 'uid');
+    $query->addField('rt', 'entity_id', 'uid');
 
     $query->innerJoin(
       'field_data_field_rfid_tags',
@@ -20,9 +20,8 @@ function somi_get_user_by_rfid($id) {
      AND rt.bundle = 'user'"
     );
 
-    $query->condition('i.entity_type', 'node');
-    $query->condition('i.bundle', 'rfid_tag');
-    $query->condition('n.title', trim($id));
+    $query->condition('i.type', 'rfid_tag');
+    $query->condition('i.title', trim($id));
 
     if ($uids = $query->execute()->fetchCol()) {
       $uid = array_shift($uids);
@@ -79,8 +78,7 @@ function somi_get_rfid_by_id($id) {
     $query = db_select('node', 'i');
     $query->addField('i', 'nid', 'id');
 
-    $query->condition('i.entity_type', 'node');
-    $query->condition('i.bundle', 'rfid_tag');
+    $query->condition('i.type', 'rfid_tag');
     $query->condition('i.title', trim($id));
 
     if ($nids = $query->execute()->fetchCol()) {

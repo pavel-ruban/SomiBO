@@ -228,12 +228,23 @@ function common_admin_field_multiple_value_form($variables) {
  * Implements hook_theme_registry_alter().
  */
 function common_admin_theme_registry_alter(&$registry) {
-  $registry['taxonomy_form_term']['preprocess functions'][] = 'common_admin_preprocess_default_form';
-  $registry['taxonomy_form_term']['path'] = drupal_get_path('theme', 'common_admin') . '/templates';
-  $registry['taxonomy_form_vocabulary']['preprocess functions'][] = 'common_admin_preprocess_default_form';
-  $registry['taxonomy_form_vocabulary']['path'] = drupal_get_path('theme', 'common_admin') . '/templates';
-  $registry['user_profile_form']['preprocess functions'][] = 'common_admin_preprocess_default_form';
-  $registry['node_form']['preprocess functions'][] = 'common_admin_preprocess_default_form';
+  if (!empty($registry['taxonomy_form_term'])) {
+    $registry['taxonomy_form_term']['preprocess functions'][] = 'common_admin_preprocess_default_form';
+    $registry['taxonomy_form_term']['path'] = drupal_get_path('theme', 'common_admin') . '/templates';
+  }
+
+  if (!empty($registry['taxonomy_form_vocabulary'])) {
+    $registry['taxonomy_form_vocabulary']['preprocess functions'][] = 'common_admin_preprocess_default_form';
+    $registry['taxonomy_form_vocabulary']['path'] = drupal_get_path('theme', 'common_admin') . '/templates';
+  }
+
+  if (!empty($registry['user_profile_form'])) {
+    $registry['user_profile_form']['preprocess functions'][] = 'common_admin_preprocess_default_form';
+  }
+
+  if (!empty($registry['node_form'])) {
+    $registry['node_form']['preprocess functions'][] = 'common_admin_preprocess_default_form';
+  }
 }
 
 /**
