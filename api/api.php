@@ -905,7 +905,15 @@ function api_user_account_balance_add_post() {
   if (empty($data->user->email)) {
     throw new ApiException("Электронная почта пользователя который проводит сделку не доступна.");
   }
+
   $initiator = user_load_by_mail($data->user->email);
+
+  // Check users are ok.
+  foreach ($data->recipients as $recipient) {
+    if (!($account = user_load_by_mail($recipient->email))) {
+      throw new ApiException("Пользователь с адресом {$recipient->email} не может быть найден в Drupal API.");
+    }
+  }
 
   // Credit crystals from user account as he gave them.
   somi_add_user_account_balance(
@@ -922,10 +930,6 @@ function api_user_account_balance_add_post() {
   $response['initiator']['uid'] = $initiator->uid;
 
   foreach ($data->recipients as $recipient) {
-    if (!($account = user_load_by_mail($recipient->email))) {
-      throw new ApiException("Пользователь с адресом {$recipient->email} не может быть найден в Drupal API.");
-    }
-
     // Debet crystals.
     somi_add_user_account_balance(
       $account->uid,
