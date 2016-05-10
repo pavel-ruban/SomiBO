@@ -97,6 +97,28 @@ function somi_get_rfid_by_id($id) {
   return $storage[$id];
 }
 
+/**
+ * Opens Somi Door.
+ */
+function somi_open_door() {
+  $server_ip   = SOMI_SERVER_IP;
+  $server_port = SOMI_SERVER_PORT;
+  $message     = 'command: admin open';
+
+  ob_clean();
+
+  header('content-type: application:json');
+
+  if ($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)) {
+    socket_sendto($socket, $message, strlen($message), 0, $server_ip, $server_port);
+    echo drupal_json_encode(['status' => "OK"]);
+  } else {
+    echo drupal_json_encode(['status' => "can't create socket"]);
+  }
+
+  drupal_exit();
+}
+
 function somi_access_handler($id = FALSE) {
   if (($device = somi_get_rfid_by_id($id)) && ($account = somi_get_user_by_rfid($id))) {
     $w = entity_metadata_wrapper('user', $account);

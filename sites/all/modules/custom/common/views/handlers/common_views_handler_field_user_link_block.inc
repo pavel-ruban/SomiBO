@@ -16,7 +16,7 @@ class common_views_handler_field_user_link_block extends views_handler_field_use
     $text = !empty($this->options['text']) ? $this->options['text'] : t('Block');
 
     $this->options['alter']['make_link'] = TRUE;
-    $this->options['alter']['path'] = 'user/' . $data . '/status/0';
+    $this->options['alter']['path'] = 'user/' . $data . '/cancel';
 
     return $text;
   }

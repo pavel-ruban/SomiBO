@@ -35,7 +35,7 @@ function somi_log_event($context, $access) {
     $query = db_query("select * from log WHERE uid = '{$context['uid']}' AND access >= $log_fq_limit;");
 
     if (!$query->rowCount()) {
-      db_query("insert into log (uid, access) values('{$context['uid']}', {$context['time']});");
+      db_query("insert into log (id, uid, access) values('{$context['rfid']}', '{$context['uid']}', {$context['time']});");
     }
   }
   catch (Exception $e) {
@@ -153,6 +153,7 @@ function drush_somi_manager($id = NULL) {
     module_load_include('inc', 'somi', 'somi.pages');
 
     $account = somi_get_user_by_rfid($id);
+    $rfid = somi_get_rfid_by_id($id);
     $access = somi_access_handler($id);
 
     if ($access) {
@@ -162,15 +163,18 @@ function drush_somi_manager($id = NULL) {
       echo "denied";
     }
 
-    $context = array(
-      'uid' => $account->uid,
-      'name' => $account->name,
-      'time' => $time,
-      'mail' => $account->mail,
-      'card' => $id,
-    );
+    if ($account && $rfid) {
+      $context = array(
+        'uid' => $account->uid,
+        'rfid' => $rfid->nid,
+        'name' => $account->name,
+        'time' => $time,
+        'mail' => $account->mail,
+        'card' => $id,
+      );
 
-    somi_log_event($context, $access);
+      somi_log_event($context, $access);
+    }
   }
 }
 
@@ -196,7 +200,7 @@ function somi_slack_webhook_trigger($id, $context, $status) {
     "https://hooks.slack.com/services/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",
   );
 
-  $somi_base_url = 'http://somi.qajedi.ru';
+  $somi_base_url = 'http://somibo.qajedi.ru';
 
   $slack_bot_name = "Smart Office";
 

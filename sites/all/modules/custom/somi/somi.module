@@ -7,6 +7,9 @@ const SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 30;
 const SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 20;
 const SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 10;
 
+const SOMI_SERVER_IP = '95.172.148.149';
+const SOMI_SERVER_PORT = '36208';
+
 const SOMI_I20_CRYSTALLS_CURRENCY_TID = 8;
 const SOMI_CRYSTALLS_CURRENCY_TID = 7;
 
@@ -46,6 +49,13 @@ function somi_menu() {
     'file' => 'somi.pages.inc',
   );
 
+  $items['open-door'] = array(
+    'title' => t('Somi open door'),
+    'page callback' => 'somi_open_door',
+    'access arguments' => array('manage somi door'),
+    'file' => 'somi.pages.inc',
+  );
+
   return $items;
 }
 
@@ -68,6 +78,11 @@ function somi_theme() {
     'path' => $path,
     'render element' => 'content',
     'template' => 'somi-account-data',
+  );
+  $items['somi_door_utils'] = array(
+    'path' => $path,
+    'render element' => 'content',
+    'template' => 'somi-door-utils',
   );
 
   return $items;
@@ -440,7 +455,47 @@ function somi_permission() {
       'title' => t('Perform manual account operations'),
       'description' => t('Lets users to change users accounts.'),
     ),
+    'manage somi door' => array(
+      'title' => t('Perform manual door open action, checke recent rfid tag etc'),
+      'description' => t('Perform manual door open action, checke recent rfid tag etc.'),
+    ),
+    'access somi logs' => array(
+      'title' => t('Access somi logs'),
+      'description' => t('Access somi logs.'),
+    ),
   );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function somi_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'user_profile_form') {
+    if (!user_access('manage somi door')) {
+      $form['field_rfid_tags']['#access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Implements hook_library().
+ * @return mixed
+ */
+function somi_library() {
+  $path = '/sites/all/libraries/Chartjs';
+
+  $libraries['chartjs'] = array(
+    'title' => 'Chartjs',
+    'version' => '1.0',
+    'js' => array(
+      $path . '/Chart.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'drupal.ajax'),
+      array('system', 'ui.dialog'),
+    ),
+  );
+  return $libraries;
 }
 
 /**

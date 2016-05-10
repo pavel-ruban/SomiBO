@@ -369,6 +369,178 @@ function somi_feature_common_default_page_manager_pages() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
+  $page->name = 'somi_availability';
+  $page->task = 'page';
+  $page->admin_title = 'Somi Availability';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/availability';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi logs',
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array();
+  $page->arguments = array();
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_availability__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_availability';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Somi Availability',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'SOMI Активность Персонала';
+  $display->uuid = 'df551cb6-de88-408f-9ebc-4b9a168dd337';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-b193e4a6-19e0-4a86-9f2a-51050ab9996b';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_availability';
+    $pane->subtype = 'somi_availability';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = 'b193e4a6-19e0-4a86-9f2a-51050ab9996b';
+    $display->content['new-b193e4a6-19e0-4a86-9f2a-51050ab9996b'] = $pane;
+    $display->panels['middle'][0] = 'new-b193e4a6-19e0-4a86-9f2a-51050ab9996b';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-b193e4a6-19e0-4a86-9f2a-51050ab9996b';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_availability'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
+  $page->name = 'somi_charts';
+  $page->task = 'page';
+  $page->admin_title = 'Somi Charts';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/chart';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi logs',
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array();
+  $page->arguments = array();
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_charts__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_charts';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Panel',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'SOMI Графики';
+  $display->uuid = '89b7f09b-3931-4615-b1ed-1dc9e3b21b6f';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-b4b05327-4b16-4735-9479-edd25689dc25';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_logs';
+    $pane->subtype = 'somi_logs';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = 'b4b05327-4b16-4735-9479-edd25689dc25';
+    $display->content['new-b4b05327-4b16-4735-9479-edd25689dc25'] = $pane;
+    $display->panels['middle'][0] = 'new-b4b05327-4b16-4735-9479-edd25689dc25';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-b4b05327-4b16-4735-9479-edd25689dc25';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_charts'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
   $page->name = 'somi_logs';
   $page->task = 'page';
   $page->admin_title = 'SOMI Logs';

@@ -1,0 +1,136 @@
+
+div.event-wrapper span.time {
+  font-weight: normal;
+}
+
+div.event-wrapper li {
+  list-style: none;
+  min-height: 87px;
+  min-width: 200px;
+}
+
+div.event-wrapper li .wrapper {
+  float: left;
+  margin-left: 8px;
+}
+
+div.event-wrapper li img {
+  float: left;
+}
+
+li.chart-line {
+  clear: both;
+}
+
+#canvas-holder {
+  float: left;
+  margin-top: 75px;
+}
+
+span#rfid-tracker {
+  font-weight: bold;
+  font-size: 17px;
+  margin-left: 15px;
+}
+
+ul.menu *,
+.bold
+{
+  font-weight: bold;
+}
+
+a#open-door
+{
+  position: absolute;
+  right: 3%;
+  top: 3%;
+}
+
+input[disabled]
+{
+  background-color: #E7E4E4;
+}
+
+tr.add td
+{
+  background-color: #D5D5D5;
+}
+
+td.error input
+{
+  border-color: red;
+}
+
+td.count {
+}
+
+h1.chart {
+  margin: 0 auto;
+  width: 489px;
+}
+
+#canvas-holder {
+  float: left;
+  margin-top: 75px;
+}
+
+div.chart-wrapper {
+  float: left;
+  margin-top: 0;
+  margin-left: 70px;
+  min-width: 387px;
+}
+
+div.chart-wrapper span {
+  font-weight: bold;
+}
+
+div.chart-wrapper span.count {
+  font-size: 20;
+}
+
+div.event-wrapper {
+  float: left;
+  margin-top: 0;
+  margin-left: 70px;
+}
+
+div.event-wrapper span {
+  font-weight: bold;
+}
+
+div.event-wrapper span.count {
+  font-size: 20;
+}
+
+.ui-datepicker td {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.ui-datepicker a {
+  margin: 0;
+}
+
+form#chart {
+  width: 730px;
+  height: 50px;
+  margin-top: 35px;
+  margin-left: 51px;
+  margin-right: 35px;
+  float:	right;
+}
+
+form#chart input[type="submit"] {
+  margin: 15 0 13 14;
+  float: left;
+}
+
+form#chart p{
+  float: left;
+}
+
+form#chart p.end {
+  margin-left: 14px;
+}

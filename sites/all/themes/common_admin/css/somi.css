@@ -1,0 +1,32 @@
+span#rfid-tracker {
+  background: #ECF3F6;
+  padding: 6px;
+  border: 1px black solid;
+  display: none;
+}
+
+#somi-door-utils {
+  background: #cacbc3;
+}
+
+#somi-door-utils a {
+  background: rgb(236, 243, 246);
+  text-align: center;
+  min-width: 68px;
+  display: block;
+  float: right;
+  z-index: 1000;
+  position: relative;
+  margin-right: 31px;
+  padding: 4px;
+  border: 1px black solid;
+}
+
+#somi-door-utils form {
+  margin-top: 5px;
+  display: block;
+  float: right;
+  z-index: 1000;
+  position: relative;
+  margin-right: 11px;
+}

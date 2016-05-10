@@ -1,0 +1,7 @@
+**/*.log
+/components
+/bower_components
+/node_modules
+/coverage
+/vendor
+/composer.lock

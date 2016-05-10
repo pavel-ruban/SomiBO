@@ -11,7 +11,9 @@ regions[page_bottom] = Page bottom
 
 stylesheets[screen][] = css/custom_admin.css
 stylesheets[screen][] = css/styles.css
+stylesheets[screen][] = css/somi.css
 
+;scripts[] = js/jquery-once/jquery.once.min.js
 scripts[] = scripts/diaporama_modern.js
 scripts[] = scripts/fancybox.js
 scripts[] = scripts/form_settings.js
@@ -19,6 +21,7 @@ scripts[] = scripts/jquery.slideshow.js
 scripts[] = scripts/jquery.main.js
 scripts[] = scripts/scripts.js
 scripts[] = scripts/custom_admin.js
+scripts[] = js/custom.js
 
 ; Support shortcut module links
 settings[shortcut_module_link] = 1

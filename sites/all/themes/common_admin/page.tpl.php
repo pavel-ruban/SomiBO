@@ -16,6 +16,9 @@
       <img src="<?php print $logo ?>" alt="<?php print $site_name_and_slogan ?>" title="<?php print $site_name_and_slogan ?>" id="logo" />
     </a>
   </div>
+  <?php if (user_access('manage somi door')): ?>
+    <?php echo theme('somi_door_utils', []); ?>
+  <?php endif; ?>
   <?php endif; ?>
 <div id='page-title'><div class='limiter clearfix'>
   <?php if (!empty($common_admin_menu_level_1)) :?>
