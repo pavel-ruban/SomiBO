@@ -276,6 +276,30 @@ function somi_get_user_account_balance($uid, $currency_tid = NULL) {
 }
 
 /**
+ * @return array
+ */
+function somi_get_recent_account_events() {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage)) {
+    $account_events = votingapi_select_votes(
+      array(
+        'entity_type' => 'user',
+      ),
+      500
+    );
+
+    usort($account_events, function($a, $b) {
+      return $a['timestamp'] > $b['timestamp'] ? -1 : 1;
+    });
+
+    $storage = $account_events;
+  }
+
+  return $storage;
+}
+
+/**
  * Check access to page.
  */
 function somi_taxonomy_add_page_access() {

@@ -10,6 +10,7 @@
  * Implements hook_install().
  */
 function somi_install() {
+  somi_update_7001();
 }
 
 /**
@@ -30,5 +31,6 @@ function somi_schema_alter(&$schema) {
  * Adds column message to votingapi_votes table.
  * @param $context
  */
-function somi_update_7000() {
+function somi_update_7001() {
+  module_enable(['somi_feature_common']);
 }

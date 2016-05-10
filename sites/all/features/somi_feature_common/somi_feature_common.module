@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Common feature.
+ */
+
+include_once 'somi_feature_common.features.inc';
