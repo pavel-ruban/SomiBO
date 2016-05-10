@@ -104,7 +104,7 @@ function chart_list_user_link($v) {
     $v['access_count'],
     $v['uid'],
     $v['card'],
-    l("{$v['name']}", "/chart/{$v['uid']}")
+    l("8{$v['name']}", "/chart/{$v['uid']}")
   );
 
   return $link;
