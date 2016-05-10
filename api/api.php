@@ -846,6 +846,10 @@ function api_crystal_op_validate_post() {
         $response['error'] = $error;
       }
 
+      if (empty($data->recipients) || !is_array($data->recipients)) {
+        throw new ApiException("Drupal API: получатель сделки указан не верно или отсутсвует.");
+      }
+
       foreach ($data->recipients as $recipient_email) {
         if (($account = user_load_by_mail($recipient_email))) {
           $response['recipients'][] = [
