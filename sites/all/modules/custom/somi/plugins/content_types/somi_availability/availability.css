@@ -291,7 +291,7 @@ td.grayscale {
   border: solid 0px black;
 }
 
-table {
+body #main-content table {
   display: table;
   width: auto;
   margin: 25px auto;
