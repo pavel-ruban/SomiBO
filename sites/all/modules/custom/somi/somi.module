@@ -447,6 +447,8 @@ function somi_permission() {
  * Redirects to user login form.
  */
 function somi_init() {
+  setlocale(LC_ALL, 'ru_RU.UTF-8');
+  
   if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q'])) {
     drupal_goto('/user');
   }
