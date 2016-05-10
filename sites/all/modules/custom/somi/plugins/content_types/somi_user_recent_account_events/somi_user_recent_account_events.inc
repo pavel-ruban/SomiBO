@@ -46,13 +46,16 @@ function somi_user_recent_account_events_content_type_render($subtype, $conf, $p
 
         $row = [];
         $row [] = date($date_format, $event['timestamp']);
-        $row [] = $src;
-        $row [] = $account->name;
+        $row [] = !empty($src_account) ? l($src, "/admin/user/{$src_account->uid}/account" . (!empty($currency_term) ? "/{$currency_term->tid}" : '')) : $src;
+        $row [] = l($account->name, "/admin/user/{$account->uid}/account" . (!empty($currency_term) ? "/{$currency_term->tid}" : ''));
         $row [] = $account_type;
         $row [] = $event['value'];
         $row [] = $event['message'];
 
         $rows[] = $row;
+
+        unset($currency_term);
+        unset($src_account);
       }
     }
 
