@@ -37,10 +37,18 @@ function somi_user_recent_account_events_content_type_render($subtype, $conf, $p
           $src = '-';
         }
 
+        if (is_numeric($event['value_type']) && $currency_term = taxonomy_term_load($event['value_type'])) {
+          $account_type = $currency_term->name;
+        }
+        else {
+          $account_type = $event['value_type'];
+        }
+
         $row = [];
         $row [] = date($date_format, $event['timestamp']);
         $row [] = $src;
         $row [] = $account->name;
+        $row [] = $account_type;
         $row [] = $event['value'];
         $row [] = $event['message'];
 
@@ -54,6 +62,7 @@ function somi_user_recent_account_events_content_type_render($subtype, $conf, $p
         'Отправитель',
         'Получатель',
         'Сумма',
+        'Счет',
         'Сообщение',
       ],
       'rows' => $rows
