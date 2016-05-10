@@ -104,7 +104,7 @@ function chart_list_user_link($v) {
     $v['access_count'],
     $v['uid'],
     $v['card'],
-    l("открыть детальный график по пользователю {$v['name']}", "/chart/{$v['uid']}")
+    l("{$v['name']}", "/chart/{$v['uid']}")
   );
 
   return $link;

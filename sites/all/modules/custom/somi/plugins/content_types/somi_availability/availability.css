@@ -1,3 +1,281 @@
+body
+{
+  text-align: justify;
+}
+
+.persons-table td
+{
+  padding: 3px 10px;
+  margin: 0;
+  font-weight: bold;
+  font-size: 12px;
+  /*background: #F9F8F7;*/
+}
+
+.persons-table th
+{
+  padding: 3px 10px;
+  margin: 0;
+  font-weight: bold;
+  font-size: 17px;
+  background: #F9F8F7;
+}
+
+.notify
+{
+  text-align: justify;
+  display: block;
+  margin: 0 auto 0 180px;
+  width: 300px;
+}
+
+div.errors
+{
+  font-weight: bold;
+  background: orange;
+
+}
+
+tr.disabled td
+{
+  background: #F9F8F7;
+}
+
+tr.hr *,
+tr.hr
+{
+  text-align: center;
+  font-weight: bold;
+  font-size: 1px;
+  height: 2px;
+  /*
+  background: #F9F8F7;
+  */
+
+}
+
+tr.add,
+tr.add td,
+tr.search td,
+tr.search
+{
+  /*padding: 0;
+  margin: 0;*/
+  /*background: #F9F8F7;*/
+}
+
+table, div.errors, div.authorization
+{
+  background-color: #fff;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid rgba(0,0,0,0.15);
+  -moz-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  margin: 50px auto;
+  text-align: center;
+}
+
+div.errors
+{
+  min-width:	400px;
+  margin: 0		auto;
+  background-color: #F9F8F7;
+}
+
+div.authorization
+{
+  position: absolute;
+  min-width:	400px;
+  left: 40%;
+  right: 40%;
+}
+
+a {
+  margin-right: 10px;
+}
+
+div.authorization .login-block
+{
+  display: block;
+  margin: 0 auto;
+}
+
+div.authorization label
+{
+  text-align: left;
+  font-weight: bold;
+  margin: 0;
+}
+
+div.authorization input
+{
+  display: block;
+  margin: 0 auto;
+  background-color: #fff;
+  float: none
+}
+
+input
+{
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.15);
+  -moz-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  min-height: 30px;
+}
+
+tr, th, td
+{
+  background-color: #fff;
+  height: 40px;
+  border: 0px solid rgba(0,0,0,0.15);
+  -moz-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+
+input[type="submit"]
+{
+  position: related;
+  right: 20%;
+  background-color: #fff;
+  min-width: 120px;
+}
+
+body
+{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  padding: 37px 0 17px 0;
+  background-color: #f4f6f7;
+}
+
+label.tracker
+{
+  font-weight: bold;
+  font-size: 17px;
+}
+
+input#track-rfids
+{
+  margin-top: 16px;
+  min-height: 10px;
+}
+
+span#rfid-tracker {
+  font-weight: bold;
+  font-size: 17px;
+  margin-left: 15px;
+}
+
+ul.menu *,
+.bold
+{
+  font-weight: bold;
+}
+
+a#open-door
+{
+  position: absolute;
+  right: 3%;
+  top: 3%;
+}
+
+input[disabled]
+{
+  background-color: #E7E4E4;
+}
+
+tr.add td
+{
+  background-color: #D5D5D5;
+}
+
+td.error input
+{
+  border-color: red;
+}
+
+td.count {
+}
+
+h1.chart {
+  margin: 0 auto;
+  width: 489px;
+}
+
+#canvas-holder {
+  float: left;
+  margin-top: 75px;
+}
+
+div.chart-wrapper {
+  float: left;
+  margin-top: 0;
+  margin-left: 70px;
+  min-width: 387px;
+}
+
+div.chart-wrapper span {
+  font-weight: bold;
+}
+
+div.chart-wrapper span.count {
+  font-size: 20;
+}
+
+div.event-wrapper {
+  float: left;
+  margin-top: 0;
+  margin-left: 70px;
+}
+
+div.event-wrapper span {
+  font-weight: bold;
+}
+
+div.event-wrapper span.count {
+  font-size: 20;
+}
+
+.ui-datepicker td {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.ui-datepicker a {
+  margin: 0;
+}
+
+form#chart {
+  width: 730px;
+  height: 50px;
+  margin-top: 35px;
+  margin-left: 51px;
+  margin-right: 35px;
+  float:	right;
+}
+
+form#chart input[type="submit"] {
+  margin: 15 0 13 14;
+  float: left;
+}
+
+form#chart p{
+  float: left;
+}
+
+form#chart p.end {
+  margin-left: 14px;
+}
+
 img.grayscale {
   filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
   filter: gray; /* IE6-9 */

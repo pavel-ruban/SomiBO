@@ -43,9 +43,9 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       'image_class' => 'active',
     );
 
-    $uids[$row->uid] = $row->uid;
   }
 
+  $uids = db_query('select uid from users')->fetchCol();
   $users = user_load_multiple($uids);
 
   foreach ($users as $uid => $account) {
