@@ -195,7 +195,7 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
     $queue = DrupalQueue::get(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
     $queue->createQueue();
 
-    while ($item = $queue->claimItem(15)) {
+    while ($item = $queue->claimItem(1)) {
       // Check if changed user account is the same user that item belongs to.
       if ($item->data->uid == $target_uid) {
         $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
@@ -227,10 +227,6 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
           if (!empty($connection)) {
             $connection->close();
           }
-        }
-        else {
-          // This is done by cron, when expired timestamp is over, btw we do it manual first time, to avoid case when cron will be disabled and we would completely stuck here.
-          $queue->releaseItem($item);
         }
       }
     }
