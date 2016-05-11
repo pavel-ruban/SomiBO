@@ -22,7 +22,7 @@ class AMQPProtocolException extends \Exception implements AMQPExceptionInterface
     /**
      * @param string $reply_code
      * @param int $reply_text
-     * @param array $method_sig
+     * @param \Exception $method_sig
      */
     public function __construct($reply_code, $reply_text, $method_sig)
     {
@@ -34,9 +34,9 @@ class AMQPProtocolException extends \Exception implements AMQPExceptionInterface
 
         $ms = MiscHelper::methodSig($method_sig);
 
-        $protocolClass = AbstractChannel::$PROTOCOL_CONSTANTS_CLASS;
-        $mn = isset($protocolClass::$GLOBAL_METHOD_NAMES[$ms])
-            ? $protocolClass::$GLOBAL_METHOD_NAMES[$ms]
+        $PROTOCOL_CONSTANTS_CLASS = AbstractChannel::$PROTOCOL_CONSTANTS_CLASS;
+        $mn = isset($PROTOCOL_CONSTANTS_CLASS::$GLOBAL_METHOD_NAMES[$ms])
+            ? $PROTOCOL_CONSTANTS_CLASS::$GLOBAL_METHOD_NAMES[$ms]
             : $mn = '';
 
         $this->args = array($reply_code, $reply_text, $method_sig, $mn);

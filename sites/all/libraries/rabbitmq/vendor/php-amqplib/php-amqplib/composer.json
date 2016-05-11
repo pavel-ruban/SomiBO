@@ -1,26 +1,12 @@
 {
-    "name": "php-amqplib/php-amqplib",
-    "replace": {
-        "videlalvaro/php-amqplib": "self.version"
-    },
+    "name": "videlalvaro/php-amqplib",
     "type": "library",
-    "description": "Formerly videlalvaro/php-amqplib.  This library is a pure PHP implementation of the AMQP protocol. It's been tested against RabbitMQ.",
+    "description": "This library is a pure PHP implementation of the AMQP protocol. It's been tested against RabbitMQ.",
     "keywords": ["rabbitmq", "message", "queue"],
-    "homepage": "https://github.com/php-amqplib/php-amqplib/",
+    "homepage": "https://github.com/videlalvaro/php-amqplib/",
     "authors": [
         {
-            "name": "Alvaro Videla",
-            "role": "Original Maintainer"
-        },
-        {
-            "name": "John Kelly",
-            "email": "johnmkelly86@gmail.com",
-            "role": "Maintainer"
-        },
-        {
-            "name": "Raúl Araya",
-            "email": "nubeiro@gmail.com",
-            "role": "Maintainer"
+            "name" : "Alvaro Videla"
         }
     ],
     "require": {
@@ -29,9 +15,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8",
-        "scrutinizer/ocular": "^1.1",
-        "squizlabs/php_codesniffer": "^2.5"
+        "phpunit/phpunit": "3.7.*"
     },
     "suggest": {
         "ext-sockets": "Use AMQPSocketConnection"
@@ -50,7 +34,7 @@
     "license": "LGPL-2.1",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.7-dev"
+            "dev-master": "2.4-dev"
         }
     }
 }

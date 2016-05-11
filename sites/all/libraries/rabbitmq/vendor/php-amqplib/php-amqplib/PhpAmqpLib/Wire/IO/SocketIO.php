@@ -3,7 +3,6 @@ namespace PhpAmqpLib\Wire\IO;
 
 use PhpAmqpLib\Exception\AMQPIOException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
-use PhpAmqpLib\Helper\MiscHelper;
 
 class SocketIO extends AbstractIO
 {
@@ -13,7 +12,7 @@ class SocketIO extends AbstractIO
     /** @var int */
     protected $port;
 
-    /** @var float */
+    /** @var int */
     protected $timeout;
 
     /** @var resource */
@@ -25,7 +24,7 @@ class SocketIO extends AbstractIO
     /**
      * @param string $host
      * @param int $port
-     * @param float $timeout
+     * @param int $timeout
      * @param bool $keepalive
      */
     public function __construct($host, $port, $timeout, $keepalive = false)
@@ -45,9 +44,8 @@ class SocketIO extends AbstractIO
     {
         $this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
-        list($sec, $uSec) = MiscHelper::splitSecondsMicroseconds($this->timeout);
-        socket_set_option($this->sock, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $sec, 'usec' => $uSec));
-        socket_set_option($this->sock, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $sec, 'usec' => $uSec));
+        socket_set_option($this->sock, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $this->timeout, 'usec' => 0));
+        socket_set_option($this->sock, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $this->timeout, 'usec' => 0));
 
         if (!socket_connect($this->sock, $this->host, $this->port)) {
             $errno = socket_last_error($this->sock);
@@ -85,7 +83,7 @@ class SocketIO extends AbstractIO
     }
 
     /**
-     * @param int $n
+     * @param $n
      * @return mixed|string
      * @throws \PhpAmqpLib\Exception\AMQPIOException
      * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
@@ -122,7 +120,7 @@ class SocketIO extends AbstractIO
     }
 
     /**
-     * @param string $data
+     * @param $data
      * @return mixed|void
      * @throws \PhpAmqpLib\Exception\AMQPIOException
      * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
@@ -170,8 +168,8 @@ class SocketIO extends AbstractIO
     }
 
     /**
-     * @param int $sec
-     * @param int $usec
+     * @param $sec
+     * @param $usec
      * @return int|mixed
      */
     public function select($sec, $usec)

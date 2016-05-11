@@ -43,7 +43,6 @@ class AMQPWriter extends AbstractClient
 
         $ox = $x; //purely for dbg purposes (overflow exception)
         $isNeg = false;
-
         if (is_int($x)) {
             if ($x < 0) {
                 $isNeg = true;
@@ -57,7 +56,6 @@ class AMQPWriter extends AbstractClient
         } else {
             throw new AMQPInvalidArgumentException('Only integer and numeric string values are supported');
         }
-
         if ($isNeg) {
             $x = bcadd($x, -1, 0);
         } //in negative domain starting point is -1, not 0
@@ -68,7 +66,6 @@ class AMQPWriter extends AbstractClient
             $x = bcdiv($x, 65536, 0);
             $res[] = pack('n', $isNeg ? ~$chnk : $chnk);
         }
-
         if ($x || ($isNeg && ($chnk & 0x8000))) {
             throw new AMQPOutOfBoundsException(sprintf('Overflow detected while attempting to pack %s into %s bytes', $ox, $bytes));
         }
@@ -87,8 +84,6 @@ class AMQPWriter extends AbstractClient
 
     /**
      * Get what's been encoded so far.
-     *
-     * @return string
      */
     public function getvalue()
     {
@@ -102,10 +97,6 @@ class AMQPWriter extends AbstractClient
 
     /**
      * Write a plain PHP string, with no special encoding.
-     *
-     * @param string $s
-     *
-     * @return $this
      */
     public function write($s)
     {
@@ -119,14 +110,20 @@ class AMQPWriter extends AbstractClient
      * (deprecated, use write_bits instead)
      *
      * @deprecated
-     * @param bool $b
+     * @param $b
      * @return $this
      */
     public function write_bit($b)
     {
-        $b = $b ? 1 : 0;
+        $b = (int) (bool) $b;
         $shift = $this->bitcount % 8;
-        $last = $shift === 0 ? 0 : array_pop($this->bits);
+
+        if ($shift == 0) {
+            $last = 0;
+        } else {
+            $last = array_pop($this->bits);
+        }
+
         $last |= ($b << $shift);
         array_push($this->bits, $last);
         $this->bitcount += 1;
@@ -137,7 +134,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write multiple bits as an octet
      *
-     * @param bool[] $bits
+     * @param $bits
      * @return $this
      */
     public function write_bits($bits)
@@ -157,7 +154,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write an integer as an unsigned 8-bit value
      *
-     * @param int $n
+     * @param $n
      * @return $this
      * @throws \PhpAmqpLib\Exception\AMQPInvalidArgumentException
      */
@@ -172,10 +169,6 @@ class AMQPWriter extends AbstractClient
         return $this;
     }
 
-    /**
-     * @param int $n
-     * @return $this
-     */
     public function write_signed_octet($n)
     {
         if (($n < -128) || ($n > 127)) {
@@ -190,7 +183,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write an integer as an unsigned 16-bit value
      *
-     * @param int $n
+     * @param $n
      * @return $this
      * @throws \PhpAmqpLib\Exception\AMQPInvalidArgumentException
      */
@@ -205,10 +198,6 @@ class AMQPWriter extends AbstractClient
         return $this;
     }
 
-    /**
-     * @param int $n
-     * @return $this
-     */
     public function write_signed_short($n)
     {
         if (($n < -32768) || ($n > 32767)) {
@@ -223,7 +212,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write an integer as an unsigned 32-bit value
      *
-     * @param int $n
+     * @param $n
      * @return $this
      */
     public function write_long($n)
@@ -242,7 +231,7 @@ class AMQPWriter extends AbstractClient
     }
 
     /**
-     * @param int $n
+     * @param $n
      * @return $this
      */
     private function write_signed_long($n)
@@ -260,7 +249,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write an integer as an unsigned 64-bit value
      *
-     * @param int $n
+     * @param $n
      * @return $this
      */
     public function write_longlong($n)
@@ -291,10 +280,6 @@ class AMQPWriter extends AbstractClient
         return $this;
     }
 
-    /**
-     * @param int $n
-     * @return $this
-     */
     public function write_signed_longlong($n)
     {
         if ((bcadd($n, PHP_INT_MAX, 0) >= -1) && (bcadd($n, -PHP_INT_MAX, 0) <= 0)) {
@@ -323,8 +308,8 @@ class AMQPWriter extends AbstractClient
     }
 
     /**
-     * @param int|string $n
-     * @return integer[]
+     * @param int $n
+     * @return array
      */
     private function splitIntoQuads($n)
     {
@@ -337,7 +322,7 @@ class AMQPWriter extends AbstractClient
      * Write a string up to 255 bytes long after encoding.
      * Assume UTF-8 encoding
      *
-     * @param string $s
+     * @param $s
      * @return $this
      * @throws \PhpAmqpLib\Exception\AMQPInvalidArgumentException
      */
@@ -357,7 +342,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write a string up to 2**32 bytes long.  Assume UTF-8 encoding
      *
-     * @param string $s
+     * @param $s
      * @return $this
      */
     public function write_longstr($s)
@@ -380,7 +365,7 @@ class AMQPWriter extends AbstractClient
         if (!($a instanceof AMQPArray)) {
             $a = new AMQPArray($a);
         }
-        $data = new self();
+        $data = new AMQPWriter();
 
         foreach ($a as $v) {
             $data->write_value($v[0], $v[1]);
@@ -396,7 +381,7 @@ class AMQPWriter extends AbstractClient
     /**
      * Write unix time_t value as 64 bit timestamp
      *
-     * @param int $v
+     * @param $v
      * @return $this
      */
     public function write_timestamp($v)
@@ -411,7 +396,7 @@ class AMQPWriter extends AbstractClient
      * values are (type,value) tuples.
      *
      * @param AMQPTable|array $d Instance of AMQPTable or PHP array WITH format hints (unlike write_array())
-     * @return $this
+     * @return self
      * @throws \PhpAmqpLib\Exception\AMQPInvalidArgumentException
      */
     public function write_table($d)
@@ -434,9 +419,6 @@ class AMQPWriter extends AbstractClient
 
     /**
      * for compat with method mapping used by AMQPMessage
-     *
-     * @param AMQPTable|array
-     * @return $this
      */
     public function write_table_object($d)
     {
@@ -479,8 +461,8 @@ class AMQPWriter extends AbstractClient
                 $this->write_longlong($val);
                 break;
             case AMQPAbstractCollection::T_DECIMAL:
-                $this->write_octet($val->getE());
-                $this->write_signed_long($val->getN());
+                $this->write_octet($val->e);
+                $this->write_signed_long($val->n);
                 break;
             case AMQPAbstractCollection::T_TIMESTAMP:
                 $this->write_timestamp($val);

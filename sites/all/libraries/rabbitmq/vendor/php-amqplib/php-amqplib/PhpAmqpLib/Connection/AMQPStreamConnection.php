@@ -6,7 +6,7 @@ use PhpAmqpLib\Wire\IO\StreamIO;
 class AMQPStreamConnection extends AbstractConnection
 {
     /**
-     * @param string $host
+     * @param AbstractConnection $host
      * @param string $port
      * @param string $user
      * @param string $password
@@ -15,11 +15,10 @@ class AMQPStreamConnection extends AbstractConnection
      * @param string $login_method
      * @param null $login_response
      * @param string $locale
-     * @param float $connection_timeout
-     * @param float $read_write_timeout
+     * @param int $connection_timeout
+     * @param int $read_write_timeout
      * @param null $context
      * @param bool $keepalive
-     * @param int $heartbeat
      */
     public function __construct(
         $host,
@@ -31,33 +30,15 @@ class AMQPStreamConnection extends AbstractConnection
         $login_method = 'AMQPLAIN',
         $login_response = null,
         $locale = 'en_US',
-        $connection_timeout = 3.0,
-        $read_write_timeout = 3.0,
+        $connection_timeout = 3,
+        $read_write_timeout = 3,
         $context = null,
         $keepalive = false,
         $heartbeat = 0
     ) {
-        $io = new StreamIO(
-            $host,
-            $port,
-            $connection_timeout,
-            $read_write_timeout,
-            $context,
-            $keepalive,
-            $heartbeat
-        );
+        $io = new StreamIO($host, $port, $connection_timeout, $read_write_timeout, $context, $keepalive, $heartbeat);
 
-        parent::__construct(
-            $user,
-            $password,
-            $vhost,
-            $insist,
-            $login_method,
-            $login_response,
-            $locale,
-            $io,
-            $heartbeat
-        );
+        parent::__construct($user, $password, $vhost, $insist, $login_method, $login_response, $locale, $io, $heartbeat);
 
         // save the params for the use of __clone, this will overwrite the parent
         $this->construct_params = func_get_args();

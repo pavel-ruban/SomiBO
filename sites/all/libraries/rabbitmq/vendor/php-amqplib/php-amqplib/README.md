@@ -1,26 +1,12 @@
 # php-amqplib #
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE)
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Build Status](https://secure.travis-ci.org/videlalvaro/php-amqplib.png)](http://travis-ci.org/videlalvaro/php-amqplib)
 
 This library is a _pure PHP_ implementation of the AMQP protocol. It's been tested against [RabbitMQ](http://www.rabbitmq.com/).
 
 **Requirements: PHP 5.3** due to the use of `namespaces`.
 
 The library was used for the PHP examples of [RabbitMQ in Action](http://manning.com/videla/) and the [official RabbitMQ tutorials](http://www.rabbitmq.com/tutorials/tutorial-one-php.html).
-
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
-
-## New Maintainers (02/10/2016) ##
-
-Thanks to [videlalvaro](https://github.com/videlalvaro) for his hard work in maintaining php-amqplib!  He's done a fantastic job
-and has left big shoes to fill.
-
-The package will now be maintained by [postalservice14](https://github.com/postalservice14) and [nubeiro](https://github.com/nubeiro).
 
 ## Supported RabbitMQ Versions ##
 
@@ -45,7 +31,7 @@ Extensions that modify existing methods like `alternate exchanges` are also supp
 ```javascript
 {
   "require": {
-      "php-amqplib/php-amqplib": "2.6.*"
+      "videlalvaro/php-amqplib": "2.5.*"
   }
 }
 ```
@@ -100,10 +86,6 @@ If you need to listen to the sockets used to connect to RabbitMQ then see the ex
 $ php amqp_consumer_non_blocking.php
 ```
 
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
 ## Tutorials ##
 
 To not repeat ourselves, if you want to learn more about this library,
@@ -145,12 +127,12 @@ You could send it every 50 messages, or every hundred. That's up to you.
 Another way to speed up your message publishing is by reusing the `AMQPMessage` message instances. You can create your new message like this:
 
 ```
-$properties = array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT);
+$properties = array('content_type' => 'text/plain', 'delivery_mode' => 2);
 $msg = new AMQPMessage($body, $properties);
 $ch->basic_publish($msg, $exchange);
 ```
 
-Now let's say that while you want to change the message body for future messages, you will keep the same properties, that is, your messages will still be `text/plain` and the `delivery_mode` will still be `AMQPMessage::DELIVERY_MODE_PERSISTENT`. If you create a new `AMQPMessage` instance for every published message, then those properties would have to be re-encoded in the AMQP binary format. You could avoid all that by just reusing the `AMQPMessage` and then resetting the message body like this:
+Now let's say that while you want to change the message body for future messages, you will keep the same properties, that is, your messages will still be `text/plain` and the `delivery_mode` will still be `2`. If you create a new `AMQPMessage` instance for every published message, then those properties would have to be re-encoded in the AMQP binary format. You could avoid all that by just reusing the `AMQPMessage` and then resetting the message body like this:
 
 ```php
 $msg->setBody($body2);
@@ -162,15 +144,15 @@ $ch->basic_publish($msg, $exchange);
 AMQP imposes no limit on the size of messages; if a very large message is received by a consumer, PHP's memory limit may be reached
 within the library before the callback passed to `basic_consume` is called.
 
-To avoid this, you can call the method `AMQPChannel::setBodySizeLimit(int $bytes)` on your Channel instance. Body sizes exceeding this limit will be truncated,
-and delivered to your callback with a `AMQPMessage::$is_truncated` flag set to `true`. The property `AMQPMessage::$body_size` will reflect the true body size of
-a received message, which will be higher than `strlen(AMQPMessage::getBody())` if the message has been truncated.
+To avoid this, you can call the method `setBodySizeLimit(int $bytes)` on your Channel object. Body sizes exceeding this will be truncated, 
+and delivered to your callback with a `$msg->is_truncated` flag set. The property `$msg->body_size` will reflect the true body size of
+a received message, which will be higher than `strlen($msg->body)` if the message has been truncated.
 
-Note that all data above the limit is read from the AMQP Channel and immediately discarded, so there is no way to retrieve it within your
+Note that all data above the limit is read from the AMQP Channel and immediately discarded, so there is no way to retrieve it within your 
 callback. If you have another consumer which can handle messages with larger payloads, you can use `basic_reject` or `basic_nack` to tell
 the server (which still has a complete copy) to forward it to a Dead Letter Exchange.
 
-By default, no truncation will occur. To disable truncation on a Channel that has had it enabled, pass `0` (or `null`) to `AMQPChannel::setBodySizeLimit()`.
+By default, no truncation will occur. To disable truncation on a Channel that has had it enabled, pass `null` to `setBodySizeLimit`.
 
 ##UNIX Signals##
 
@@ -250,10 +232,6 @@ Once your environment is set up you can run your tests like this:
 $ make test
 ```
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
 ## Using AMQP 0.8 ##
 
 If you still want to use the old version of the protocol then you can do it by settings the following constant in your configuration code:
@@ -266,7 +244,7 @@ The default value is `'0.9.1'`.
 
 ## Providing your own autoloader ##
 
-If for some reason you don't want to use composer, then you need to have an autoloader in place fo the library classes. People have [reported](https://github.com/videlalvaro/php-amqplib/issues/61#issuecomment-37855050) to use this [autoloader](https://gist.github.com/jwage/221634) with success.
+If for some reasone you don't want to use composer, then you need to have an autoloader in place fo the library classes. People have [reported](https://github.com/videlalvaro/php-amqplib/issues/61#issuecomment-37855050) to use this [autoloader](https://gist.github.com/jwage/221634) with success.
 
 ## Original README: ##
 
@@ -290,18 +268,3 @@ For bug reports, please use bug tracking system at the project page.
 Patches are very welcome!
 
 Author: Vadim Zaliva <lord@crocodile.org>
-
-[ico-version]: https://img.shields.io/packagist/v/php-amqplib/php-amqplib.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-LGPL-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/php-amqplib/php-amqplib/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/php-amqplib/php-amqplib.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/php-amqplib/php-amqplib.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/php-amqplib/php-amqplib.svg?style=flat-square
-
-[link-packagist]: https://packagist.org/packages/php-amqplib/php-amqplib
-[link-travis]: https://travis-ci.org/php-amqplib/php-amqplib
-[link-scrutinizer]: https://scrutinizer-ci.com/g/php-amqplib/php-amqplib/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/php-amqplib/php-amqplib
-[link-downloads]: https://packagist.org/packages/php-amqplib/php-amqplib
-[link-author]: https://github.com/php-amqplib
-[link-contributors]: ../../contributors
