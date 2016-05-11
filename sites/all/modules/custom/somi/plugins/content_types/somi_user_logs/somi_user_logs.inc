@@ -45,7 +45,7 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
 
     $access_data[] = $row->access;
 
-    ++$chart_data[$month]['access_count'];
+    ++$chart_data[$year][$month]['access_count'];
     ++$access_count;
   }
 
