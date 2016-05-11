@@ -852,6 +852,11 @@ function api_crystal_op_validate_post() {
 
       foreach ($data->recipients as $recipient_email) {
         if (($account = user_load_by_mail($recipient_email))) {
+          if ($initiator->uid == $account->uid) {
+            throw new ApiException("Drupal API: Пользователь не может указывать получателем самого себя.");
+
+          }
+
           $response['recipients'][] = [
             'balance' => somi_get_user_account_balance($account->uid, SOMI_CRYSTALLS_CURRENCY_TID),
             'uid' => $account->uid,
