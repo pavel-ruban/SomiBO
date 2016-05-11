@@ -206,8 +206,8 @@ function somi_slack_webhook_trigger($id, $context, $status) {
 
   $i20_logo_url = "http://i20.biz/sites/all/themes/gki20/logo.png";
 
-  $somi_chart_url = "$somi_base_url/chart";
-  $somi_user_chart_url = "$somi_base_url/somi/chart";
+  $somi_chart_url = "$somi_base_url/admin/somi/chart";
+  $somi_user_chart_url = "$somi_base_url/admin/somi/chart";
   $somi_user_chart_url = is_numeric($id) ? "$somi_user_chart_url/$id" : $somi_chart_url;
 
   $somi_user_name = $context['name'];

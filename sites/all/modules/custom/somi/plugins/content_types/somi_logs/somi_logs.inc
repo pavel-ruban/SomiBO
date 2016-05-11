@@ -104,7 +104,7 @@ function chart_list_user_link($v) {
     $v['access_count'],
     $v['uid'],
     $v['card'],
-    l("8{$v['name']}", "/chart/{$v['uid']}")
+    l("{$v['name']}", "/admin/somi/chart/{$v['uid']}", ['attributes' => ['title' => ['Открыть детальный график по пользователю ' . $v['name']]]])
   );
 
   return $link;

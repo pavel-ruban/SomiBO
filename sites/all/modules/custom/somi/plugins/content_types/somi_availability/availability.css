@@ -119,16 +119,6 @@ div.authorization input
   float: none
 }
 
-input
-{
-  background-color: #fff;
-  border: 1px solid rgba(0,0,0,0.15);
-  -moz-box-shadow: 0 0 6px rgba(0,0,0,0.05);
-  -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.05);
-  box-shadow: 0 0 6px rgba(0,0,0,0.05);
-  min-height: 30px;
-}
-
 tr, th, td
 {
   background-color: #fff;
@@ -154,24 +144,6 @@ body
   line-height: 18px;
   padding: 37px 0 17px 0;
   background-color: #f4f6f7;
-}
-
-label.tracker
-{
-  font-weight: bold;
-  font-size: 17px;
-}
-
-input#track-rfids
-{
-  margin-top: 16px;
-  min-height: 10px;
-}
-
-span#rfid-tracker {
-  font-weight: bold;
-  font-size: 17px;
-  margin-left: 15px;
 }
 
 ul.menu *,
