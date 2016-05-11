@@ -37,7 +37,7 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
     $month = date('m-Y', $row->access);
     if (!isset($chart_data[$month])) {
       $chart_data[$month] = array(
-        'month' => date('M', $row->access),
+        'month' => date('M Y', $row->access),
         'access_count' => 0,
       );
     }
@@ -50,7 +50,7 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
 
   ksort($chart_data);
 
-  if (count($chart_data) < 10) {
+  if (count($chart_data) < 1) {
     $chart_data = array();
 
     foreach($access_data as $timestamp) {
@@ -65,7 +65,7 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
       ++$chart_data[$time]['access_count'];
     }
   }
-  elseif (count($chart_data) < 30) {
+  elseif (count($chart_data) < 2) {
 
     $chart_data = array();
 
