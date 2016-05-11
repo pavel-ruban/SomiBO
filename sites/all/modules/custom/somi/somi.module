@@ -365,7 +365,7 @@ function somi_get_currency_image($currency = NULL) {
       if (!isset($storage[$currency])) {
         $currency_term = taxonomy_get_term_by_name($currency, SOMI_VOCABULARY_CURRENCIES);
         $currency_term = reset($currency_term);
-        $view = taxonomy_term_view($currency_term);
+        $view = taxonomy_term_view($currency_term, 'teaser');
 
         $storage[$currency] = render($view['field_image']);
       }

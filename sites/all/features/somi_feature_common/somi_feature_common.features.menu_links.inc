@@ -29,7 +29,7 @@ function somi_feature_common_menu_default_menu_links() {
     'expanded' => 1,
     'weight' => 0,
     'customized' => 1,
-    'parent_identifier' => 'menu-common-admin-menu_:admin/content/accounts',
+    'parent_identifier' => 'menu-common-admin-menu_content:admin/content/accounts',
   );
   // Exported menu link: menu-common-admin-menu_-:admin/content/taxonomies/add-term.
   $menu_links['menu-common-admin-menu_-:admin/content/taxonomies/add-term'] = array(

@@ -560,9 +560,13 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'weight' => 0,
       ),
       'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
+        'label' => 'hidden',
+        'module' => 'image',
+        'settings' => array(
+          'image_link' => '',
+          'image_style' => 'thumbnail',
+        ),
+        'type' => 'image',
         'weight' => 0,
       ),
     ),
