@@ -23,7 +23,7 @@
       };
 
       $.each(Drupal.settings.chartData, function (i, v) {
-        $.each(i , function (ii, vv) {
+        $.each(v , function (ii, vv) {
           lineData.months.push(vv.month);
           lineData.values.push(vv.access_count);
         })
