@@ -37,6 +37,7 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
 
     $availability_data[$row->uid] = array(
       'uid' => $row->uid,
+      'name' => '',
       'access' => $access,
       'sort' => (int) $access,
       'image_url' => '',
@@ -52,6 +53,7 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
     if (!isset($availability_data[$account->uid])) {
       $availability_data[$account->uid] = array(
         'uid' => $account->uid,
+        'name' => $account->name,
         'access' => 0,
         'sort' => 0,
         'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
@@ -60,7 +62,23 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
     }
     else {
       $availability_data[$account->uid]['image_url'] = "http://www.gravatar.com/avatar/" . md5($account->mail);
+      $availability_data[$account->uid]['name'] = $account->name;
     }
+  }
+
+  foreach ($availability_data as &$item) {
+    $class = $item['access'] ? 'active' : 'grayscale';
+
+    $item = [
+      'uid' => $item['uid'],
+      'access' => $item['access'],
+      'class' => $class,
+      'l' => l(
+        theme('image', ['path' => $item['image_url'], 'attributes' => ['title' => $item['name'], 'class' => [$class]]]),
+        '/admin/somi/chart/' . $item['uid'],
+        ['html' => TRUE]
+      )
+    ];
   }
 
   drupal_add_css(SOMI_MODULE_PATH . '/plugins/content_types/somi_availability/availability.css');

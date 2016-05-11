@@ -96,6 +96,14 @@ function somi_entity_info_alter(&$entity_info) {
     'user' => array(
       'teaser',
     ),
+    'taxonomy_term' => array(
+      'icon',
+      'teaser',
+    ),
+    'node' => array(
+      'icon',
+      'teaser',
+    ),
   );
 
   foreach ($view_modes as $key => $entity_type) {
@@ -482,13 +490,28 @@ function somi_form_alter(&$form, &$form_state, $form_id) {
  * @return mixed
  */
 function somi_library() {
-  $path = '/sites/all/libraries/Chartjs';
+  $path = '/sites/all/libraries';
 
   $libraries['chartjs'] = array(
     'title' => 'Chartjs',
     'version' => '1.0',
     'js' => array(
-      $path . '/Chart.js' => array(),
+      $path . '/Chartjs/Chart.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'drupal.ajax'),
+      array('system', 'ui.dialog'),
+    ),
+  );
+
+  $libraries['bgrins-spectrum'] = array(
+    'title' => 'Spectrum',
+    'version' => '1.0',
+    'js' => array(
+      $path . '/bgrins-spectrum/spectrum.js' => array(),
+    ),
+    'css' => array(
+      $path . '/bgrins-spectrum/spectrum.css' => array(),
     ),
     'dependencies' => array(
       array('system', 'drupal.ajax'),
@@ -507,6 +530,8 @@ function somi_init() {
   if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q'])) {
     drupal_goto('/user');
   }
+
+  drupal_add_library('somi', 'spectrum');
 }
 
 /**

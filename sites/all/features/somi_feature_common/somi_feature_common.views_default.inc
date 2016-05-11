@@ -190,6 +190,17 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['name']['link_to_taxonomy'] = TRUE;
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['label'] = '';
+  $handler->display->display_options['fields']['field_color_picker']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_color_picker']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker']['settings'] = array(
+    'width' => '15',
+    'height' => '15',
+  );
   /* Field: Taxonomy vocabulary: Machine name */
   $handler->display->display_options['fields']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['fields']['machine_name']['table'] = 'taxonomy_vocabulary';
@@ -375,6 +386,10 @@ function somi_feature_common_views_default_views() {
       'empty_column' => 1,
     ),
   );
+  /* Relationship: Content: Color (field_color) */
+  $handler->display->display_options['relationships']['field_color_tid']['id'] = 'field_color_tid';
+  $handler->display->display_options['relationships']['field_color_tid']['table'] = 'field_data_field_color';
+  $handler->display->display_options['relationships']['field_color_tid']['field'] = 'field_color_tid';
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -387,6 +402,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['field_type']['table'] = 'field_data_field_type';
   $handler->display->display_options['fields']['field_type']['field'] = 'field_type';
   $handler->display->display_options['fields']['field_type']['label'] = 'Тип';
+  /* Field: somi: Device Image */
+  $handler->display->display_options['fields']['device_image']['id'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['table'] = 'node';
+  $handler->display->display_options['fields']['device_image']['field'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['label'] = 'Изображение';
   /* Field: Content: Published */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'node';
@@ -394,11 +414,17 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['status']['label'] = 'Статус';
   $handler->display->display_options['fields']['status']['type'] = 'on-off';
   $handler->display->display_options['fields']['status']['not'] = 0;
-  /* Field: Content: Color */
-  $handler->display->display_options['fields']['field_color']['id'] = 'field_color';
-  $handler->display->display_options['fields']['field_color']['table'] = 'field_data_field_color';
-  $handler->display->display_options['fields']['field_color']['field'] = 'field_color';
-  $handler->display->display_options['fields']['field_color']['label'] = 'Цвет';
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['relationship'] = 'field_color_tid';
+  $handler->display->display_options['fields']['field_color_picker']['label'] = 'Цвет';
+  $handler->display->display_options['fields']['field_color_picker']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker']['settings'] = array(
+    'width' => '15',
+    'height' => '15',
+  );
   /* Field: Content: Собственность i20 */
   $handler->display->display_options['fields']['field_i20_property']['id'] = 'field_i20_property';
   $handler->display->display_options['fields']['field_i20_property']['table'] = 'field_data_field_i20_property';
@@ -544,16 +570,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['field_type']['table'] = 'field_data_field_type';
   $handler->display->display_options['fields']['field_type']['field'] = 'field_type';
   $handler->display->display_options['fields']['field_type']['label'] = 'Тип';
-  /* Field: Field: Image */
-  $handler->display->display_options['fields']['field_image']['id'] = 'field_image';
-  $handler->display->display_options['fields']['field_image']['table'] = 'field_data_field_image';
-  $handler->display->display_options['fields']['field_image']['field'] = 'field_image';
-  $handler->display->display_options['fields']['field_image']['label'] = 'Изображение';
-  $handler->display->display_options['fields']['field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['field_image']['settings'] = array(
-    'image_style' => 'icon',
-    'image_link' => '',
-  );
+  /* Field: somi: Device Image */
+  $handler->display->display_options['fields']['device_image']['id'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['table'] = 'node';
+  $handler->display->display_options['fields']['device_image']['field'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['label'] = 'Изображение';
   /* Field: Content: Published */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'node';
@@ -561,11 +582,17 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['status']['label'] = 'Статус';
   $handler->display->display_options['fields']['status']['type'] = 'on-off';
   $handler->display->display_options['fields']['status']['not'] = 0;
-  /* Field: Content: Color */
-  $handler->display->display_options['fields']['field_color']['id'] = 'field_color';
-  $handler->display->display_options['fields']['field_color']['table'] = 'field_data_field_color';
-  $handler->display->display_options['fields']['field_color']['field'] = 'field_color';
-  $handler->display->display_options['fields']['field_color']['label'] = 'Цвет';
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['relationship'] = 'field_color_tid';
+  $handler->display->display_options['fields']['field_color_picker']['label'] = 'Цвет';
+  $handler->display->display_options['fields']['field_color_picker']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker']['settings'] = array(
+    'width' => '15',
+    'height' => '15',
+  );
   /* Field: Content: Собственность i20 */
   $handler->display->display_options['fields']['field_i20_property']['id'] = 'field_i20_property';
   $handler->display->display_options['fields']['field_i20_property']['table'] = 'field_data_field_i20_property';

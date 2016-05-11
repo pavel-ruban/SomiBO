@@ -5,6 +5,105 @@
  */
 
 /**
+ * Implements hook_default_page_manager_handlers().
+ */
+function somi_feature_common_default_page_manager_handlers() {
+  $export = array();
+
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'site_template__panel_context_446f2726-dc74-4a3e-9dd0-ee3b37be2736';
+  $handler->task = 'site_template';
+  $handler->subtask = '';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Common',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => '',
+    'access' => array(
+      'logic' => 'and',
+    ),
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'one_main' => NULL,
+      'top' => NULL,
+      'left' => NULL,
+      'middle' => NULL,
+      'right' => NULL,
+      'bottom' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = '';
+  $display->uuid = '3d246d3f-c18e-4134-835e-934fc3fa9f7f';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-92c86403-a6aa-4200-9580-14d2925a396d';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_header';
+    $pane->subtype = 'somi_header';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '92c86403-a6aa-4200-9580-14d2925a396d';
+    $display->content['new-92c86403-a6aa-4200-9580-14d2925a396d'] = $pane;
+    $display->panels['middle'][0] = 'new-92c86403-a6aa-4200-9580-14d2925a396d';
+    $pane = new stdClass();
+    $pane->pid = 'new-bc977508-d131-493f-8319-d81253567453';
+    $pane->panel = 'middle';
+    $pane->type = 'page_content';
+    $pane->subtype = 'page_content';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'context' => 'argument_page_content_1',
+      'override_title' => 1,
+      'override_title_text' => '',
+      'override_title_heading' => 'h2',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 1;
+    $pane->locks = array();
+    $pane->uuid = 'bc977508-d131-493f-8319-d81253567453';
+    $display->content['new-bc977508-d131-493f-8319-d81253567453'] = $pane;
+    $display->panels['middle'][1] = 'new-bc977508-d131-493f-8319-d81253567453';
+  $display->hide_title = PANELS_TITLE_NONE;
+  $display->title_pane = '0';
+  $handler->conf['display'] = $display;
+  $export['site_template__panel_context_446f2726-dc74-4a3e-9dd0-ee3b37be2736'] = $handler;
+
+  return $export;
+}
+
+/**
  * Implements hook_default_page_manager_pages().
  */
 function somi_feature_common_default_page_manager_pages() {
@@ -611,6 +710,101 @@ function somi_feature_common_default_page_manager_pages() {
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
   $pages['somi_logs'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
+  $page->name = 'somi_user_chart';
+  $page->task = 'page';
+  $page->admin_title = 'Somi User Chart';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/chart/%uid';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi logs',
+        ),
+        'context' => 'argument_entity_id:user_1',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array();
+  $page->arguments = array(
+    'uid' => array(
+      'id' => 1,
+      'identifier' => 'String',
+      'name' => 'string',
+      'settings' => array(
+        'use_tail' => 0,
+      ),
+    ),
+  );
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_user_chart__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_user_chart';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Somi User Chart',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'SOMI График Пользователя';
+  $display->uuid = '3b97a63d-7bfa-4dfc-84b5-174b732ad29a';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-36740365-31ea-4554-acea-ef9a4c8f63ea';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_user_logs';
+    $pane->subtype = 'somi_user_logs';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '36740365-31ea-4554-acea-ef9a4c8f63ea';
+    $display->content['new-36740365-31ea-4554-acea-ef9a4c8f63ea'] = $pane;
+    $display->panels['middle'][0] = 'new-36740365-31ea-4554-acea-ef9a4c8f63ea';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-36740365-31ea-4554-acea-ef9a4c8f63ea';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_user_chart'] = $page;
 
   return $pages;
 

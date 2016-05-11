@@ -94,36 +94,3 @@ function somi_logs_content_type_theme(&$theme, $plugin) {
     'template' => 'somi_logs',
   );
 }
-
-/**
- * @param $v
- * @return string
- */
-function chart_list_user_link($v) {
-  $link = sprintf('<span>count</span>: <span class=\"count\">%s</span> <span>id</span>: %s <span>card</span>: "%s" %s',
-    $v['access_count'],
-    $v['uid'],
-    $v['card'],
-    l("{$v['name']}", "/admin/somi/chart/{$v['uid']}", ['attributes' => ['title' => 'Открыть детальный график по пользователю ' . $v['name']]])
-  );
-
-  return $link;
-}
-
-/**
- * @param $event
- * @return string
- */
-function event_list_user_link($event) {
-
-  $link = sprintf('%s<div class="wrapper"><div><span>uid</span>: %s | <span class="time">%s</span></div><div><span>card</span>: "%s"</div><div>%s</div></div>',
-    !empty($event['mail'])
-      ? ("<img class=\"avatar\" src=\"http://www.gravatar.com/avatar/" . md5($event['mail']) . "\" />")
-      : "<img src=\"http://www.gravatar.com/avatar\" />",
-    $event['uid'],
-    date('H:i:s d.m.y', $event['time']),
-    $event['card'],
-    "{$event['name']}"
-  );
-  return $link;
-}

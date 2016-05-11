@@ -26,18 +26,18 @@ function somi_field_formatter_view($entity_type, $entity, $field, $instance, $la
     case 'somi_devices':
       foreach ($items as $delta => $item) {
         if ($node = node_load($item['target_id'])) {
-          $wrapper = entity_metadata_wrapper('node', $node);
-          $device_type = $wrapper->field_type->value()->name;
-          $device_id = $wrapper->title->value();
+          $device_type = somi_get_device_type_by_nid($node->nid);
+          $device_id = $node->title;
 
           $options = array(
+            'html' => TRUE,
             'attributes' => array(
               'class' => array($node->status ? 'green' : 'red', 'device-link'),
             )
           );
 
           $elements[$delta] = array(
-            '#markup' => l("$device_type: $device_id", "/node/{$node->nid}", $options),
+            '#markup' => l("$device_type : $device_id", "/node/{$node->nid}", $options),
           );
         }
       }

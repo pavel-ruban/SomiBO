@@ -30,3 +30,14 @@ span#rfid-tracker {
   position: relative;
   margin-right: 11px;
 }
+
+.view-display-id-admin_devices .views-field-field-color-picker div.color-swatch {
+  margin-top: 28px;
+}
+
+div.event-wrapper li div.type-icon img {
+  float: none;
+}
+div.event-wrapper li div.field-name-field-color-picker {
+  display: inline-block;
+}

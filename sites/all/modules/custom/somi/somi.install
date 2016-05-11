@@ -34,3 +34,11 @@ function somi_schema_alter(&$schema) {
 function somi_update_7001() {
   module_enable(['somi_feature_common']);
 }
+
+/**
+ * Enable modules.
+ * @param $context
+ */
+function somi_update_7002($context) {
+  module_enable(['color_field', 'somi_feature_vocabularies_content_types']);
+}

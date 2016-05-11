@@ -30,6 +30,16 @@ function somi_views_data() {
     ),
   );
 
+  $data['node']['device_image'] = array(
+    'field' => array(
+      'title' => t('Device Image'),
+      'help' => t('Shows image of device.'),
+      'handler' => 'somi_views_handler_field_device_image',
+      'group' => 'somi',
+      'real field' => 'nid',
+    ),
+  );
+
   $data['users']['crystalls_debet'] = array(
     'field' => array(
       'title' => t('Crystalls Debet Count'),

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content Types & Taxonomies feature.
+ */
+
+include_once 'somi_feature_vocabularies_content_types.features.inc';
