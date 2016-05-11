@@ -8,7 +8,7 @@
         <tr>
       <?php endif; ?>
       <td id="<?php echo $v['uid']; ?>" access="<?php echo $v['access']; ?>" class="<?php echo $v['image_class']; ?>">
-        <img src="<?php echo $v['image_url']; ?>" class="<?php echo $v['image_class']; ?>"
+        <img src="<?php echo $v['image_url']; ?>" class="<?php echo $v['image_class']; ?>" />
       </td>
       <?php if ($i > 8): ?>
         <?php $i = 0; ?>

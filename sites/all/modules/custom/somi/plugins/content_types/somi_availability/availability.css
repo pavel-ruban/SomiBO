@@ -296,3 +296,17 @@ body #main-content table {
   width: auto;
   margin: 25px auto;
 }
+
+body #main-content table tr {
+  height: auto;
+  margin: 0;
+}
+
+body #main-content table td {
+  height: auto;
+  padding: 2px;
+}
+
+body #main-content table td img {
+  display: block;
+}
