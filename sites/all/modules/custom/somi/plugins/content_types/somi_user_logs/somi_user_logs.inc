@@ -34,9 +34,10 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
   $result = db_query("select * from log WHERE uid = $uid ORDER BY access DESC;")->fetchAllAssoc('access');
 
   foreach ($result as $row) {
-    $month = date('m-Y', $row->access);
-    if (!isset($chart_data[$month])) {
-      $chart_data[$month] = array(
+    $month = date('m', $row->access);
+    $year = date('Y', $row->access);
+    if (!isset($chart_data[$year][$month])) {
+      $chart_data[$year][$month] = array(
         'month' => date('M Y', $row->access),
         'access_count' => 0,
       );
@@ -48,37 +49,45 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
     ++$access_count;
   }
 
-  ksort($chart_data);
+  sort($access_data, SORT_ASC | SORT_NUMERIC);
 
-  if (count($chart_data) < 1) {
+  ksort($chart_data);
+  foreach ($chart_data as &$year_data) {
+    ksort($year_data);
+  }
+
+  if ($access_count < 15) {
     $chart_data = array();
 
     foreach($access_data as $timestamp) {
       $time = date('H d.m.Y', $timestamp);
-      if (!isset($chart_data[$time])) {
-        $chart_data[$time] = array(
+      $year = date('Y', $timestamp);
+
+      if (!isset($chart_data[$year][$time])) {
+        $chart_data[$year][$time] = array(
           'month' => date('H:00-H:59:59 d.m.Y', $timestamp),
           'access_count' => 0,
         );
       }
 
-      ++$chart_data[$time]['access_count'];
+      ++$chart_data[$year][$time]['access_count'];
     }
   }
-  elseif (count($chart_data) < 2) {
+  elseif ($access_count < 60) {
 
     $chart_data = array();
 
     foreach($access_data as $timestamp) {
       $day = date('d-m-Y', $timestamp);
-      if (!isset($chart_data[$day])) {
-        $chart_data[$day] = array(
+      $year = date('Y', $timestamp);
+      if (!isset($chart_data[$year][$day])) {
+        $chart_data[$year][$day] = array(
           'month' => date('d.m.Y', $timestamp),
           'access_count' => 0,
         );
       }
 
-      ++$chart_data[$day]['access_count'];
+      ++$chart_data[$year][$day]['access_count'];
     }
   }
 

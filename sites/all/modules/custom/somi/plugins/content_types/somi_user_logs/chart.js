@@ -23,8 +23,10 @@
       };
 
       $.each(Drupal.settings.chartData, function (i, v) {
-        lineData.months.push(v.month);
-        lineData.values.push(v.access_count);
+        $.each(i , function (ii, vv) {
+          lineData.months.push(vv.month);
+          lineData.values.push(vv.access_count);
+        })
       });
 
       var lineChartData = {
