@@ -42,11 +42,12 @@ function event_list_user_link($event) {
 
   $device_type = somi_get_device_type_by_nid($d->nid);
   $device_color = somi_get_device_color_by_nid($d->nid);
+  $img = !empty($event['mail'])
+    ? ("<img class=\"avatar\" src=\"http://www.gravatar.com/avatar/" . md5($event['mail']) . "\" />")
+    : "<img src=\"http://www.gravatar.com/avatar\" />";
 
   $link = sprintf('%s<div class="wrapper"><div>%s</div><div><span>uid</span>: %s | <span class="time">%s</span></div><div><span>card</span>: "%s"</div><div class="type-icon"><span>type</span>: %s <span>color</span>: %s</div></div>',
-    !empty($event['mail'])
-      ? ("<img class=\"avatar\" src=\"http://www.gravatar.com/avatar/" . md5($event['mail']) . "\" />")
-      : "<img src=\"http://www.gravatar.com/avatar\" />",
+    l($img, '/admin/somi/chart/' . $event['uid'], ['html' => TRUE]),
     "{$event['name']}",
     $event['uid'],
     date('H:i:s d.m.y', $event['time']),
