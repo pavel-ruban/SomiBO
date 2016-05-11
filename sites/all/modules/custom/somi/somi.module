@@ -195,17 +195,18 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
     $queue = DrupalQueue::get(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
     $queue->createQueue();
 
-    while($item = $queue->claimItem(15)) {
-      // Check if changed user account is the same user that item belongs to.
-      if ($item->data->uid == $target_uid) {
+    try {
+      $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+      $channel = $connection->channel();
 
-        $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+      while ($item = $queue->claimItem(15)) {
+        // Check if changed user account is the same user that item belongs to.
+        if ($item->data->uid == $target_uid) {
 
-        // If successful delete the item from Drupal queue and add it to RabbitMQ queue.
-        if ($available_crystals >= $item->data->attempt_crystals_amount) {
-          try {
-            $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
-            $channel = $connection->channel();
+          $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+
+          // If successful delete the item from Drupal queue and add it to RabbitMQ queue.
+          if ($available_crystals >= $item->data->attempt_crystals_amount) {
 
             $channel->queue_declare(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME, FALSE, TRUE, FALSE, FALSE);
 
@@ -216,20 +217,27 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
 
             $channel->basic_publish($message, '', SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
 
-            $channel->close();
-            $connection->close();
+
 
             // If adding to RabbitMQ gone ok then delete Drupal queue item.
             $queue->deleteItem($item);
-          } catch (Exception $e) {
-            // Do nothing.
+
+          }
+          else {
+            // This is done by cron, when expired timestamp is over, btw we do it manual first time, to avoid case when cron will be disabled and we would completely stuck here.
+            $queue->releaseItem($item);
           }
         }
-        else {
-          // This is done by cron, when expired timestamp is over, btw we do it manual first time, to avoid case when cron will be disabled and we would completely stuck here.
-          $queue->releaseItem($item);
-        }
       }
+    } catch (Exception $e) {
+      // Do nothing.
+    }
+
+    if (!empty($channel)) {
+      $channel->close();
+    }
+    if (!empty($connection)) {
+      $connection->close();
     }
   }
 }
