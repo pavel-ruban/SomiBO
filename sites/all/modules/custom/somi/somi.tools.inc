@@ -240,3 +240,13 @@ function somi_api_account_currencies_mapping() {
     ],
   ];
 }
+
+/**
+ * @return array
+ */
+function somi_currencies_translations() {
+  return [
+    ':gem:' => [1 => 'кристалл', 2 => 'кристалла', 3 => 'кристаллов'],
+    ':beetle:' => [1 => 'жук', 2 => 'жука', 3 => 'жуков'],
+  ];
+}

@@ -822,10 +822,6 @@ function api_users_get() {
   return $response;
 }
 
-define('SOMI_CURRENCIES_TRANSLATIONS', [
-  ':gem:' => [1 => 'кристалл', 2 => 'кристалла', 3 => 'кристаллов'],
-  ':beetle:' => [1 => 'жук', 2 => 'жука', 3 => 'жуков'],
-]);
 /**
  * Get discussions of user or device.
  */
@@ -859,12 +855,12 @@ function api_account_op_validate_post() {
 
         $goods = plural_str(
           $transaction_amount,
-          SOMI_CURRENCIES_TRANSLATIONS[$currency][1],
-          SOMI_CURRENCIES_TRANSLATIONS[$currency][2],
-          SOMI_CURRENCIES_TRANSLATIONS[$currency][3]
+          somi_currencies_translations()[$currency][1],
+          somi_currencies_translations()[$currency][2],
+          somi_currencies_translations()[$currency][3]
         );
 
-        $error['message'] = "Недостаточно " . SOMI_CURRENCIES_TRANSLATIONS[$currency][3] . " для совершения сделки, на вашем счёте $transaction_amount $goods.";
+        $error['message'] = "Недостаточно " . somi_currencies_translations()[$currency][3] . " для совершения сделки, на вашем счёте $transaction_amount $goods.";
         $response['error'] = $error;
       }
 
