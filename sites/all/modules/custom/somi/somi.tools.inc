@@ -9,7 +9,8 @@
  * @return mixed
  */
 function plural_str($a, $str1, $str2, $str3) {
-  if ($a % 10 == 1 && $a % 100 != 11) return $str1;
+  if ($a == 0) return $str3;
+  elseif ($a % 10 == 1 && $a % 100 != 11) return $str1;
   else if (($a % 10 >= 2) && ($a % 10 <= 4) && ($a % 100 < 10 || $a % 100 >= 20)) return $str2;
   else return $str3;
 }
@@ -222,4 +223,20 @@ function somi_get_device_color_by_nid($nid) {
   }
 
   return FALSE;
+}
+
+/**
+ * @return array
+ */
+function somi_api_account_currencies_mapping() {
+  return [
+    ':gem' => [
+      'active' => SOMI_CRYSTALLS_CURRENCY_TID,
+      'passive' => SOMI_I20_CRYSTALLS_CURRENCY_TID
+    ],
+    ':beetle:' => [
+      'active' => SOMI_BUGS_CURRENCY_TID,
+      'passive' => SOMI_I20_BUGS_CURRENCY_TID
+    ],
+  ];
 }

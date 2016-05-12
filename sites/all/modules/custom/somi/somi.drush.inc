@@ -19,6 +19,10 @@ function somi_drush_command() {
     'description' => dt('Resets All Users Crystall Debet Accounts.'),
   );
 
+  $items['somi-reset-bugs-accounts'] = array(
+    'description' => dt('Resets All Users Bugs Debet Accounts.'),
+  );
+
   return $items;
 }
 
@@ -55,6 +59,24 @@ function drush_somi_reset_crystalls_accounts() {
     'operations' => array(
       array(
         'somi_reset_crystalls_accounts_batch',
+        array()
+      ),
+    ),
+  );
+  batch_set($batch);
+  drush_backend_batch_process();
+}
+
+/**
+ * A command callback.
+ */
+function drush_somi_reset_bugs_accounts() {
+  // Set the batch operations.
+  $batch = array(
+    'title' => dt('Updating users bugs debet accounts'),
+    'operations' => array(
+      array(
+        'somi_reset_bugs_accounts_batch',
         array()
       ),
     ),
@@ -127,6 +149,80 @@ function somi_reset_crystalls_accounts_batch(&$context) {
 
     if (!empty($new_amount)) {
       somi_add_user_account_balance($account->uid, $new_amount, SOMI_I20_CRYSTALLS_CURRENCY_TID, $message, $source_uid);
+      unset($new_amount);
+    }
+
+    $context['sandbox']['progress']++;
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = 'Updating Users Debets Crystall Accoutns (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+  }
+}
+
+/**
+ * @param $context
+ */
+function somi_reset_bugs_accounts_batch(&$context) {
+  if (!isset($context['results']['uids'])) {
+    $query = db_select('users', 'u');
+    $query->addField('u', 'uid');
+    $query->condition('status', 1);
+    $uids = $query->execute()->fetchCol();
+
+    $context['results']['uids'] = $uids;
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($uids);
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+
+    $context['message'] = 'Preparing data for operations, found ' . $context['sandbox']['max'] . ' active users.';
+
+    return;
+  }
+
+  $chunk = array_slice($context['results']['uids'], $context['sandbox']['progress'], 30);
+  $source_uid = 1;
+  $roles = user_roles();
+  $msg = 'Ежемесячное обновление жуков I20';
+  $currency = taxonomy_term_load(SOMI_I20_CRYSTALLS_CURRENCY_TID)->name;
+
+  foreach ($chunk as $uid) {
+    if ($account = user_load($uid)) {
+      switch (TRUE) {
+        case array_search('top', $roles) !== FALSE && user_has_role(array_search('top', $roles), $account):
+          $message = t($msg . ' для роли :role', [':role' => 'top']);
+          $limit = SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
+          break;
+
+        case array_search('core', $roles) !== FALSE && user_has_role(array_search('core', $roles), $account):
+          $message = t($msg . ' для роли :role', [':role' => 'core']);
+          $limit = SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
+          break;
+
+        case array_search('active', $roles) !== FALSE && user_has_role(array_search('active', $roles), $account):
+          $message = t($msg . ' для роли :role', [':role' => 'active']);
+          $limit = SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
+          break;
+
+        default:
+          $message = t($msg . ' для роли :role', [':role' => 'авторизованный пользователь']);
+          $limit = SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT;
+          break;
+      }
+    }
+
+    $balance = somi_get_user_account_balance($account->uid, SOMI_I20_BUGS_CURRENCY_TID);
+
+    if ($balance < $limit) {
+      $new_amount = $limit - $balance;
+
+    }
+    elseif ($balance > $limit) {
+      $new_amount = -1 * ($balance - $limit);
+    }
+
+    if (!empty($new_amount)) {
+      somi_add_user_account_balance($account->uid, $new_amount, SOMI_I20_BUGS_CURRENCY_TID, $message, $source_uid);
       unset($new_amount);
     }
 

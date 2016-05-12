@@ -80,8 +80,8 @@ function api_methods() {
       'callback' => 'api_user_account_balance_post',
       'dependencies' => array(),
     ) + $base,
-    'crystal/op/validate/post' => array(
-      'callback' => 'api_crystal_op_validate_post',
+    'account/op/validate/post' => array(
+      'callback' => 'api_account_op_validate_post',
       'dependencies' => array(
         'somi',
         'votingapi',
@@ -822,10 +822,14 @@ function api_users_get() {
   return $response;
 }
 
+define('SOMI_CURRENCIES_TRANSLATIONS', [
+  ':gem:' => [1 => 'кристалл', 2 => 'кристалла', 3 => 'кристаллов'],
+  ':beetle:' => [1 => 'жук', 2 => 'жука', 3 => 'жуков'],
+]);
 /**
  * Get discussions of user or device.
  */
-function api_crystal_op_validate_post() {
+function api_account_op_validate_post() {
   global $user;
 
   if (!empty($user->uid)) {
@@ -833,16 +837,34 @@ function api_crystal_op_validate_post() {
     $response = ['initiator' => [], 'recipients' => []];
 
     if (!empty($data->user->email)) {
+      if (empty($data->user->currency) || !array_key_exists($data->user->currency, somi_api_account_currencies_mapping())) {
+        throw new ApiException(
+          sprintf(
+            "Drupal API: валюта %s не привязана ни к одному из счетов.",
+            !empty($data->user->currency) ? $data->user->currency : '')
+        );
+      }
+
+      $currency = $data->user->currency;
+      $account_tid = somi_api_account_currencies_mapping()[$data->user->currency]['active'];
+      $passive_account_tid = somi_api_account_currencies_mapping()[$data->user->currency]['passive'];
+
       $initiator = user_load_by_mail($data->user->email);
-      $crystals_amount = somi_get_user_account_balance($initiator->uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
-      $response['initiator']['balance'] = $crystals_amount;
+      $transaction_amount = somi_get_user_account_balance($initiator->uid, $passive_account_tid);
+      $response['initiator']['balance'] = $transaction_amount;
       $response['initiator']['uid'] = $initiator->uid;
 
-      if ($data->user->crystals_amount > $crystals_amount) {
+      if ($data->user->transaction_amount > $transaction_amount) {
         $error['code'] = 33;
-        $goods = plural_str($crystals_amount, 'кристалл', 'кристалла', 'кристаллов');
 
-        $error['message'] = "Недостаточно кристаллов для совершения сделки, на вашем счёте $crystals_amount $goods.";
+        $goods = plural_str(
+          $transaction_amount,
+          SOMI_CURRENCIES_TRANSLATIONS[$currency][1],
+          SOMI_CURRENCIES_TRANSLATIONS[$currency][2],
+          SOMI_CURRENCIES_TRANSLATIONS[$currency][3]
+        );
+
+        $error['message'] = "Недостаточно " . SOMI_CURRENCIES_TRANSLATIONS[$currency][3] . " для совершения сделки, на вашем счёте $transaction_amount $goods.";
         $response['error'] = $error;
       }
 
@@ -858,7 +880,7 @@ function api_crystal_op_validate_post() {
           }
 
           $response['recipients'][] = [
-            'balance' => somi_get_user_account_balance($account->uid, SOMI_CRYSTALLS_CURRENCY_TID),
+            'balance' => somi_get_user_account_balance($account->uid, $account_tid),
             'uid' => $account->uid,
             'email' => $recipient_email,
           ];
@@ -880,16 +902,17 @@ function api_crystal_op_validate_post() {
   // and nodejs bot will check the queue and remind user that he is able to perform operation.
   if (!empty($response['error'])) {
     // Store attempt to give crystals to remind it later.
-    $queue = DrupalQueue::get(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
+    $queue = DrupalQueue::get(SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME);
     $queue->createQueue();
 
     $op = new StdClass();
     $op->time = time();
+    $op->currency = $data->user->currency;
     $op->uid = $initiator->uid;
     $op->slack_id = $data->user->id;
-    $op->attempt_crystals_amount = $data->user->crystals_amount;
-    $op->crystals_old_amount = $crystals_amount;
-    $op->crystals_recipient_quantity = $data->user->crystals_per_recipient;
+    $op->attempt_transaction_amount = $data->user->transaction_amount;
+    $op->transaction_old_amount = $transaction_amount;
+    $op->transaction_recipient_quantity = $data->user->amount_per_recipient;
     $op->raw_message = $data->message;
 
     $queue->createItem($op);
@@ -915,6 +938,18 @@ function api_user_account_balance_add_post() {
     throw new ApiException("Электронная почта пользователя который проводит сделку не доступна.");
   }
 
+  if (empty($data->user->currency) || !array_key_exists($data->user->currency, somi_api_account_currencies_mapping())) {
+    throw new ApiException(
+      sprintf(
+        "Drupal API: валюта %s не привязана ни к одному из счетов.",
+        !empty($data->user->currency) ? $data->user->currency : '')
+    );
+  }
+
+  $currency = $data->user->currency;
+  $account_tid = somi_api_account_currencies_mapping()[$currency]['active'];
+  $passive_account_tid = somi_api_account_currencies_mapping()[$currency]['passive'];
+
   $initiator = user_load_by_mail($data->user->email);
 
   // Check users are ok.
@@ -927,15 +962,15 @@ function api_user_account_balance_add_post() {
   // Credit crystals from user account as he gave them.
   somi_add_user_account_balance(
     $initiator->uid,
-    -1 * $data->user->crystals_amount,
-    SOMI_I20_CRYSTALLS_CURRENCY_TID,
+    -1 * $data->user->transaction_amount,
+    $passive_account_tid,
     $prefix . $data->message,
     $initiator->uid
   );
 
-  $crystals_amount = somi_get_user_account_balance($initiator->uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+  $transaction_amount = somi_get_user_account_balance($initiator->uid, $passive_account_tid);
 
-  $response['initiator']['balance'] = $crystals_amount;
+  $response['initiator']['balance'] = $transaction_amount;
   $response['initiator']['uid'] = $initiator->uid;
 
   foreach ($data->recipients as $recipient) {
@@ -943,13 +978,13 @@ function api_user_account_balance_add_post() {
     somi_add_user_account_balance(
       $account->uid,
       $recipient->amount,
-      SOMI_CRYSTALLS_CURRENCY_TID,
+      $account_tid,
       $prefix . $data->message,
       $initiator->uid
     );
 
     $response['recipients'][] = [
-      'balance' => somi_get_user_account_balance($account->uid, SOMI_CRYSTALLS_CURRENCY_TID),
+      'balance' => somi_get_user_account_balance($account->uid, $account_tid),
       'uid' => $account->uid,
       'email' => $recipient->email,
     ];

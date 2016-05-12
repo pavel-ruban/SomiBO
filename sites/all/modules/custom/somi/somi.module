@@ -11,11 +11,13 @@ const SOMI_SERVER_IP = '95.172.148.149';
 const SOMI_SERVER_PORT = '36208';
 
 const SOMI_I20_CRYSTALLS_CURRENCY_TID = 8;
+const SOMI_BUGS_CURRENCY_TID = 12;
+const SOMI_I20_BUGS_CURRENCY_TID = 13;
 const SOMI_CRYSTALLS_CURRENCY_TID = 7;
 
 const SOMI_VOCABULARY_CURRENCIES = 'currencies';
 
-const SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME = 'somi_crystals_failed_ops';
+const SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME = 'somi_transaction_failed_ops';
 
 require_once "somi.field.inc";
 require_once "somi.tools.inc";
@@ -191,41 +193,51 @@ function somi_add_user_account_balance($target_uid, $value, $currency_tid, $mess
  */
 function somi_checked_queued_remind_items($target_uid, $currency_tid) {
   // Check if user has pending operations and after change there is enough crystals. If he does, remind about them via RabbitMQ service.
-  if ($currency_tid == SOMI_I20_CRYSTALLS_CURRENCY_TID) {
-    $queue = DrupalQueue::get(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
+  $passive_account_tids = [];
+  foreach (somi_api_account_currencies_mapping() as $currency) {
+    if (!empty($currency['active'])) {
+      $passive_account_tids[] = $currency['active'];
+    }
+  }
+
+  if (in_array($currency_tid, $passive_account_tids)) {
+    $queue = DrupalQueue::get(SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME);
     $queue->createQueue();
 
     while ($item = $queue->claimItem(1)) {
-      // Check if changed user account is the same user that item belongs to.
-      if ($item->data->uid == $target_uid) {
-        $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID, TRUE);
+      if (!empty($item->data->currency) && !empty(somi_api_account_currencies_mapping()[$item->data->currency]['passive'])) {
+        $passive_account_tid = somi_api_account_currencies_mapping()[$item->data->currency]['passive'];
+        // Check if changed user account is the same user that item belongs to.
+        if ($item->data->uid == $target_uid && $currency_tid == $passive_account_tid) {
+          $available_amount = somi_get_user_account_balance($target_uid, $passive_account_tid, TRUE);
 
-        // If successful delete the item from Drupal queue and add it to RabbitMQ queue.
-        if ($available_crystals >= $item->data->attempt_crystals_amount) {
-          try {
-            $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
-            $channel = $connection->channel();
+          // If successful delete the item from Drupal queue and add it to RabbitMQ queue.
+          if ($available_amount >= $item->data->attempt_transaction_amount) {
+            try {
+              $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+              $channel = $connection->channel();
 
-            $channel->queue_declare(SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME, FALSE, TRUE, FALSE, FALSE);
+              $channel->queue_declare(SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME, FALSE, TRUE, FALSE, FALSE);
 
-            // Add information about current account balance.
-            $item->data->crystals_new_amount = $available_crystals;
+              // Add information about current account balance.
+              $item->data->transaction_new_amount = $available_amount;
 
-            $message = new AMQPMessage(drupal_json_encode($item), ['persistent' => TRUE]);
+              $message = new AMQPMessage(drupal_json_encode($item), ['persistent' => TRUE]);
 
-            $channel->basic_publish($message, '', SOMI_CRYSTAL_FAILED_OPS_QUEUE_NAME);
+              $channel->basic_publish($message, '', SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME);
 
-            // If adding to RabbitMQ gone ok then delete Drupal queue item.
-            $queue->deleteItem($item);
-          } catch (Exception $e) {
-            // Do nothing.
-          }
+              // If adding to RabbitMQ gone ok then delete Drupal queue item.
+              $queue->deleteItem($item);
+            } catch (Exception $e) {
+              // Do nothing.
+            }
 
-          if (!empty($channel)) {
-            $channel->close();
-          }
-          if (!empty($connection)) {
-            $connection->close();
+            if (!empty($channel)) {
+              $channel->close();
+            }
+            if (!empty($connection)) {
+              $connection->close();
+            }
           }
         }
       }
