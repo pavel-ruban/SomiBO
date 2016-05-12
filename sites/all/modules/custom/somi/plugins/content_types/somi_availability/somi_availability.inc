@@ -22,8 +22,6 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
   $block = new stdClass();
   $block->content = '';
 
-  $uids = array();
-
   $query = "select * from log WHERE access >= " . strtotime(date('d M y 05:00')) . " AND access <"  . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . ";";
 
   $availability_data = array();
@@ -31,9 +29,14 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
   $result = db_query($query)->fetchAllAssoc('access');
 
   foreach ($result as $row) {
-    $access = (!empty($availability_data[$row->uid]['access']) && $availability_data[$row->uid]['access'] < $row->access)
-      ? $availability_data[$row->uid]['access']:
-      $row->access;
+    if (!empty($availability_data[$row->uid]['access'])) {
+      $access = $availability_data[$row->uid]['access'] < $row->access
+        ? $row->access
+        : $availability_data[$row->uid]['access'];
+    }
+    else {
+      $access = $row->access;
+    }
 
     $availability_data[$row->uid] = array(
       'uid' => $row->uid,
@@ -44,6 +47,14 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       'image_class' => 'active',
     );
   }
+
+  uasort($availability_data, function($a, $b) {
+    if ($a['access'] == $b['access']) return 0;
+
+    return $a['access'] > $b['access']
+      ? -1
+      : 1;
+  });
 
   $uids = db_query('select uid from users')->fetchCol();
   $users = user_load_multiple($uids);
@@ -65,18 +76,10 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
     }
   }
 
-  uasort($availability_data, function($a, $b) {
-    if ($a['access'] == $b['access']) return 0;
-
-    return $a['access'] > $b['access']
-      ? -1
-      : 1;
-  });
-
-  foreach ($availability_data as $key => $item) {
+  foreach ($availability_data as $key => &$item) {
     $class = $item['access'] ? 'active' : 'grayscale';
 
-    $availability_data[$key] = [
+    $item = [
       'uid' => $item['uid'],
       'access' => $item['access'],
       'class' => $class,

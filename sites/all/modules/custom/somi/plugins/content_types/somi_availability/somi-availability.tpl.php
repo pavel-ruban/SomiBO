@@ -17,5 +17,8 @@
         <?php ++$i; ?>
       <?php endif; ?>
     <?php endforeach; ?>
+    <?php if ($i > 0): ?>
+      </tr>
+    <?php endif; ?>
   </table>
 </div>
