@@ -230,7 +230,7 @@ function somi_get_device_color_by_nid($nid) {
  */
 function somi_api_account_currencies_mapping() {
   return [
-    ':gem' => [
+    ':gem:' => [
       'active' => SOMI_CRYSTALLS_CURRENCY_TID,
       'passive' => SOMI_I20_CRYSTALLS_CURRENCY_TID
     ],
