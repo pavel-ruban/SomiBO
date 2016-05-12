@@ -56,7 +56,7 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       : 1;
   });
 
-  $uids = db_query('select uid from users')->fetchCol();
+  $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
   $users = user_load_multiple($uids);
 
   foreach ($users as $uid => $account) {
