@@ -84,7 +84,7 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       'access' => $item['access'],
       'class' => $class,
       'l' => l(
-        theme('image', ['path' => $item['image_url'], 'attributes' => ['title' => $item['name'] . PHP_EOL . date('H:i:s', $item['access']), 'class' => [$class]]]),
+        theme('image', ['path' => $item['image_url'], 'attributes' => ['title' => $item['name'] . ($item['access'] ? (PHP_EOL . date('H:i:s', $item['access'])) : ''), 'class' => [$class]]]),
         '/admin/somi/chart/' . $item['uid'],
         ['html' => TRUE]
       )
