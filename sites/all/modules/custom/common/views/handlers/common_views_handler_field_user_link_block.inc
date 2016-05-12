@@ -9,10 +9,15 @@ class common_views_handler_field_user_link_block extends views_handler_field_use
    * Renders the link.
    */
   function render_link($data, $values) {
+    if (!user_access('administer users')) {
+      return;
+    }
+
     $user = user_load($data);
     if (!$user->status) {
       return;
     }
+
     $text = !empty($this->options['text']) ? $this->options['text'] : t('Block');
 
     $this->options['alter']['make_link'] = TRUE;

@@ -27,7 +27,7 @@ function somi_feature_common_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 0,
     'expanded' => 1,
-    'weight' => 0,
+    'weight' => -50,
     'customized' => 1,
     'parent_identifier' => 'menu-common-admin-menu_content:admin/content/accounts',
   );
@@ -47,7 +47,7 @@ function somi_feature_common_menu_default_menu_links() {
     'hidden' => 0,
     'external' => 0,
     'has_children' => 0,
-    'expanded' => 0,
+    'expanded' => 1,
     'weight' => 0,
     'customized' => 1,
     'parent_identifier' => 'menu-common-admin-menu_:admin/content/taxonomies',

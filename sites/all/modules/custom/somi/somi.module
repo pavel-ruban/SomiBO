@@ -198,7 +198,7 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
     while ($item = $queue->claimItem(1)) {
       // Check if changed user account is the same user that item belongs to.
       if ($item->data->uid == $target_uid) {
-        $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID);
+        $available_crystals = somi_get_user_account_balance($target_uid, SOMI_I20_CRYSTALLS_CURRENCY_TID, TRUE);
 
         // If successful delete the item from Drupal queue and add it to RabbitMQ queue.
         if ($available_crystals >= $item->data->attempt_crystals_amount) {
@@ -271,10 +271,10 @@ function somi_set_user_account_balance($target_uid, $value, $currency_tid, $mess
  * @param string $currency
  * @return mixed
  */
-function somi_get_user_account_balance($uid, $currency_tid = NULL) {
+function somi_get_user_account_balance($uid, $currency_tid = NULL, $reset = FALSE) {
   $storage = &drupal_static(__FUNCTION__);
 
-  if (!isset($storage[$currency_tid][$uid])) {
+  if (!isset($storage[$currency_tid][$uid]) || $reset) {
     $crystalls_count = votingapi_select_results(
       array(
         'entity_id' => $uid,

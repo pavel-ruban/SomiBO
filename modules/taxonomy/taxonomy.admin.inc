@@ -764,11 +764,16 @@ function taxonomy_form_term($form, &$form_state, $edit = array(), $vocabulary = 
     '#weight' => 5,
   );
 
+  if (!isset($term->vocabulary_machine_name)) {
+    $vocabulary = taxonomy_vocabulary_load($term->vid);
+    $term->vocabulary_machine_name = $vocabulary->machine_name;
+  }
+
   if ($term->tid) {
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
-      '#access' => user_access("delete terms in $vocabulary->vid") || user_access('administer taxonomy'),
+      '#access' => user_access("delete terms in $term->vocabulary_machine_name") || user_access('administer taxonomy'),
       '#weight' => 10,
     );
   }
