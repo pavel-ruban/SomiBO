@@ -12,6 +12,7 @@ dependencies[] = elysia_cron
 dependencies[] = entity
 dependencies[] = features
 dependencies[] = image
+dependencies[] = menu
 dependencies[] = page_manager
 dependencies[] = panels
 dependencies[] = path

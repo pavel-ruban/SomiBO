@@ -294,11 +294,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
-    'nid' => 'nid',
     'title' => 'title',
     'field_type' => 'field_type',
+    'device_image' => 'device_image',
     'status' => 'status',
-    'field_color' => 'field_color',
+    'field_color_picker' => 'field_color_picker',
     'field_i20_property' => 'field_i20_property',
     'changed' => 'changed',
     'field_granting_date' => 'field_granting_date',
@@ -309,71 +309,69 @@ function somi_feature_common_views_default_views() {
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
-    'nid' => array(
-      'sortable' => 0,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
-    ),
     'title' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'field_type' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
+    ),
+    'device_image' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
     ),
     'status' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
-    'field_color' => array(
+    'field_color_picker' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'field_i20_property' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'changed' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'field_granting_date' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'edit_node' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'delete_node' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'publish_node' => array(
       'align' => '',
@@ -473,6 +471,12 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['unpublish_node']['field'] = 'unpublish_node';
   $handler->display->display_options['fields']['unpublish_node']['label'] = 'Изменить статус';
   $handler->display->display_options['fields']['unpublish_node']['text'] = 'деактивировать';
+  /* Field: Global: Reference button */
+  $handler->display->display_options['fields']['ref_dialog_button']['id'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['table'] = 'views';
+  $handler->display->display_options['fields']['ref_dialog_button']['field'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['label'] = 'Выбрать';
+  $handler->display->display_options['fields']['ref_dialog_button']['text'] = 'ок';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -512,6 +516,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['filters']['field_type_tid']['expose']['label'] = 'Тип';
   $handler->display->display_options['filters']['field_type_tid']['expose']['operator'] = 'field_type_tid_op';
   $handler->display->display_options['filters']['field_type_tid']['expose']['identifier'] = 'field_type_tid';
+  $handler->display->display_options['filters']['field_type_tid']['expose']['multiple'] = TRUE;
   $handler->display->display_options['filters']['field_type_tid']['expose']['remember_roles'] = array(
     2 => '2',
     1 => 0,
@@ -533,6 +538,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['filters']['field_color_tid']['expose']['label'] = 'Цвет';
   $handler->display->display_options['filters']['field_color_tid']['expose']['operator'] = 'field_color_tid_op';
   $handler->display->display_options['filters']['field_color_tid']['expose']['identifier'] = 'field_color_tid';
+  $handler->display->display_options['filters']['field_color_tid']['expose']['multiple'] = TRUE;
   $handler->display->display_options['filters']['field_color_tid']['expose']['remember_roles'] = array(
     2 => '2',
     1 => 0,
@@ -541,6 +547,7 @@ function somi_feature_common_views_default_views() {
     5 => 0,
     6 => 0,
   );
+  $handler->display->display_options['filters']['field_color_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_color_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_color_tid']['vocabulary'] = 'color';
   $handler->display->display_options['filters']['field_color_tid']['hierarchy'] = 1;
@@ -550,9 +557,96 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['attach'] = array(
+    0 => 'user:field_rfid_tags:user',
+  );
 
   /* Display: devices */
   $handler = $view->new_display('page', 'devices', 'devices');
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = 'Хэш карты';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Type */
+  $handler->display->display_options['fields']['field_type']['id'] = 'field_type';
+  $handler->display->display_options['fields']['field_type']['table'] = 'field_data_field_type';
+  $handler->display->display_options['fields']['field_type']['field'] = 'field_type';
+  $handler->display->display_options['fields']['field_type']['label'] = 'Тип';
+  /* Field: somi: Device Image */
+  $handler->display->display_options['fields']['device_image']['id'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['table'] = 'node';
+  $handler->display->display_options['fields']['device_image']['field'] = 'device_image';
+  $handler->display->display_options['fields']['device_image']['label'] = 'Изображение';
+  /* Field: Content: Published */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'node';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = 'Статус';
+  $handler->display->display_options['fields']['status']['type'] = 'on-off';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['relationship'] = 'field_color_tid';
+  $handler->display->display_options['fields']['field_color_picker']['label'] = 'Цвет';
+  $handler->display->display_options['fields']['field_color_picker']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker']['settings'] = array(
+    'width' => '15',
+    'height' => '15',
+  );
+  /* Field: Content: Собственность i20 */
+  $handler->display->display_options['fields']['field_i20_property']['id'] = 'field_i20_property';
+  $handler->display->display_options['fields']['field_i20_property']['table'] = 'field_data_field_i20_property';
+  $handler->display->display_options['fields']['field_i20_property']['field'] = 'field_i20_property';
+  $handler->display->display_options['fields']['field_i20_property']['type'] = 'list_key';
+  /* Field: Content: Updated date */
+  $handler->display->display_options['fields']['changed']['id'] = 'changed';
+  $handler->display->display_options['fields']['changed']['table'] = 'node';
+  $handler->display->display_options['fields']['changed']['field'] = 'changed';
+  $handler->display->display_options['fields']['changed']['label'] = 'Дата изменения';
+  $handler->display->display_options['fields']['changed']['date_format'] = 'long';
+  $handler->display->display_options['fields']['changed']['second_date_format'] = 'long';
+  /* Field: Content: Дата выдачи устройства */
+  $handler->display->display_options['fields']['field_granting_date']['id'] = 'field_granting_date';
+  $handler->display->display_options['fields']['field_granting_date']['table'] = 'field_data_field_granting_date';
+  $handler->display->display_options['fields']['field_granting_date']['field'] = 'field_granting_date';
+  $handler->display->display_options['fields']['field_granting_date']['settings'] = array(
+    'format_type' => 'long',
+    'fromto' => 'both',
+    'multiple_number' => '',
+    'multiple_from' => '',
+    'multiple_to' => '',
+    'show_remaining_days' => 0,
+  );
+  /* Field: Content: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
+  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  /* Field: Content: Delete link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = 'Удалить';
+  $handler->display->display_options['fields']['delete_node']['text'] = 'удалить';
+  /* Field: Content: Publish link */
+  $handler->display->display_options['fields']['publish_node']['id'] = 'publish_node';
+  $handler->display->display_options['fields']['publish_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['publish_node']['field'] = 'publish_node';
+  $handler->display->display_options['fields']['publish_node']['label'] = 'Изменить статус';
+  $handler->display->display_options['fields']['publish_node']['text'] = 'активировать';
+  /* Field: Content: Unpublish link */
+  $handler->display->display_options['fields']['unpublish_node']['id'] = 'unpublish_node';
+  $handler->display->display_options['fields']['unpublish_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['unpublish_node']['field'] = 'unpublish_node';
+  $handler->display->display_options['fields']['unpublish_node']['label'] = 'Изменить статус';
+  $handler->display->display_options['fields']['unpublish_node']['text'] = 'деактивировать';
   $handler->display->display_options['path'] = 'devices';
 
   /* Display: devices_admin */
@@ -669,6 +763,8 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '50';
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
+    'uid' => 'uid',
+    'gravatar_image' => 'gravatar_image',
     'name' => 'name',
     'edit_node' => 'edit_node',
     'field_rfid_tags' => 'field_rfid_tags',
@@ -678,87 +774,81 @@ function somi_feature_common_views_default_views() {
     'created' => 'created',
     'mail' => 'mail',
     'login' => 'login',
-    'picture' => 'picture',
     'rid' => 'rid',
-    'uid' => 'uid',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
+    'uid' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'gravatar_image' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
     'name' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'edit_node' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'field_rfid_tags' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'activate_user' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'status' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'block_user' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'created' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'mail' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'login' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
-    ),
-    'picture' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'rid' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
-    ),
-    'uid' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
   );
   /* Field: User: Uid */

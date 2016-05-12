@@ -117,6 +117,8 @@ function somi_feature_common_default_page_manager_pages() {
   $page->path = 'admin/user/%uid/account/!currency_tid';
   $page->access = array(
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array(
     'type' => 'none',
@@ -231,6 +233,8 @@ function somi_feature_common_default_page_manager_pages() {
       ),
     ),
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array();
   $page->arguments = array();
@@ -307,6 +311,8 @@ function somi_feature_common_default_page_manager_pages() {
   $page->path = 'user/%uid/crystalls';
   $page->access = array(
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array(
     'type' => 'none',
@@ -399,7 +405,10 @@ function somi_feature_common_default_page_manager_pages() {
   $page->admin_title = 'Home page';
   $page->admin_description = '';
   $page->path = 'home';
-  $page->access = array();
+  $page->access = array(
+    'type' => 'none',
+    'settings' => NULL,
+  );
   $page->menu = array();
   $page->arguments = array();
   $page->conf = array(
@@ -485,6 +494,8 @@ function somi_feature_common_default_page_manager_pages() {
       ),
     ),
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array();
   $page->arguments = array();
@@ -571,6 +582,8 @@ function somi_feature_common_default_page_manager_pages() {
       ),
     ),
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array();
   $page->arguments = array();
@@ -645,7 +658,10 @@ function somi_feature_common_default_page_manager_pages() {
   $page->admin_title = 'SOMI Logs';
   $page->admin_description = '';
   $page->path = 'somi-logs';
-  $page->access = array();
+  $page->access = array(
+    'type' => 'none',
+    'settings' => NULL,
+  );
   $page->menu = array();
   $page->arguments = array();
   $page->conf = array(
@@ -731,6 +747,8 @@ function somi_feature_common_default_page_manager_pages() {
       ),
     ),
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array();
   $page->arguments = array(
