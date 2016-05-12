@@ -43,8 +43,15 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       'image_url' => '',
       'image_class' => 'active',
     );
-
   }
+
+  uksort($availability_data, function($a, $b) {
+    if ($a['access'] == $b['access']) return 0;
+
+    return $a['access'] > $b['access']
+      ? -1
+      : 1;
+  });
 
   $uids = db_query('select uid from users')->fetchCol();
   $users = user_load_multiple($uids);
