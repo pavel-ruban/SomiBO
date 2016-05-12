@@ -41,7 +41,7 @@ table input.fluid { width:100%; }
 
 /* filter region */
 .view-filters .views-exposed-widgets .views-exposed-widget {
-  height: 65px;
+  /*height: 65px;*/
 }
 .view-filters .views-exposed-widgets .views-exposed-widget input.fluid {
   width: auto;
@@ -736,4 +736,8 @@ form#user-pass,
 form#user-login {
   width: 500px;
   margin: 0 auto;
+}
+
+.views-widget div.description {
+  display: none;
 }
