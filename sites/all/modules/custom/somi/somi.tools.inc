@@ -35,11 +35,7 @@ function chart_list_user_link($v) {
  * @return string
  */
 function event_list_user_link($event) {
-
   $d = somi_get_rfid_by_id($event['card']);
-  $w = entity_metadata_wrapper('node', $d);
-  $color = $w->field_color->value();
-  $type = $w->field_type->value();
 
   $device_type = somi_get_device_type_by_nid($d->nid);
   $device_color = somi_get_device_color_by_nid($d->nid);

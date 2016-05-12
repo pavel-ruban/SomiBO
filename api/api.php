@@ -865,7 +865,7 @@ function api_account_op_validate_post() {
       }
 
       if (empty($data->recipients) || !is_array($data->recipients)) {
-        throw new ApiException("Drupal API: получатель сделки указан не верно или отсутсвует.");
+        throw new ApiException("Drupal API: получатель сделки указан не верно или отсутствует.");
       }
 
       foreach ($data->recipients as $recipient_email) {

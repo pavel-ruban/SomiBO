@@ -31,8 +31,8 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
   $result = db_query($query)->fetchAllAssoc('access');
 
   foreach ($result as $row) {
-    $access = (!empty($availability_data[$row->uid]['access']) && $availability_data[$row->uid]['access'] > $row->access)
-      ? $availability_data[$row->id]['access']:
+    $access = (!empty($availability_data[$row->uid]['access']) && $availability_data[$row->uid]['access'] < $row->access)
+      ? $availability_data[$row->uid]['access']:
       $row->access;
 
     $availability_data[$row->uid] = array(
@@ -44,14 +44,6 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
       'image_class' => 'active',
     );
   }
-
-  uksort($availability_data, function($a, $b) {
-    if ($a['access'] == $b['access']) return 0;
-
-    return $a['access'] > $b['access']
-      ? -1
-      : 1;
-  });
 
   $uids = db_query('select uid from users')->fetchCol();
   $users = user_load_multiple($uids);
@@ -73,10 +65,18 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
     }
   }
 
-  foreach ($availability_data as &$item) {
+  uasort($availability_data, function($a, $b) {
+    if ($a['access'] == $b['access']) return 0;
+
+    return $a['access'] > $b['access']
+      ? -1
+      : 1;
+  });
+
+  foreach ($availability_data as $key => $item) {
     $class = $item['access'] ? 'active' : 'grayscale';
 
-    $item = [
+    $availability_data[$key] = [
       'uid' => $item['uid'],
       'access' => $item['access'],
       'class' => $class,
