@@ -482,6 +482,10 @@ function somi_permission() {
       'title' => t('Access somi logs'),
       'description' => t('Access somi logs.'),
     ),
+    'access somi availability' => array(
+      'title' => t('Access somi availability'),
+      'description' => t('Access somi availability.'),
+    ),
   );
 }
 
