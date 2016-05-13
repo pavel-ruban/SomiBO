@@ -65,8 +65,12 @@ function somi_get_user_devices($uid) {
   $rfids = $w->field_rfid_tags->value();
   $devices = '';
   foreach ($rfids as $rfid) {
-    if ($devices) $devices .= ' ';
-    $devices .= $rfid->title;
+    if (!empty($rfid->title)) {
+      if ($devices) {
+        $devices .= ' ';
+      }
+      $devices .= $rfid->title;
+    }
   }
 
   return $devices;

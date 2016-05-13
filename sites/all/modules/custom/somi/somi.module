@@ -195,8 +195,8 @@ function somi_checked_queued_remind_items($target_uid, $currency_tid) {
   // Check if user has pending operations and after change there is enough crystals. If he does, remind about them via RabbitMQ service.
   $passive_account_tids = [];
   foreach (somi_api_account_currencies_mapping() as $currency) {
-    if (!empty($currency['active'])) {
-      $passive_account_tids[] = $currency['active'];
+    if (!empty($currency['passive'])) {
+      $passive_account_tids[] = $currency['passive'];
     }
   }
 
