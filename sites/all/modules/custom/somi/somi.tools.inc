@@ -193,13 +193,13 @@ function somi_get_device_type_by_nid($nid) {
  * @param $nid
  * @return bool
  */
-function somi_get_device_color_by_nid($nid) {
+function somi_get_device_color_by_nid($nid, $plain = FALSE) {
   $storage = &drupal_static(__FUNCTION__, []);
 
   if ($node = node_load($nid)) {
     if (!isset($storage[$nid])) {
       $wrapper = entity_metadata_wrapper('node', $node);
-      if ($color = $wrapper->field_color->value()) {
+      if (!$plain && ($color = $wrapper->field_color->value())) {
         $color_view = taxonomy_term_view($color, 'icon');
         if (!empty($color_view['field_color_picker'])) {
           $device_color = drupal_render($color_view['field_color_picker']);
@@ -245,4 +245,54 @@ function somi_currencies_translations() {
     ':gem:' => [1 => 'кристалл', 2 => 'кристалла', 3 => 'кристаллов'],
     ':beetle:' => [1 => 'жук', 2 => 'жука', 3 => 'жуков'],
   ];
+}
+
+/**
+ * Service callback to add additional validate for main form level & for all actions.
+ */
+function somi_set_additional_validate_callback(&$form, $name, $first = FALSE) {
+  if (!empty($first)) {
+    array_unshift($form['#validate'], $name);
+  }
+  else {
+    $form['#validate'][] = $name;
+  }
+  if (!empty($form['actions'])) {
+    foreach (element_children($form['actions']) as $key) {
+      // Add new #validate if any one already exists, is no - main form level validates will be triggered.
+      if ($key != 'delete' && !empty($form['actions'][$key]['#validate'])) {
+        if (!empty($first)) {
+          array_unshift($form['actions'][$key]['#validate'], $name);
+        }
+        else {
+          $form['actions'][$key]['#validate'][] = $name;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Service callback to add additional submit for main form level & for all actions.
+ */
+function somi_set_additional_submit_callback(&$form, $name, $first = FALSE) {
+  if (!empty($first)) {
+    array_unshift($form['#submit'], $name);
+  }
+  else {
+    $form['#submit'][] = $name;
+  }
+  if (!empty($form['actions'])) {
+    foreach (element_children($form['actions']) as $key) {
+      // Add new #validate if any one already exists, is no - main form level validates will be triggered.
+      if ($key != 'delete' && !empty($form['actions'][$key]['#submit'])) {
+        if (!empty($first)) {
+          array_unshift($form['actions'][$key]['#submit'], $name);
+        }
+        else {
+          $form['actions'][$key]['#submit'][] = $name;
+        }
+      }
+    }
+  }
 }

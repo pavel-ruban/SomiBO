@@ -313,9 +313,18 @@ function somi_slack_webhook_trigger($id, $context, $status) {
   $status_msg = $status ? 'доступ разрешен' : 'доступ запрещен';
   $node = "ресепшен";
   $event = "запрос доступа";
-  $card = $context['card'];
+  $rfid_tag = $context['card'];
   $time = date('H:i:s d.m', $context['time']);
   $short_time = date('H:i:s', $context['time']);
+
+  if ($rfid = somi_get_rfid_by_id($rfid_tag)) {
+    $rfid_color = somi_get_device_color_by_nid($rfid->nid, TRUE);
+    $rfid_device = somi_get_device_type_by_nid($rfid->nid);
+  }
+  else {
+    $rfid_color = '-';
+    $rfid_device = 'карта';
+  }
 
   $slack_payload = <<< EOS
 {
@@ -337,8 +346,18 @@ function somi_slack_webhook_trigger($id, $context, $status) {
 					"short": true
 				},
 				{
-					"title": "Идентификатор карты:",
-					"value": "$card",
+					"title": "Идентификатор устройства:",
+					"value": "$rfid_tag",
+					"short": true
+				},
+				{
+					"title": "Тип устройства:",
+					"value": "$rfid_device",
+					"short": true
+				},
+				{
+					"title": "Цвет устройства:",
+					"value": "$rfid_color",
 					"short": true
 				},
 				{

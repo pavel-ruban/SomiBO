@@ -490,6 +490,19 @@ function somi_permission() {
 }
 
 /**
+ * @param $form
+ * @param $form_state
+ */
+function somi_unique_device_rfid_tag_validate($form, &$form_state) {
+  $tag = $form_state['values']['title'];
+  if (!empty($tag) && ($rfid = somi_get_rfid_by_id($tag))) {
+    if (empty($form_state['node']->nid) || $rfid->nid != $form_state['node']->nid) {
+      form_set_error('title', t('Устройство с такой меткой !tag уже зарегистрировано', ['!tag' => $tag]));
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function somi_form_alter(&$form, &$form_state, $form_id) {
@@ -497,6 +510,9 @@ function somi_form_alter(&$form, &$form_state, $form_id) {
     if (!user_access('manage somi door')) {
       $form['field_rfid_tags']['#access'] = FALSE;
     }
+  }
+  elseif ($form_id == 'rfid_tag_node_form') {
+    somi_set_additional_validate_callback($form, 'somi_unique_device_rfid_tag_validate');
   }
 }
 
