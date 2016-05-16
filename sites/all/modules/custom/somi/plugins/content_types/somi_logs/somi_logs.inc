@@ -47,10 +47,10 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
         'name' => $users[$row->uid]->name,
         'access_count' => 0,
       );
-    }
 
-    $chart_data[$row->uid]['time'][] = $row->access;
-    ++$chart_data[$row->uid]['access_count'];
+      $chart_data[$row->uid]['time'][] = $row->access;
+      ++$chart_data[$row->uid]['access_count'];
+    }
   }
 
   // Sort by access count.
