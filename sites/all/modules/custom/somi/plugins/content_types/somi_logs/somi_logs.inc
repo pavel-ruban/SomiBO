@@ -39,17 +39,19 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
   $rfids = node_load_multiple($event_rfids);
 
   foreach ($result as $row) {
-    if (!empty($users[$row->uid]) && !isset($chart_data[$row->uid])) {
-      $chart_data[$row->uid] = array(
-        'uid' => $row->uid,
-        'time' => array(),
-        'card' => $rfids[$row->id]->title,
-        'name' => $users[$row->uid]->name,
-        'access_count' => 0,
-      );
+    if (!empty($users[$row->uid])) {
+      if (!isset($chart_data[$row->uid])) {
+        $chart_data[$row->uid] = array(
+          'uid' => $row->uid,
+          'time' => array(),
+          'card' => $rfids[$row->id]->title,
+          'name' => $users[$row->uid]->name,
+          'access_count' => 0,
+        );
+      }
 
-      $chart_data[$row->uid]['time'][] = $row->access;
       ++$chart_data[$row->uid]['access_count'];
+      $chart_data[$row->uid]['time'][] = $row->access;
     }
   }
 
