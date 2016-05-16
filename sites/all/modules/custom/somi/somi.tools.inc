@@ -127,6 +127,44 @@ function somi_get_rfid_by_id($id) {
  * @param $id
  * @return mixed
  */
+function somi_get_web_rfid_by_user($account) {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage[$account->uid])) {
+    $web_request_rfid_type_tid = SOMI_WEB_REQUEST_RFID_TYPE_TID;
+
+    $query = <<<START_QUERY
+      SELECT n.nid FROM field_data_field_rfid_tags fr
+
+      INNER JOIN users u ON u.uid = fr.entity_id
+      INNER JOIN node n ON n.nid = fr.field_rfid_tags_target_id
+      INNER JOIN field_data_field_type ft ON ft.entity_type = 'node'
+       AND ft.bundle = 'rfid_tag' AND ft.deleted = 0 AND ft.entity_id = n.nid
+
+      WHERE fr.entity_type = 'user' AND fr.bundle = 'user' AND fr.deleted = 0
+       AND n.status = 1 AND  u.status = 1
+       AND field_type_tid = $web_request_rfid_type_tid AND u.uid = {$account->uid}
+START_QUERY;
+
+    if ($nids = db_query($query)->fetchCol()) {
+      $nid = array_shift($nids);
+      if ($rfid = node_load($nid)) {
+        $storage[$account->uid] = $rfid;
+      }
+    }
+
+    if (!isset($storage[$account->uid])) {
+      $storage[$account->uid] = FALSE;
+    }
+  }
+
+  return $storage[$account->uid];
+}
+
+/**
+ * @param $id
+ * @return mixed
+ */
 function somi_get_user_by_rfid($id) {
   $storage = &drupal_static(__FUNCTION__);
 

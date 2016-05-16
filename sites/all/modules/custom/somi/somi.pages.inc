@@ -57,21 +57,18 @@ function somi_open_door() {
     echo drupal_json_encode(['status' => "can't create socket"]);
   }
 
-  if ($user->name == 'ruban.pavel') {
-    $title = 'ruban.pavel:nexus7';
-    $nid = db_query("select nid from node where title=$title;")->fetchCol();
-    if ($rfid = node_load($nid)) {
-      $context = array(
-        'uid' => $user->uid,
-        'rfid' => $rfid->nid,
-        'name' => $user->name,
-        'time' => time(),
-        'mail' => $user->mail,
-        'card' => $rfid->title,
-      );
+  if ($rfid = somi_get_web_rfid_by_user($user)) {
+    $context = array(
+      'uid' => $user->uid,
+      'rfid' => $rfid->nid,
+      'name' => $user->name,
+      'time' => time(),
+      'mail' => $user->mail,
+      'card' => $rfid->title,
+    );
 
-      somi_log_event($context, 1);
-    }
+    module_load_include('inc', 'somi', 'somi.drush');
+    somi_log_event($context, 1);
   }
   drupal_exit();
 }
