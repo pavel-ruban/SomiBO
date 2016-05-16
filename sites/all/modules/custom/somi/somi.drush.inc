@@ -292,7 +292,7 @@ function somi_slack_webhook_trigger($id, $context, $status) {
 
   // Child process continues HTTP Slack API invocation.
   $slack_webhook_url = array(
-    "https://hooks.slack.com/services/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",
+//    "https://hooks.slack.com/services/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",
     "https://hooks.slack.com/services/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",
   );
 
