@@ -361,22 +361,22 @@ function somi_slack_webhook_trigger($id, $context, $status) {
 					"short": true
 				},
 				{
-					"title": "событие:",
+					"title": "Событие:",
 					"value": "$event",
 					"short": true
 				},
 				{
-					"title": "узел:",
+					"title": "Узел:",
 					"value": "$node",
 					"short": true
 				},
 				{
-					"title": "статус:",
+					"title": "Статус:",
 					"value": "$status_msg",
 					"short": true
 				},
 				{
-					"title": "время:",
+					"title": "Время:",
 					"value": "$time",
 					"short": true
 				}
