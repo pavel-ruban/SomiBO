@@ -58,3 +58,11 @@ function somi_update_7003($context) {
 function somi_update_7004($context) {
   module_enable(['booleancheckboxformatter']);
 }
+
+/**
+ * Enable modules.
+ * @param $context
+ */
+function somi_update_7005($context) {
+  module_enable(['boolean_formatter']);
+}
