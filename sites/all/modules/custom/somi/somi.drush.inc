@@ -278,11 +278,15 @@ function drush_somi_manager($id = NULL) {
  * Slack Web Hooks Integration.
  */
 function somi_slack_webhook_trigger($id, $context, $status) {
-  $pid = pcntl_fork();
+  // PHP apache doesn't able deal with pcntl functions, only CDG or CLI modes.
+  // so do it in the same process for web request access loging :'C.
+  if (function_exists('pcntl_fork')) {
+    $pid = pcntl_fork();
 
-  // Parent process should immediately response to hardware.
-  if ($pid === -1 || $pid > 0) {
-    return;
+    // Parent process should immediately response to hardware.
+    if ($pid === -1 || $pid > 0) {
+      return;
+    }
   }
 
   // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
