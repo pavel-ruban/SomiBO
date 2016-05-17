@@ -64,8 +64,8 @@ function somi_user_recent_account_events_content_type_render($subtype, $conf, $p
         'Дата',
         'Отправитель',
         'Получатель',
-        'Сумма',
         'Счет',
+        'Сумма',
         'Сообщение',
       ],
       'rows' => $rows
