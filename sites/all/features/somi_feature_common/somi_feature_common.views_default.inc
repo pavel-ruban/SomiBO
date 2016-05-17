@@ -40,40 +40,64 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['style_options']['columns'] = array(
     'views_bulk_operations' => 'views_bulk_operations',
     'name' => 'name',
+    'field_color_picker' => 'field_color_picker',
+    'field_image' => 'field_color_picker',
+    'machine_name' => 'machine_name',
     'name_1' => 'name_1',
-    'edit_term' => 'edit_term',
     'delete_term' => 'delete_term',
+    'edit_term' => 'edit_term',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
     'views_bulk_operations' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'name' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
+      'empty_column' => 1,
+    ),
+    'field_color_picker' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'field_image' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
       'empty_column' => 0,
+    ),
+    'machine_name' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
     ),
     'name_1' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
-    ),
-    'edit_term' => array(
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
     ),
     'delete_term' => array(
       'align' => '',
       'separator' => '',
-      'empty_column' => 0,
+      'empty_column' => 1,
+    ),
+    'edit_term' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
     ),
   );
   /* Field: Bulk operations: Taxonomy term */
@@ -201,6 +225,15 @@ function somi_feature_common_views_default_views() {
     'width' => '15',
     'height' => '15',
   );
+  /* Field: Field: Image */
+  $handler->display->display_options['fields']['field_image']['id'] = 'field_image';
+  $handler->display->display_options['fields']['field_image']['table'] = 'field_data_field_image';
+  $handler->display->display_options['fields']['field_image']['field'] = 'field_image';
+  $handler->display->display_options['fields']['field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_image']['settings'] = array(
+    'image_style' => 'slack_thumb',
+    'image_link' => '',
+  );
   /* Field: Taxonomy vocabulary: Machine name */
   $handler->display->display_options['fields']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['fields']['machine_name']['table'] = 'taxonomy_vocabulary';
@@ -310,14 +343,14 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
     'title' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'field_type' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
@@ -329,35 +362,35 @@ function somi_feature_common_views_default_views() {
       'empty_column' => 1,
     ),
     'status' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'field_color_picker' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'field_i20_property' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'changed' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'field_granting_date' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
@@ -674,7 +707,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['status']['table'] = 'node';
   $handler->display->display_options['fields']['status']['field'] = 'status';
   $handler->display->display_options['fields']['status']['label'] = 'Статус';
-  $handler->display->display_options['fields']['status']['type'] = 'on-off';
+  $handler->display->display_options['fields']['status']['type'] = 'unicode-yes-no';
   $handler->display->display_options['fields']['status']['not'] = 0;
   /* Field: Taxonomy term: Color */
   $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
@@ -691,7 +724,8 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['field_i20_property']['id'] = 'field_i20_property';
   $handler->display->display_options['fields']['field_i20_property']['table'] = 'field_data_field_i20_property';
   $handler->display->display_options['fields']['field_i20_property']['field'] = 'field_i20_property';
-  $handler->display->display_options['fields']['field_i20_property']['type'] = 'list_key';
+  $handler->display->display_options['fields']['field_i20_property']['label'] = 'I20 Собственность';
+  $handler->display->display_options['fields']['field_i20_property']['type'] = 'checkboxes';
   /* Field: Content: Updated date */
   $handler->display->display_options['fields']['changed']['id'] = 'changed';
   $handler->display->display_options['fields']['changed']['table'] = 'node';
@@ -766,15 +800,15 @@ function somi_feature_common_views_default_views() {
     'uid' => 'uid',
     'gravatar_image' => 'gravatar_image',
     'name' => 'name',
-    'edit_node' => 'edit_node',
-    'field_rfid_tags' => 'field_rfid_tags',
-    'activate_user' => 'activate_user',
-    'status' => 'status',
-    'block_user' => 'block_user',
-    'created' => 'created',
     'mail' => 'mail',
-    'login' => 'login',
+    'field_rfid_tags' => 'field_rfid_tags',
+    'status' => 'status',
     'rid' => 'rid',
+    'created' => 'created',
+    'login' => 'login',
+    'edit_node' => 'edit_node',
+    'activate_user' => 'activate_user',
+    'block_user' => 'block_user',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
@@ -797,17 +831,14 @@ function somi_feature_common_views_default_views() {
       'separator' => '',
       'empty_column' => 1,
     ),
-    'edit_node' => array(
+    'mail' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'field_rfid_tags' => array(
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 1,
-    ),
-    'activate_user' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
@@ -819,19 +850,12 @@ function somi_feature_common_views_default_views() {
       'separator' => '',
       'empty_column' => 1,
     ),
-    'block_user' => array(
+    'rid' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
     ),
     'created' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 1,
-    ),
-    'mail' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
@@ -845,7 +869,17 @@ function somi_feature_common_views_default_views() {
       'separator' => '',
       'empty_column' => 1,
     ),
-    'rid' => array(
+    'edit_node' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'activate_user' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'block_user' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
@@ -867,13 +901,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['label'] = 'Имя';
   $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
-  /* Field: User: Edit link */
-  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
-  $handler->display->display_options['fields']['edit_node']['table'] = 'users';
-  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
-  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  /* Field: User: E-mail */
+  $handler->display->display_options['fields']['mail']['id'] = 'mail';
+  $handler->display->display_options['fields']['mail']['table'] = 'users';
+  $handler->display->display_options['fields']['mail']['field'] = 'mail';
+  $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
   /* Field: User: rfid_tags */
   $handler->display->display_options['fields']['field_rfid_tags']['id'] = 'field_rfid_tags';
   $handler->display->display_options['fields']['field_rfid_tags']['table'] = 'field_data_field_rfid_tags';
@@ -885,12 +917,6 @@ function somi_feature_common_views_default_views() {
     'links' => 1,
   );
   $handler->display->display_options['fields']['field_rfid_tags']['delta_offset'] = '0';
-  /* Field: User: Activate link */
-  $handler->display->display_options['fields']['activate_user']['id'] = 'activate_user';
-  $handler->display->display_options['fields']['activate_user']['table'] = 'users';
-  $handler->display->display_options['fields']['activate_user']['field'] = 'activate_user';
-  $handler->display->display_options['fields']['activate_user']['label'] = 'Активировать';
-  $handler->display->display_options['fields']['activate_user']['text'] = 'активировать';
   /* Field: User: Active */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'users';
@@ -898,12 +924,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['status']['label'] = 'Статус';
   $handler->display->display_options['fields']['status']['type'] = 'unicode-yes-no';
   $handler->display->display_options['fields']['status']['not'] = 0;
-  /* Field: User: Block link */
-  $handler->display->display_options['fields']['block_user']['id'] = 'block_user';
-  $handler->display->display_options['fields']['block_user']['table'] = 'users';
-  $handler->display->display_options['fields']['block_user']['field'] = 'block_user';
-  $handler->display->display_options['fields']['block_user']['label'] = 'Заблокировать';
-  $handler->display->display_options['fields']['block_user']['text'] = 'заблокировать';
+  /* Field: User: Roles */
+  $handler->display->display_options['fields']['rid']['id'] = 'rid';
+  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
+  $handler->display->display_options['fields']['rid']['field'] = 'rid';
+  $handler->display->display_options['fields']['rid']['label'] = 'Роль';
   /* Field: User: Created date */
   $handler->display->display_options['fields']['created']['id'] = 'created';
   $handler->display->display_options['fields']['created']['table'] = 'users';
@@ -911,11 +936,6 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['created']['label'] = 'Дата создания';
   $handler->display->display_options['fields']['created']['date_format'] = 'long';
   $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
-  /* Field: User: E-mail */
-  $handler->display->display_options['fields']['mail']['id'] = 'mail';
-  $handler->display->display_options['fields']['mail']['table'] = 'users';
-  $handler->display->display_options['fields']['mail']['field'] = 'mail';
-  $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
   /* Field: User: Last login */
   $handler->display->display_options['fields']['login']['id'] = 'login';
   $handler->display->display_options['fields']['login']['table'] = 'users';
@@ -923,11 +943,25 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['login']['label'] = 'Дата последнего посещения';
   $handler->display->display_options['fields']['login']['date_format'] = 'long';
   $handler->display->display_options['fields']['login']['second_date_format'] = 'long';
-  /* Field: User: Roles */
-  $handler->display->display_options['fields']['rid']['id'] = 'rid';
-  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
-  $handler->display->display_options['fields']['rid']['field'] = 'rid';
-  $handler->display->display_options['fields']['rid']['label'] = 'Роль';
+  /* Field: User: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'users';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  /* Field: User: Activate link */
+  $handler->display->display_options['fields']['activate_user']['id'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['table'] = 'users';
+  $handler->display->display_options['fields']['activate_user']['field'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['label'] = 'Активировать';
+  $handler->display->display_options['fields']['activate_user']['text'] = 'активировать';
+  /* Field: User: Block link */
+  $handler->display->display_options['fields']['block_user']['id'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['table'] = 'users';
+  $handler->display->display_options['fields']['block_user']['field'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['label'] = 'Заблокировать';
+  $handler->display->display_options['fields']['block_user']['text'] = 'заблокировать';
   /* Sort criterion: User: Created date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'users';
@@ -1038,6 +1072,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
   $handler->display->display_options['fields']['rid']['field'] = 'rid';
   $handler->display->display_options['fields']['rid']['label'] = 'Роль';
+  $handler->display->display_options['fields']['rid']['type'] = 'ol';
   $handler->display->display_options['path'] = 'admin/content/accounts';
   $export['users'] = $view;
 

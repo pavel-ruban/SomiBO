@@ -487,7 +487,7 @@ function somi_feature_common_default_page_manager_pages() {
       0 => array(
         'name' => 'perm',
         'settings' => array(
-          'perm' => 'access somi logs',
+          'perm' => 'access somi availability',
         ),
         'context' => 'logged-in-user',
         'not' => FALSE,
