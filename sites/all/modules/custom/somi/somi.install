@@ -50,3 +50,11 @@ function somi_update_7002($context) {
 function somi_update_7003($context) {
   module_enable(['role_export']);
 }
+
+/**
+ * Enable modules.
+ * @param $context
+ */
+function somi_update_7004($context) {
+  module_enable(['booleancheckboxformatter']);
+}
