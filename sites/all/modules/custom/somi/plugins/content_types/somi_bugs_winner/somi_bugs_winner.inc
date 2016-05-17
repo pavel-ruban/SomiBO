@@ -7,7 +7,7 @@
 
 $plugin = array(
   'title' => t('Somi Bugs Winner'),
-  'description' => t('Provides SOMI personal availability'),
+  'description' => t('Provides SOMI Bugs Winner Info'),
   'content_types' => 'somi_bugs_winner',
   'single' => TRUE,
   'render callback' => 'somi_bugs_winner_content_type_render',
@@ -22,7 +22,7 @@ function somi_bugs_winner_content_type_render($subtype, $conf, $panel_args, $con
   $block = new stdClass();
   $block->content = '';
 
-  $availability_data = array();
+  $bugs_data = array();
 
   $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
   $users = user_load_multiple($uids);
@@ -30,47 +30,47 @@ function somi_bugs_winner_content_type_render($subtype, $conf, $panel_args, $con
   foreach ($users as $uid => $account) {
     $bugs = somi_get_user_account_balance($account->uid, SOMI_BUGS_CURRENCY_TID);
 
-    $availability_data[$account->uid] = array(
+    $bugs_data[$account->uid] = array(
       'uid' => $account->uid,
       'name' => $account->name,
-      'access' => $bugs,
+      'bugs' => $bugs,
       'sort' => $bugs,
       'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
       'image_class' => $bugs ? 'active' : 'grayscale',
     );
   }
 
-  uasort($availability_data, function($a, $b) {
-    if ($a['access'] == $b['access']) return 0;
+  uasort($bugs_data, function($a, $b) {
+    if ($a['bugs'] == $b['bugs']) return 0;
 
-    return $a['access'] > $b['access']
+    return $a['bugs'] > $b['bugs']
       ? -1
       : 1;
   });
 
-  foreach ($availability_data as $key => &$item) {
-    $class = $item['access'] ? 'active' : 'grayscale';
+  foreach ($bugs_data as $key => &$item) {
+    $class = $item['bugs'] ? 'active' : 'grayscale';
 
     $item = [
       'uid' => $item['uid'],
-      'access' => $item['access'],
+      'bugs' => $item['bugs'],
       'class' => $class,
       'l' => l(
         theme('image', ['path' => $item['image_url'],
           'attributes' => [
-            'title' => $item['name'] . ($item['access'] ? (PHP_EOL . 'Жуков: ' . $item['access']) : ''),
+            'title' => $item['name'] . ($item['bugs'] ? (PHP_EOL . 'Жуков: ' . $item['bugs']) : ''),
             'class' => [$class]
           ]
         ]),
-        '/admin/user/' . $account->uid . '/account/' . SOMI_BUGS_CURRENCY_TID,
+        '/admin/user/' . $item['uid'] . '/account/' . SOMI_BUGS_CURRENCY_TID,
         ['html' => TRUE]
       )
     ];
   }
 
-  drupal_add_css(SOMI_MODULE_PATH . '/plugins/content_types/somi_bugs_winner/availability.css');
+  drupal_add_css(SOMI_MODULE_PATH . '/plugins/content_types/somi_bugs_winner/table-board.css');
 
-  $block->content = theme('somi_bugs_winner', array('availability_data' => $availability_data));
+  $block->content = theme('somi_bugs_winner', array('bugs_data' => $bugs_data));
   return $block;
 }
 

@@ -565,6 +565,92 @@ function somi_feature_common_default_page_manager_pages() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
+  $page->name = 'somi_bugs_winner';
+  $page->task = 'page';
+  $page->admin_title = 'Somi Bugs Winner';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/bugs-winner';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi winner boards',
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array();
+  $page->arguments = array();
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_bugs_winner__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_bugs_winner';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Somi Bugs Winner',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'Доска позора';
+  $display->uuid = '16b884d1-ed21-49be-bf44-0d2c65de1ccb';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_bugs_winner';
+    $pane->subtype = 'somi_bugs_winner';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '34206006-419b-4fd5-812f-5ac8b3ded1f8';
+    $display->content['new-34206006-419b-4fd5-812f-5ac8b3ded1f8'] = $pane;
+    $display->panels['middle'][0] = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_bugs_winner'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
   $page->name = 'somi_charts';
   $page->task = 'page';
   $page->admin_title = 'Somi Charts';
@@ -649,6 +735,92 @@ function somi_feature_common_default_page_manager_pages() {
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
   $pages['somi_charts'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
+  $page->name = 'somi_crystals_winner';
+  $page->task = 'page';
+  $page->admin_title = 'Somi Crystals Winner';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/crystal-winner';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi winner boards',
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array();
+  $page->arguments = array();
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_crystals_winner__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_crystals_winner';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Somi Crystal Winner',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'Доска почета';
+  $display->uuid = '2a308a35-be27-49e7-be9e-8ad12c45378f';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-61303143-205a-49b0-be03-4bccbe90d18e';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_crystal_winner';
+    $pane->subtype = 'somi_crystal_winner';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '61303143-205a-49b0-be03-4bccbe90d18e';
+    $display->content['new-61303143-205a-49b0-be03-4bccbe90d18e'] = $pane;
+    $display->panels['middle'][0] = 'new-61303143-205a-49b0-be03-4bccbe90d18e';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-61303143-205a-49b0-be03-4bccbe90d18e';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_crystals_winner'] = $page;
 
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */

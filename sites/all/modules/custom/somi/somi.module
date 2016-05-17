@@ -488,6 +488,10 @@ function somi_permission() {
       'title' => t('Access somi availability'),
       'description' => t('Access somi availability.'),
     ),
+    'access somi winner boards' => array(
+      'title' => t('Access somi winner boards'),
+      'description' => t('Access somi winner boards.'),
+    ),
   );
 }
 

@@ -392,7 +392,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'module' => 'image',
         'settings' => array(
           'image_link' => '',
-          'image_style' => 'thumbnail',
+          'image_style' => 'slack_thumb',
         ),
         'type' => 'image',
         'weight' => 1,
@@ -688,7 +688,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'module' => 'image',
         'settings' => array(
           'image_link' => '',
-          'image_style' => 'thumbnail',
+          'image_style' => 'slack_thumb',
         ),
         'type' => 'image',
         'weight' => 0,
