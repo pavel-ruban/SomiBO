@@ -319,7 +319,7 @@ function somi_slack_webhook_trigger($id, $context, $status) {
 
   if ($rfid = somi_get_rfid_by_id($rfid_tag)) {
     $rfid_color = somi_get_device_color_by_nid($rfid->nid, TRUE);
-    $rfid_device = somi_get_device_type_by_nid($rfid->nid);
+    $rfid_device = somi_get_device_type_by_nid($rfid->nid, TRUE);
   }
   else {
     $rfid_color = '-';
@@ -402,6 +402,9 @@ EOS;
     curl_setopt_array($ch, $defaults);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-type: application/x-www-form-urlencoded',
+    ));
 
     curl_exec($ch);
     curl_close($ch);

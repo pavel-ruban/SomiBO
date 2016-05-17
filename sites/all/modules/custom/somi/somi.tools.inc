@@ -203,23 +203,26 @@ function somi_get_user_by_rfid($id) {
  * @param $nid
  * @return bool
  */
-function somi_get_device_type_by_nid($nid) {
+function somi_get_device_type_by_nid($nid, $plain = FALSE) {
   $storage = &drupal_static(__FUNCTION__, []);
-
   if ($node = node_load($nid)) {
     if (!isset($storage[$nid])) {
-      $wrapper = entity_metadata_wrapper('node', $node);
-      if ($type = $wrapper->field_type->value()) {
-        $type_view = taxonomy_term_view($type, 'icon');
-        if (!empty($type_view['field_icon'])) {
-          $device_type = drupal_render($type_view['field_icon']);
+      if (!empty($node->field_type[LANGUAGE_NONE][0]['tid']) && ($type = taxonomy_term_load($node->field_type[LANGUAGE_NONE][0]['tid']))) {
+        if (!$plain) {
+          $type_view = taxonomy_term_view($type, 'icon');
+          if (!empty($type_view['field_icon'])) {
+            $device_type = drupal_render($type_view['field_icon']);
+          }
+          else {
+            $device_type = $type->name;
+          }
         }
         else {
           $device_type = $type->name;
         }
       }
       else {
-        $device_type = '';
+        $device_type = 'карта';
       }
 
       $storage[$nid] = $device_type;
@@ -240,18 +243,22 @@ function somi_get_device_color_by_nid($nid, $plain = FALSE) {
 
   if ($node = node_load($nid)) {
     if (!isset($storage[$nid])) {
-      $wrapper = entity_metadata_wrapper('node', $node);
-      if (!$plain && ($color = $wrapper->field_color->value())) {
-        $color_view = taxonomy_term_view($color, 'icon');
-        if (!empty($color_view['field_color_picker'])) {
-          $device_color = drupal_render($color_view['field_color_picker']);
+      if (!empty($node->field_color[LANGUAGE_NONE][0]['tid']) && ($color = taxonomy_term_load($node->field_color[LANGUAGE_NONE][0]['tid']))) {
+        if (!$plain) {
+          $color_view = taxonomy_term_view($color, 'icon');
+          if (!empty($color_view['field_color_picker'])) {
+            $device_color = drupal_render($color_view['field_color_picker']);
+          }
+          else {
+            $device_color = $color->name;
+          }
         }
         else {
           $device_color = $color->name;
         }
       }
       else {
-        $device_color = '';
+        $device_color = '-';
       }
 
       $storage[$nid] = $device_color;
