@@ -741,3 +741,11 @@ form#user-login {
 .views-widget div.description {
   display: none;
 }
+.view.view-devices.view-id-devices.view-display-id-admin_devices td.views-field-status,
+.view.view-devices.view-id-devices.view-display-id-admin_devices td.views-field-field-i20-property {
+  padding-top: 30px;
+}
+
+th a.active {
+  color: #537C9A;
+}
