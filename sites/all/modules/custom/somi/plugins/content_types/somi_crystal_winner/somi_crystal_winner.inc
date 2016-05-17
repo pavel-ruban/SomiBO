@@ -62,7 +62,7 @@ function somi_crystal_winner_content_type_render($subtype, $conf, $panel_args, $
             'class' => [$class]
           ]
         ]),
-        '/admin/user/' . $item['uid'] . '/account/' . SOMI_BUGS_CURRENCY_TID,
+        '/admin/user/' . $item['uid'] . '/account/' . SOMI_CRYSTALLS_CURRENCY_TID,
         ['html' => TRUE]
       )
     ];
