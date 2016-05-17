@@ -970,6 +970,8 @@ function api_user_account_balance_add_post() {
   $response['initiator']['uid'] = $initiator->uid;
 
   foreach ($data->recipients as $recipient) {
+    $account = user_load_by_mail($recipient->email);
+
     // Debet crystals.
     somi_add_user_account_balance(
       $account->uid,
