@@ -213,6 +213,9 @@ function somi_reset_bugs_accounts_batch(&$context) {
 
     $balance = somi_get_user_account_balance($account->uid, SOMI_I20_BUGS_CURRENCY_TID);
 
+    // Bugs could be given without strict limitation.
+    $limit = 9999;
+
     if ($balance < $limit) {
       $new_amount = $limit - $balance;
 
