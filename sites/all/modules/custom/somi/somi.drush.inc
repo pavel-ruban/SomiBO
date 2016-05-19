@@ -58,7 +58,7 @@ function drush_somi_reset_crystalls_accounts() {
     'title' => dt('Updating users crystalls debet accounts'),
     'operations' => array(
       array(
-        'somi_reset_crystalls_accounts_batch',
+        'somi_reset_crystals_accounts_batch',
         array()
       ),
     ),
@@ -88,7 +88,7 @@ function drush_somi_reset_bugs_accounts() {
 /**
  * @param $context
  */
-function somi_reset_crystalls_accounts_batch(&$context) {
+function somi_reset_crystals_accounts_batch(&$context) {
   if (!isset($context['results']['uids'])) {
     $query = db_select('users', 'u');
     $query->addField('u', 'uid');
@@ -155,7 +155,7 @@ function somi_reset_crystalls_accounts_batch(&$context) {
     $context['sandbox']['progress']++;
 
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    $context['message'] = 'Updating Users Debets Crystall Accoutns (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+    $context['message'] = 'Updating Users Debet Crystal Accounts (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
   }
 }
 
@@ -232,7 +232,7 @@ function somi_reset_bugs_accounts_batch(&$context) {
     $context['sandbox']['progress']++;
 
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    $context['message'] = 'Updating Users Debets Crystall Accoutns (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+    $context['message'] = 'Updating Users Debet Bugs Accounts (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
   }
 }
 
