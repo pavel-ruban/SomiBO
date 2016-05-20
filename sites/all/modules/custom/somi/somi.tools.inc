@@ -285,7 +285,7 @@ function somi_api_account_currencies_mapping() {
     ],
     ':drupal:' => [
       'active' => SOMI_DRUPAL_CURRENCY_TID,
-      'passive' => SOMI_DRUPAL_CURRENCY_TID
+      'passive' => SOMI_I20_DRUPAL_CURRENCY_TID
     ],
   ];
 }
