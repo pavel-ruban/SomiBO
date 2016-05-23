@@ -942,6 +942,9 @@ function api_user_account_balance_add_post() {
     );
   }
 
+  // Avoid markup filter stripping text wrapped with triangle braces.
+  $data->message = preg_replace('/<|>/', '', $data->message);
+
   $currency = $data->user->currency;
   $account_tid = somi_api_account_currencies_mapping()[$currency]['active'];
   $passive_account_tid = somi_api_account_currencies_mapping()[$currency]['passive'];
@@ -960,8 +963,7 @@ function api_user_account_balance_add_post() {
     $initiator->uid,
     -1 * $data->user->transaction_amount,
     $passive_account_tid,
-    // Avoid markup filter stripping text wrapped with triangle braces.
-    $prefix . preg_replace('/<|>/', '', $data->message),
+    $prefix . $data->message,
     $initiator->uid
   );
 
