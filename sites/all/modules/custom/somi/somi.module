@@ -324,7 +324,7 @@ function somi_get_recent_account_events() {
       array(
         'entity_type' => 'user',
       ),
-      500
+      0
     );
 
     usort($account_events, function($a, $b) {
