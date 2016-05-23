@@ -492,7 +492,7 @@ function color_field_field_formatter_settings_summary($field, $instance, $view_m
 function color_field_theme($existing, $type, $theme, $path) {
   return array(
     'color_swatch' => array(
-      'variables' => array('color' => '', 'width' => 50, 'height' => 50),
+      'variables' => array('color' => '', 'width' => 50, 'height' => 50, 'title' => ''),
     ),
   );
 }
@@ -767,6 +767,7 @@ function theme_color_swatch($variables) {
   $color = $variables['color'];
   $width = $variables['width'];
   $height = $variables['height'];
+  $title = !empty($variables['title']) ? $variables['title'] : '';
 
-  return '<div class="color-swatch" style="background-color: ' . $color .  '; width: ' . $width . 'px; height: ' . $height . 'px;"></div>';
+  return '<div class="color-swatch" title="' . $title . '" style="background-color: ' . $color .  '; width: ' . $width . 'px; height: ' . $height . 'px;"></div>';
 }

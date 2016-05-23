@@ -211,6 +211,7 @@ function somi_get_device_type_by_nid($nid, $plain = FALSE) {
         if (!$plain) {
           $type_view = taxonomy_term_view($type, 'icon');
           if (!empty($type_view['field_icon'])) {
+            $type_view['field_icon'][0]['#item']['title'] = $device_type = $type->name;
             $device_type = drupal_render($type_view['field_icon']);
           }
           else {
@@ -238,7 +239,8 @@ function somi_get_device_type_by_nid($nid, $plain = FALSE) {
  * @param $nid
  * @return bool
  */
-function somi_get_device_color_by_nid($nid, $plain = FALSE) {
+function
+somi_get_device_color_by_nid($nid, $plain = FALSE) {
   $storage = &drupal_static(__FUNCTION__, []);
 
   if ($node = node_load($nid)) {
@@ -247,6 +249,7 @@ function somi_get_device_color_by_nid($nid, $plain = FALSE) {
         if (!$plain) {
           $color_view = taxonomy_term_view($color, 'icon');
           if (!empty($color_view['field_color_picker'])) {
+            $color_view['field_color_picker'][0]['#title'] = $color->name;
             $device_color = drupal_render($color_view['field_color_picker']);
           }
           else {
