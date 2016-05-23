@@ -759,6 +759,19 @@ tbody td span.board-counter {
   top: 4px;
   display: inline-block;
   right: 8px;
+  z-index: 999;
+}
+
+tbody td span.availability.board-counter {
+  bottom: 2px;
+  left: 8px;
+  font-size: 11px;
+  top: initial;
+  right: initial;
+}
+
+tbody td.grayscale span.availability.board-counter {
+  display: none;
 }
 
 tbody td {

@@ -8,6 +8,7 @@
         <tr>
       <?php endif; ?>
       <td id="<?php echo $v['uid']; ?>" access="<?php echo $v['access']; ?>" class="<?php echo $v['class']; ?>">
+        <span class="availability board-counter"><?php echo date('H:i:s', $v['access']); ?></span>
         <?php echo  $v['l']; ?>
       </td>
       <?php if ($i > 8): ?>
