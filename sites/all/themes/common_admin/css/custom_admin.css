@@ -777,3 +777,7 @@ tbody td.grayscale span.board-counter {
 tbody td {
   position: relative;
 }
+
+div.color-swatch {
+  border: 1px solid black;
+}
