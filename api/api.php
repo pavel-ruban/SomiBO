@@ -960,7 +960,8 @@ function api_user_account_balance_add_post() {
     $initiator->uid,
     -1 * $data->user->transaction_amount,
     $passive_account_tid,
-    $prefix . $data->message,
+    // Avoid markup filter stripping text wrapped with triangle braces.
+    $prefix . preg_replace('/<|>/', '', $data->message),
     $initiator->uid
   );
 
