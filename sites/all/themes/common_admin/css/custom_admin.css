@@ -749,3 +749,18 @@ form#user-login {
 th a.active {
   color: #537C9A;
 }
+
+tbody td span.board-counter {
+  position: absolute;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px black, 0px 0px 3px #BAE2FF;
+  top: 4px;
+  display: inline-block;
+  right: 8px;
+}
+
+tbody td {
+  position: relative;
+}
