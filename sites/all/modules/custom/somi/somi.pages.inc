@@ -98,7 +98,7 @@ function somi_realtime_board() {
   // Realtime data update.
   drupal_add_library('somi', 'jquery-color');
   drupal_add_library('somi', 'socket-io');
-  $title = "Активность сотрудников I20 за " . date('d.m.y', time()) . ", текущее время " . date('H:i:s', time());
+  $title = "Активность сотрудников I20";
 
   return theme('somi_board', array('title' => $title, 'class' => 'availability', 'data' => somi_get_availability_data()));
 }
