@@ -21,56 +21,9 @@ $plugin = array(
 function somi_drupal_winner_content_type_render($subtype, $conf, $panel_args, $context) {
   $block = new stdClass();
   $block->content = '';
+  $account_data = somi_get_board_account_data(SOMI_DRUPAL_CURRENCY_TID);
 
-  $drupal_data = array();
-
-  $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
-  $users = user_load_multiple($uids);
-
-  foreach ($users as $uid => $account) {
-    $drupal = somi_get_user_account_balance($account->uid, SOMI_DRUPAL_CURRENCY_TID);
-
-    $drupal_data[$account->uid] = array(
-      'uid' => $account->uid,
-      'name' => $account->name,
-      'drupal' => $drupal,
-      'sort' => $drupal,
-      'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
-      'image_class' => $drupal ? 'active' : 'grayscale',
-    );
-  }
-
-  uasort($drupal_data, function($a, $b) {
-    if ($a['drupal'] == $b['drupal']) return 0;
-
-    return $a['drupal'] > $b['drupal']
-      ? -1
-      : 1;
-  });
-
-  foreach ($drupal_data as $key => &$item) {
-    $class = $item['drupal'] ? 'active' : 'grayscale';
-
-    $item = [
-      'uid' => $item['uid'],
-      'drupal' => $item['drupal'],
-      'class' => $class,
-      'l' => l(
-        theme('image', ['path' => $item['image_url'],
-          'attributes' => [
-            'title' => $item['name'] . ($item['drupal'] ? (PHP_EOL . 'Друпликонов: ' . $item['drupal']) : ''),
-            'class' => [$class]
-          ]
-        ]),
-        '/admin/user/' . $item['uid'] . '/account/' . SOMI_DRUPAL_CURRENCY_TID,
-        ['html' => TRUE]
-      )
-    ];
-  }
-
-  drupal_add_css(SOMI_MODULE_PATH . '/plugins/content_types/somi_drupal_winner/table-board.css');
-
-  $block->content = theme('somi_drupal_winner', array('drupal_data' => $drupal_data));
+  $block->content = theme('somi_board', array('data' => $account_data, 'title' => 'Доска котнрибьюта'));
   return $block;
 }
 

@@ -47,6 +47,7 @@ function somi_log_event($context, $access) {
   }
 
   somi_slack_webhook_trigger($context['uid'], $context, $access);
+  somi_realtime_board_trigger($context);
 }
 
 /**
@@ -417,5 +418,66 @@ EOS;
     curl_close($ch);
   }
 
-  exit;
+  if (function_exists('pcntl_fork')) {
+    exit;
+  }
+}
+
+/**
+ * Slack Web Hooks Integration.
+ */
+function somi_realtime_board_trigger($context) {
+  // PHP apache doesn't able deal with pcntl functions, only CDG or CLI modes.
+  // so do it in the same process for web request access loging :'C.
+  if (function_exists('pcntl_fork')) {
+    $pid = pcntl_fork();
+
+    // Parent process should immediately response to hardware.
+    if ($pid === -1 || $pid > 0) {
+      return;
+    }
+  }
+
+  // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+  fclose(STDIN);
+  fclose(STDOUT);
+  fclose(STDERR);
+
+  // Child process continues HTTP Slack API invocation.
+  $node_js_url = array(
+    "http://127.0.0.1:8300",
+  );
+
+  $nodejs_payload = array(
+    'id' => $context['uid'],
+    'info' => date('H:i:s', time()),
+    'class' => 'active',
+  );
+
+  $data_string = json_encode($nodejs_payload);
+  // Send event to all listeners.
+  foreach ($node_js_url as $nodejs_url) {
+    $defaults = array(
+      CURLOPT_URL => $nodejs_url,
+      CURLOPT_POST => TRUE,
+      CURLOPT_POSTFIELDS => $data_string,
+    );
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, $defaults);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-type: application/json',
+      'Content-Length: ' . strlen($data_string),
+    ));
+
+    curl_exec($ch);
+    curl_close($ch);
+  }
+
+  if (function_exists('pcntl_fork')) {
+    exit;
+  }
 }

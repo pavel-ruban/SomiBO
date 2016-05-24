@@ -85,3 +85,20 @@ function somi_access_handler($id = FALSE) {
 
   return FALSE;
 }
+
+/**
+ * Used to display content on Android Board.
+ */
+function somi_realtime_board() {
+  drupal_add_css(SOMI_MODULE_PATH . '/theme/css/availability.css');
+
+  drupal_add_css(SOMI_MODULE_PATH . '/theme/css/realtime_board.css');
+  drupal_add_js(SOMI_MODULE_PATH . '/theme/js/realtime_board.js');
+
+  // Realtime data update.
+  drupal_add_library('somi', 'jquery-color');
+  drupal_add_library('somi', 'socket-io');
+  $title = "Активность сотрудников I20 за " . date('d.m.y', time()) . ", текущее время " . date('H:i:s', time());
+
+  return theme('somi_board', array('title' => $title, 'class' => 'availability', 'data' => somi_get_availability_data()));
+}

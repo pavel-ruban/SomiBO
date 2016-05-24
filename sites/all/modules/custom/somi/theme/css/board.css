@@ -282,3 +282,7 @@ body #main-content table td {
 body #main-content table td img {
   display: block;
 }
+
+body h1 {
+  text-align: center;
+}

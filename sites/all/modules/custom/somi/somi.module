@@ -62,6 +62,15 @@ function somi_menu() {
     'file' => 'somi.pages.inc',
   );
 
+  $items['realtime-board'] = array(
+    'title' => t('Somi Realtime Board'),
+    'page callback' => 'somi_realtime_board',
+    'delivery callback' => 'somi_realtime_board_delivery_callback',
+    'access arguments' => array('access somi realtime board'),
+    'file' => 'somi.pages.inc',
+    'variables' => array('title' => '', 'class' => '', 'data' => array()),
+  );
+
   return $items;
 }
 
@@ -89,6 +98,13 @@ function somi_theme() {
     'path' => $path,
     'render element' => 'content',
     'template' => 'somi-door-utils',
+  );
+
+  $items['somi_board'] = array(
+    'path' => $path,
+    'render element' => 'content',
+    'file' => 'theme.inc',
+    'template' => 'somi-board',
   );
 
   return $items;
@@ -494,6 +510,10 @@ function somi_permission() {
       'title' => t('Access somi winner boards'),
       'description' => t('Access somi winner boards.'),
     ),
+    'access somi realtime board' => array(
+      'title' => t('Access somi android board'),
+      'description' => t('Access somi android board.'),
+    ),
   );
 }
 
@@ -557,6 +577,28 @@ function somi_library() {
       array('system', 'ui.dialog'),
     ),
   );
+  $libraries['jquery-color'] = array(
+    'title' => 'Jquery Color',
+    'version' => '2.1.2',
+    'js' => array(
+      $path . '/jquery-color/jquery.color-2.1.2.min.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'drupal.ajax'),
+      array('system', 'ui.dialog'),
+    ),
+  );
+  $libraries['socket-io'] = array(
+    'title' => 'Socket IO',
+    'version' => '1.4.5',
+    'js' => array(
+      $path . '/socket-io/socket.io-1.4.5.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'drupal.ajax'),
+      array('system', 'ui.dialog'),
+    ),
+  );
   return $libraries;
 }
 
@@ -583,4 +625,30 @@ function somi_admin_paths() {
     );
     return $paths;
   }
+}
+
+/**
+ *
+ */
+function somi_realtime_board_delivery_callback($content) {
+  global $language;
+
+  $title = drupal_get_title();
+
+  $styles = drupal_get_css();
+  $scripts = drupal_get_js();
+
+  echo <<<HTML
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{$language->language}" version="XHTML+RDFa 1.0">
+  <head>
+    <title>$title</title>
+    $styles
+    $scripts
+  </head>
+  <body>
+    $content;
+  </body>
+</html>
+HTML;
 }

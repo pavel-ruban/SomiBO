@@ -353,3 +353,153 @@ function somi_set_additional_submit_callback(&$form, $name, $first = FALSE) {
     }
   }
 }
+
+/**
+ * Get availability data.
+ * @throws \Exception
+ */
+function somi_get_availability_data() {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage)) {
+    $query = "select * from log WHERE access >= " . strtotime(date('d M y 05:00')) . " AND access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . ";";
+
+    $availability_data = array();
+
+    $result = db_query($query)->fetchAllAssoc('access');
+
+    foreach ($result as $row) {
+      if (!empty($availability_data[$row->uid]['access'])) {
+        $access = $availability_data[$row->uid]['access'] < $row->access
+          ? $row->access
+          : $availability_data[$row->uid]['access'];
+      }
+      else {
+        $access = $row->access;
+      }
+
+      $availability_data[$row->uid] = array(
+        'uid' => $row->uid,
+        'name' => '',
+        'access' => $access,
+        'sort' => (int) $access,
+        'image_url' => '',
+        'image_class' => 'active',
+      );
+    }
+
+    uasort($availability_data, function ($a, $b) {
+      if ($a['access'] == $b['access']) {
+        return 0;
+      }
+
+      return $a['access'] > $b['access']
+        ? -1
+        : 1;
+    });
+
+    $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
+    $users = user_load_multiple($uids);
+
+    foreach ($users as $uid => $account) {
+      if (!isset($availability_data[$account->uid])) {
+        $availability_data[$account->uid] = array(
+          'uid' => $account->uid,
+          'name' => $account->name,
+          'access' => 0,
+          'sort' => 0,
+          'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
+          'image_class' => 'grayscale',
+        );
+      }
+      else {
+        $availability_data[$account->uid]['image_url'] = "http://www.gravatar.com/avatar/" . md5($account->mail);
+        $availability_data[$account->uid]['name'] = $account->name;
+      }
+    }
+
+    foreach ($availability_data as $key => &$item) {
+      $class = $item['access'] ? 'active' : 'grayscale';
+
+      $item = [
+        'uid' => $item['uid'],
+        'info' => $item['access'] ? date('H:i:s', $item['access']) : '',
+        'class' => $class,
+        'l' => l(
+          theme('image', ['path' => $item['image_url'],
+            'attributes' => [
+              'title' => $item['name'] . ($item['access'] ? (PHP_EOL . date('H:i:s', $item['access'])) : ''),
+              'class' => [$class]
+            ]
+          ]),
+          '/admin/somi/chart/' . $item['uid'],
+          ['html' => TRUE]
+        )
+      ];
+    }
+
+    $storage = $availability_data;
+  }
+
+  return $storage;
+}
+/**
+ * Get board accoutn data.
+ * @throws \Exception
+ */
+function somi_get_board_account_data($currency_tid) {
+  $storage = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($storage[$currency_tid])) {
+    $account_data = array();
+
+    $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
+    $users = user_load_multiple($uids);
+
+    foreach ($users as $uid => $account) {
+      $balance = somi_get_user_account_balance($account->uid, $currency_tid);
+
+      $account_data[$account->uid] = array(
+        'uid' => $account->uid,
+        'name' => $account->name,
+        'balance' => $balance,
+        'sort' => $balance,
+        'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
+        'image_class' => $balance ? 'active' : 'grayscale',
+      );
+    }
+
+    uasort($account_data, function($a, $b) {
+      if ($a['balance'] == $b['balance']) return 0;
+
+      return $a['balance'] > $b['balance']
+        ? -1
+        : 1;
+    });
+
+    foreach ($account_data as $key => &$item) {
+      $class = $item['balance'] ? 'active' : 'grayscale';
+
+      $item = [
+        'uid' => $item['uid'],
+        'balance' => $item['balance'],
+        'info' => $item['balance'],
+        'class' => $class,
+        'l' => l(
+          theme('image', ['path' => $item['image_url'],
+            'attributes' => [
+              'title' => $item['name'] . ($item['balance'] ? (PHP_EOL . 'Баланс: ' . $item['balance']) : ''),
+              'class' => [$class]
+            ]
+          ]),
+          '/admin/user/' . $item['uid'] . '/account/' . $currency_tid,
+          ['html' => TRUE]
+        )
+      ];
+    }
+
+    $storage[$currency_tid] = $account_data;
+  }
+
+  return $storage[$currency_tid];
+}

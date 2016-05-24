@@ -6,3 +6,4 @@ sites/*/files
 sites/*/private
 .idea
 tracker.txt
+sites/all/libraries/board_nodejs_server/node_modules
