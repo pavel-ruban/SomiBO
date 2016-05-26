@@ -291,12 +291,12 @@ function somi_slack_webhook_trigger($id, $context, $status) {
     if ($pid === -1 || $pid > 0) {
       return;
     }
-  }
 
-  // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
-  fclose(STDIN);
-  fclose(STDOUT);
-  fclose(STDERR);
+    // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+    fclose(STDIN);
+    fclose(STDOUT);
+    fclose(STDERR);
+  }
 
   // Child process continues HTTP Slack API invocation.
   $slack_webhook_url = array(
@@ -436,12 +436,12 @@ function somi_realtime_board_trigger($context) {
     if ($pid === -1 || $pid > 0) {
       return;
     }
-  }
 
-  // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
-  fclose(STDIN);
-  fclose(STDOUT);
-  fclose(STDERR);
+    // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+    fclose(STDIN);
+    fclose(STDOUT);
+    fclose(STDERR);
+  }
 
   // Child process continues HTTP Slack API invocation.
   $node_js_url = array(

@@ -7,69 +7,71 @@ var SOMI = SOMI || {};
       var $table = $('table.somi-board');
       var uid = td.id
       var selector = 'td#' + uid;
-      var $target_tr = $(selector).parent('tr');
-
-      var $next_last_td = undefined;
       var $target_td = $(selector);
 
-      $('table tr').each(function (i, v) {
-        var $cur_tr = $(v);
+      if ($target_td.length) {
+        var $target_tr = $target_td.parent('tr');
+        var $next_last_td = undefined;
 
-        if ($cur_tr.attr('id') == $target_tr.attr('id')) {
-          $target_td.remove();
+        $('table tr').each(function (i, v) {
+          var $cur_tr = $(v);
 
-          $target_td.find('span').html(td.info);
-          $target_td.find('img').attr('class', td.class);
-          $target_td.attr('class', 'td.class');
-
-          $('tr#1').prepend($target_td);
-
-
-          var promise1 = $target_td.animate(
-            {backgroundColor: '#FFF79F'},
-            1500
-          );
-
-          var promise2 = $target_td.find('img').animate(
-            {opacity: 0.7},
-            1500
-          );
-
-          $.when(promise1, promise2).done(function () {
-            $target_td.animate(
-              {backgroundColor: 'transparent'},
-              1500
-            );
-            $target_td.find('img').animate(
-              {opacity: 1},
-              1500
-            );
-          });
-
-          // Brake each loop.
-          return false;
-        }
-        else {
-          // Get last td from row. If we already removed last element in previous iteration use it.
-          var $cur_last_td = $next_last_td
-            ? $next_last_td
-            : $cur_tr.find('td').last('td');
-
-          var $next_tr = $cur_tr.next(v);
-
-          if ($next_tr.attr('id') == $target_tr.attr('id')) {
+          if ($cur_tr.attr('id') == $target_tr.attr('id')) {
             $target_td.remove();
-            $next_tr.prepend($cur_last_td);
+
+            $target_td.find('span').html(td.info);
+            $target_td.find('img').attr('class', td.class);
+            $target_td.attr('class', 'td.class');
+
+            $('tr#1').prepend($target_td);
+
+
+            var promise1 = $target_td.animate(
+              {backgroundColor: '#FFF79F'},
+              1500
+            );
+
+            var promise2 = $target_td.find('img').animate(
+              {opacity: 0.7},
+              1500
+            );
+
+            $.when(promise1, promise2).done(function () {
+              $target_td.animate(
+                {backgroundColor: 'transparent'},
+                1500
+              );
+              $target_td.find('img').animate(
+                {opacity: 1},
+                1500
+              );
+            });
+
+            // Brake each loop.
+            return false;
           }
           else {
-            $next_last_td = $next_tr.find('td').last('td');
+            // Get last td from row. If we already removed last element in previous iteration use it.
+            var $cur_last_td = $next_last_td
+              ? $next_last_td
+              : $cur_tr.find('td').last('td');
 
-            $cur_last_td.remove();
-            $next_last_td.remove();
-            $next_tr.prepend($cur_last_td);
+            var $next_tr = $cur_tr.next(v);
+
+            if ($next_tr.attr('id') == $target_tr.attr('id')) {
+              $target_td.remove();
+              $next_tr.prepend($cur_last_td);
+            }
+            else {
+              $next_last_td = $next_tr.find('td').last('td');
+
+              $cur_last_td.remove();
+              $next_last_td.remove();
+              $next_tr.prepend($cur_last_td);
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 
