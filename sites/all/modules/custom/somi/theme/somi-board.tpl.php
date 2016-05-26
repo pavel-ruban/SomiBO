@@ -5,7 +5,7 @@
     <?php $i = 0; $tr_i = 1; ?>
     <?php foreach ($data as $v): ?>
       <?php if ($i == 0): ?>
-        <tr id="<?php echo $tr_i++; ?>">
+        <tr id="tr-<?php echo $tr_i++; ?>">
       <?php endif; ?>
       <td id="<?php echo $v['uid']; ?>" class="<?php echo $v['class']; ?>">
         <span class="<?php echo !empty($class) ? $class . ' ' : ''; ?>board-counter"><?php echo $v['info']; ?></span>

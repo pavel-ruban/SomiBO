@@ -23,8 +23,7 @@ var SOMI = SOMI || {};
             $target_td.find('img').attr('class', td.class);
             $target_td.attr('class', 'td.class');
 
-            $('tr#1').prepend($target_td);
-
+            $('tr#tr-1').prepend($target_td);
 
             var promise1 = $target_td.animate(
               {backgroundColor: '#FFF79F'},
