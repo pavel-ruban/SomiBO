@@ -46,8 +46,8 @@ function somi_log_event($context, $access) {
     // Do nothing.
   }
 
-  somi_slack_webhook_trigger($context['uid'], $context, $access);
   somi_realtime_board_trigger($context);
+  somi_slack_webhook_trigger($context['uid'], $context, $access);
 }
 
 /**
