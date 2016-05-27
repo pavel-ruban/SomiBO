@@ -41,3 +41,7 @@ div.event-wrapper li div.type-icon img {
 div.event-wrapper li div.field-name-field-color-picker {
   display: inline-block;
 }
+
+html body {
+  overflow: hidden;
+}
