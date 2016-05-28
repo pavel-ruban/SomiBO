@@ -848,23 +848,18 @@ function api_account_op_validate_post() {
       $initiator = user_load_by_mail($data->user->email);
       $transaction_amount = somi_get_user_account_balance($initiator->uid, $passive_account_tid);
       // Checking beetles quantity for one transaction depending on user`s role.
-      if ($currency == ':beetle:') {
-        $max_beetles_quantity = 1;
+      $restrictions = somi_get_transaction_limit_settings($passive_account_tid);
+      if (!empty($restrictions)) {
+        $max_quantity = 1;
         $initiator_roles = array_flip($initiator->roles);
-        $roles_mapping = [
-          'top' => 3,
-          'core' => 3,
-          'active' => 2,
-          'authenticated user' => 1,
-        ];
-        foreach ($roles_mapping as $role => $max_beetles) {
+        foreach ($restrictions['roles_mapping'] as $role => $max_can_be_given) {
           if (isset($initiator_roles[$role])) {
-            $max_beetles_quantity = $max_beetles;
+            $max_quantity = $max_can_be_given;
             break;
           }
         }
-        if ($data->user->transaction_amount > $max_beetles_quantity) {
-          throw new ApiException("Превышено максимальное колличество жуков.");
+        if ($data->user->transaction_amount > $max_quantity) {
+          throw new ApiException(t($restrictions['message'], ['!qty' => $max_quantity]));
         }
       }
       $response['initiator']['balance'] = $transaction_amount;
