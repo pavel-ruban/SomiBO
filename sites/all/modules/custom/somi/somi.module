@@ -652,3 +652,31 @@ function somi_realtime_board_delivery_callback($content) {
 </html>
 HTML;
 }
+
+/**
+ * Get restrictions for roles.
+ */
+function somi_get_transaction_limit_settings($tid) {
+  $restrictions = [];
+  switch ($tid) {
+    case SOMI_I20_CRYSTALLS_CURRENCY_TID:
+      $restrictions = [];
+      break;
+    case SOMI_I20_BUGS_CURRENCY_TID:
+      $restrictions = [
+        'roles_mapping' => [
+          'top' => 3,
+          'core' => 3,
+          'active' => 2,
+          'authenticated user' => 1,
+        ],
+        'message' => 'Превышено максимальное колличество жуков для одной операции. Вы можете выдать за раз жуков не больше !qty.'
+      ];
+      break;
+    case SOMI_I20_DRUPAL_CURRENCY_TID:
+      $restrictions = [];
+      break;
+  }
+
+  return $restrictions;
+}

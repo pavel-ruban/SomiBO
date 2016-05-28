@@ -847,6 +847,21 @@ function api_account_op_validate_post() {
 
       $initiator = user_load_by_mail($data->user->email);
       $transaction_amount = somi_get_user_account_balance($initiator->uid, $passive_account_tid);
+      // Checking beetles quantity for one transaction depending on user`s role.
+      $restrictions = somi_get_transaction_limit_settings($passive_account_tid);
+      if (!empty($restrictions)) {
+        $max_quantity = 1;
+        $initiator_roles = array_flip($initiator->roles);
+        foreach ($restrictions['roles_mapping'] as $role => $max_can_be_given) {
+          if (isset($initiator_roles[$role])) {
+            $max_quantity = $max_can_be_given;
+            break;
+          }
+        }
+        if ($data->user->transaction_amount > $max_quantity) {
+          throw new ApiException(t($restrictions['message'], ['!qty' => $max_quantity]));
+        }
+      }
       $response['initiator']['balance'] = $transaction_amount;
       $response['initiator']['uid'] = $initiator->uid;
 
@@ -894,7 +909,7 @@ function api_account_op_validate_post() {
     throw new ApiException("Пользователь не авторизован.");
   }
 
-  // Add item to the queue. It will be passed to RabbitMQ later, when user will be enough crystals for opertations,
+  // Add item to the queue. It will be passed to RabbitMQ later, when user will be enough crystals for operations,
   // and nodejs bot will check the queue and remind user that he is able to perform operation.
   if (!empty($response['error'])) {
     // Store attempt to give crystals to remind it later.
