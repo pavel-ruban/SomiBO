@@ -276,32 +276,202 @@ somi_get_device_color_by_nid($nid, $plain = FALSE) {
 /**
  * @return array
  */
-function somi_api_account_currencies_mapping() {
+function somi_get_default_currency_config_array_template() {
   return [
-    ':gem:' => [
-      'active' => SOMI_CRYSTALLS_CURRENCY_TID,
-      'passive' => SOMI_I20_CRYSTALLS_CURRENCY_TID
+    // Падежи и склонения.
+    'nominative' => [
+      1 => 'Кристалл',
+      2 => 'Кристалла',
+      3 => 'Кристаллов'
     ],
-    ':beetle:' => [
-      'active' => SOMI_BUGS_CURRENCY_TID,
-      'passive' => SOMI_I20_BUGS_CURRENCY_TID
+    'prepositional' => [
+      1 => 'Кристалле',
+      2 => 'Кристаллах',
+      3 => 'Кристаллах'
     ],
-    ':drupal:' => [
-      'active' => SOMI_DRUPAL_CURRENCY_TID,
-      'passive' => SOMI_I20_DRUPAL_CURRENCY_TID
+    'accusative' => [
+      1 => 'Кристалл',
+      2 => 'Кристалла',
+      3 => 'Кристаллов'
     ],
+    'instrumental' => [
+      1 => 'Кристаллом',
+      2 => 'Кристаллами',
+      3 => 'Кристаллами'
+    ],
+
+    // Op translations.
+    'error_status' => [
+      'msg' => '*Сделка на %qty% %goods% не удалась!* =>no_entry_sign=>\n\n*Отправитель*',
+      'case' => 'accusative'
+    ],
+
+    'op_header' => 'Награждение кристаллами',
+
+    'event_error' => '_Произошла ошибка при награждении_',
+    'event_remind' => '_Напоминание_',
+    'event_private' => [
+      'msg' => '_Вам подарили %qty% %goods% от %usr%_',
+      'case' => 'nominative'
+    ],
+    'event_owner' => [
+      'msg' => '_Вы подарили %qty% %goods% %users%_',
+      'case' => 'nominative'
+    ],
+    'event_channel' => [
+      'alt' => '_Был(а) награжден(а) %users%_',
+      'msg' => '_Были награждены %users%_',
+      'case' => 'nominative'
+    ],
+
+    'op_status' => [
+      'msg' => '*Сделка на %qty% %goods% прошла успешно!* =>white_check_mark=>\n\n*От кого*',
+      'case' => 'nominative'
+    ],
+    'op_status_private' => [
+      'msg' => '*Вы получили %qty% %goods%!* %currencies%\n\n*От кого*',
+      'case' => 'accusative'
+    ],
+    'op_status_remind' => [
+      'msg' => '=>bell=> *Вы хотели подарить %qty% %currency%*',
+      'case' => 'accusative'
+    ],
+
+    'attach_balance_remind_title' => 'Кристаллов на вашем счете',
+    'attach_balance_private_title' => 'Кристаллов в наличии',
+    'attach_balance_owner_title' => 'Кристаллов осталось',
+    'attach_balance_needed_title' => 'Не хватает кристаллов',
+    'op_color' => 'good',
+    'op_remind' => 'Подарить'
   ];
 }
 
 /**
  * @return array
  */
+function somi_api_account_currencies_mapping() {
+  $storage = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($storage)) {
+    $storage = array();
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+    foreach ($cpw->field_currencies as $fcw) {
+      if ($fcw->value()) {
+        $storage[$fcw->field_emoticon->value()] = array(
+          'active' => $fcw->field_active_account->getIdentifier(),
+          'passive' => $fcw->field_passive_account->getIdentifier(),
+        );
+      }
+    }
+  }
+
+  return $storage;
+}
+
+/**
+ * @return array
+ */
+function somi_api_get_somi_config($force = FALSE, $time = NULL) {
+  $storage = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($storage) || $force) {
+    if (!$time) $time = time();
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+    if ($force || $cp->changed > $time) {
+      $storage = [];
+      foreach ($cpw->field_currencies as $fcw) {
+        if ($fcw->value()) {
+
+          $raw_emoticon = preg_replace('/:/', '', $fcw->field_emoticon->value());
+
+          //default config.
+          $storage['config'][$raw_emoticon] = somi_get_default_currency_config_array_template();
+
+          // fill array according settings if it's not empty.
+          foreach ($fcw->field_cases_declensions as $fcdw) {
+            if ($case = $fcdw->field_case->value()) {
+              $case = $case->name;
+              if ($declension = $fcdw->field_1_declension->value()) {
+                $storage['config'][$raw_emoticon][$case][1] = $declension;
+              }
+              if ($declension = $fcdw->field_2_declension->value()) {
+                $storage['config'][$raw_emoticon][$case][2] = $declension;
+              }
+              if ($declension = $fcdw->field_3_declension->value()) {
+                $storage['config'][$raw_emoticon][$case][3] = $declension;
+              }
+            }
+          }
+
+          // fill array according settings if it's not empty.
+          foreach ($fcw->field_slack_op as $fsow) {
+            if (($op = $fsow->field_op_id->value()) && ($msg = $fsow->field_op_msg->value())) {
+              if ($case = $fsow->field_case->value()) {
+                $case = $case->name;
+                $storage['config'][$raw_emoticon][$op] = [
+                  'msg' => $msg,
+                  'case' => $case
+                ];
+
+                if ($alt = $fsow->field_op_alt->value()) {
+                  $storage['config'][$raw_emoticon][$op]['alt'] = $alt;
+                }
+              }
+              else {
+                $storage['config'][$raw_emoticon][$op] = $msg;
+              }
+            }
+          }
+        }
+      }
+
+      $storage['timestamp'] = $cp->changed;
+    }
+  }
+
+  return $storage;
+}
+
+/**
+ * @return array
+ */
 function somi_currencies_translations() {
-  return [
-    ':gem:' => [1 => 'кристалл', 2 => 'кристалла', 3 => 'кристаллов'],
-    ':beetle:' => [1 => 'жук', 2 => 'жука', 3 => 'жуков'],
-    ':drupal:' => [1 => 'друпликон', 2 => 'друпликона', 3 => 'друпликонов'],
-  ];
+  $storage = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($storage)) {
+    $storage = array();
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+    if ($nominative_case_tid = taxonomy_get_term_by_name('nominative', 'cases')) {
+      $nominative_case_tid = reset($nominative_case_tid)->tid;
+
+      foreach ($cpw->field_currencies as $fcw) {
+        if ($fcw->value() && $fcw->field_cases_declensions->value()) {
+          foreach ($fcw->field_cases_declensions as $fcdw) {
+            if ($fcdw->field_case->getIdentifier() == $nominative_case_tid) {
+              $storage[$fcw->field_emoticon->value()] = array(
+                1 => drupal_strtolower($fcdw->field_1_declension->value()),
+                2 => drupal_strtolower($fcdw->field_2_declension->value()),
+                3 => drupal_strtolower($fcdw->field_3_declension->value()),
+              );
+
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return $storage;
 }
 
 /**
@@ -502,4 +672,59 @@ function somi_get_board_account_data($currency_tid) {
   }
 
   return $storage[$currency_tid];
+}
+
+/**
+ * @param $role
+ * @return mixed
+ */
+function somi_get_role_account_month_limit($role) {
+  $month_limits = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($month_limits[$role])) {
+    $month_limits[$role] = 0;
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+      if ($cpw->field_limit->value()) {
+        switch ($role) {
+          case 'top':
+          case 'core':
+          case 'active':
+            $month_limits[$role] = $cpw->field_limit->{"field_{$role}_limit"}->value();
+            break;
+
+        default:
+          $month_limits['default'] = $month_limits[$role] = $cpw->field_limit->{"field_regular_limit"}->value();
+
+      }
+    }
+  }
+
+  return isset($month_limits[$role]) ? $month_limits[$role] : $month_limits['default'];
+}
+
+/**
+ * @return array
+ */
+function somi_get_cron_account_balance_tids() {
+  $cron_account_tids = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($cron_account_tids)) {
+    $cron_account_tids = array();
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+    if ($cpw->field_cron_accounts->value()) {
+      foreach ($cpw->field_cron_accounts as $caw) {
+        if ($account_tid = $caw->getIdentifier()) {
+          $cron_account_tids[$account_tid] = $account_tid;
+        }
+      }
+    }
+  }
+
+  return $cron_account_tids;
 }

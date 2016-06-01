@@ -1,18 +1,21 @@
 <?php
 
+require_once "somi.field.inc";
+require_once "somi.tools.inc";
+require_once 'somi.menu_position.inc';
+
 define('SOMI_MODULE_PATH', drupal_get_path('module', 'somi'));
 
-const SOMI_TOP_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 50;
-const SOMI_CORE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 30;
-const SOMI_ACTIVE_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 20;
-const SOMI_REGULAR_CRYSTALLS_PER_MONTH_DEBET_LIMIT = 10;
+define('SOMI_TOP_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('top'));
+define('SOMI_CORE_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('core'));
+define('SOMI_ACTIVE_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('active'));
+define('SOMI_REGULAR_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('regular'));
 
 const SOMI_WEB_REQUEST_RFID_TYPE_TID = 14;
 
 const SOMI_SERVER_IP = '95.172.148.149';
 const SOMI_SERVER_PORT = '36208';
 
-const SOMI_I20_CRYSTALLS_CURRENCY_TID = 8;
 const SOMI_BUGS_CURRENCY_TID = 12;
 const SOMI_I20_BUGS_CURRENCY_TID = 13;
 const SOMI_DRUPAL_CURRENCY_TID = 16;
@@ -23,9 +26,6 @@ const SOMI_VOCABULARY_CURRENCIES = 'currencies';
 
 const SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME = 'somi_transaction_failed_ops';
 
-require_once "somi.field.inc";
-require_once "somi.tools.inc";
-require_once 'somi.menu_position.inc';
 
 require_once DRUPAL_ROOT . '/sites/all/libraries/rabbitmq/vendor/autoload.php';
 
@@ -608,7 +608,7 @@ function somi_library() {
 function somi_init() {
   setlocale(LC_ALL, 'ru_RU.UTF-8', 'ru_RU.utf8');
 
-  if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q'])) {
+  if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q']) && empty(API_PLATFORM_DRUPAL)) {
     drupal_goto('/user');
   }
 
@@ -657,26 +657,32 @@ HTML;
  * Get restrictions for roles.
  */
 function somi_get_transaction_limit_settings($tid) {
-  $restrictions = [];
-  switch ($tid) {
-    case SOMI_I20_CRYSTALLS_CURRENCY_TID:
-      $restrictions = [];
-      break;
-    case SOMI_I20_BUGS_CURRENCY_TID:
-      $restrictions = [
-        'roles_mapping' => [
-          'top' => 3,
-          'core' => 3,
-          'active' => 2,
-          'authenticated user' => 1,
-        ],
-        'message' => 'Превышено максимальное колличество жуков для одной операции. Вы можете выдать за раз жуков не больше !qty.'
-      ];
-      break;
-    case SOMI_I20_DRUPAL_CURRENCY_TID:
-      $restrictions = [];
-      break;
+  $restrictions = &drupal_static(__FUNCTION__, NULL);
+
+  if (!isset($restrictions)) {
+    $restrictions = array();
+
+    $cp = config_pages_load_entity('somi_settings');
+    $cpw = entity_metadata_wrapper('config_pages', $cp);
+
+    foreach ($cpw->field_op_limit as $folw) {
+      if ($folw->value() && $folw->field_limit->value() && ($passive_account_tid = $folw->field_passive_account->getIdentifier())) {
+        $restrictions[$passive_account_tid] = [
+          'roles_mapping' => [
+            'top' => $folw->field_limit->field_top_limit->value(),
+            'core' => $folw->field_limit->field_core_limit->value(),
+            'active' => $folw->field_limit->field_active_limit->value(),
+            'authenticated user' => $folw->field_limit->field_regular_limit->value(),
+          ],
+          'message' => $folw->field_op_limit_msg->value(),
+        ];
+      }
+    }
   }
 
-  return $restrictions;
+  if (!empty($restrictions[$tid])) {
+    return $restrictions[$tid];
+  }
+
+  return [];
 }

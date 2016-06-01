@@ -38,6 +38,7 @@ if (API_PLATFORM == API_PLATFORM_DRUPAL) {
   restore_error_handler();
   restore_exception_handler();
   set_error_handler('api_error_handler');
+  chdir(DRUPAL_ROOT);
 }
 elseif (API_PLATFORM == 'BITRIX') {
   define('API_ROOT', $_SERVER['DOCUMENT_ROOT'] . '/api');
@@ -251,6 +252,9 @@ function api_drupal_execute_callback($callback_info, $args) {
     }
     // Reset module list.
     module_list(FALSE, TRUE, FALSE, $modules);
+
+    // Make sure all stream wrappers are registered after all enabled dependencies.
+    file_get_stream_wrappers();
 
     // Ensure the language variable is set, if not it might cause problems (e.g.
     // entity info).
@@ -607,9 +611,19 @@ function api_convert_result_item($item, $result, $key_name = '') {
 
     case 'array':
       $new_result = array();
-      foreach ($result as $result_item) {
-        $new_result[] = api_convert_result_item($item['items'], $result_item, $key_name);
+      if (!empty($item['associative'])) {
+        foreach ($result as $key => $result_item) {
+          $new_result[$key] = api_convert_result_item($item['items'], $result_item, $key_name);
+        }
+
+        $new_result = (object) $new_result;
       }
+      else {
+        foreach ($result as $result_item) {
+          $new_result[] = api_convert_result_item($item['items'], $result_item, $key_name);
+        }
+      }
+
       return $new_result;
 
     case 'string':

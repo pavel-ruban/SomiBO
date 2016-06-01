@@ -81,19 +81,16 @@ function api_methods() {
       'dependencies' => array(),
     ) + $base,
     'account/op/validate/post' => array(
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
       'callback' => 'api_account_op_validate_post',
-      'dependencies' => array(
-        'somi',
-        'votingapi',
-      ),
+    ) + $base,
+    'somi/config/get' => array(
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+      'callback' => 'api_somi_config_get',
     ) + $base,
     'user/account/balance/add/post' => array(
-      'callback' => 'api_user_account_balance_add_post',
-      'dependencies' => array(
-        'somi',
-        'taxonomy',
-        'votingapi',
-      ),
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+        'callback' => 'api_user_account_balance_add_post',
     ) + $base,
     'discussion/%id/messages/get' => array(
       'callback' => 'api_discussion_messages_get',
@@ -820,6 +817,25 @@ function api_users_get() {
   }
 
   return $response;
+}
+
+/**
+ * Get Drupal config.
+ */
+function api_somi_config_get() {
+  $data = api_request_data();
+
+  if (empty($data->config_timestamp)) {
+    return somi_api_get_somi_config(TRUE);
+  }
+  else {
+    if ($config = somi_api_get_somi_config(FALSE, $data->config_timestamp)) {
+      return $config;
+    }
+    else {
+      return ['status' => 'config is up to date'];
+    }
+  }
 }
 
 /**

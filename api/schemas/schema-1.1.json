@@ -157,6 +157,118 @@
       }
     }
   },
+  "somi/config/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "optional": true},
+        "timestamp": {"type": "string", "optional": true},
+        "config": {
+          "type": "array",
+          "associative": true,
+          "optional": true,
+          "items": {
+            "type": "object",
+            "optional": true,
+            "properties": {
+              "nominative": {
+                "type": "object",
+                "properties": {
+                  "1": {"type": "string"},
+                  "2": {"type": "string"},
+                  "3": {"type": "string"}
+                }
+              },
+              "prepositional": {
+                "type": "object",
+                "properties": {
+                  "1": {"type": "string"},
+                  "2": {"type": "string"},
+                  "3": {"type": "string"}
+                }
+              },
+              "accusative": {
+                "type": "object",
+                "properties": {
+                  "1": {"type": "string"},
+                  "2": {"type": "string"},
+                  "3": {"type": "string"}
+                }
+              },
+              "instrumental": {
+                "type": "object",
+                "properties": {
+                  "1": {"type": "string"},
+                  "2": {"type": "string"},
+                  "3": {"type": "string"}
+                }
+              },
+              "error_status": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "op_header": {"type": "string"},
+              "event_error": {"type": "string"},
+              "event_remind": {"type": "string"},
+              "event_private": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "event_owner": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "event_channel": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "alt": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "op_status": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "op_status_private": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "op_status_remind": {
+                "type": "object",
+                "properties": {
+                  "msg": {"type": "string"},
+                  "case": {"type": "string"}
+                }
+              },
+              "attach_balance_remind_title": {"type": "string"},
+              "attach_balance_private_title": {"type": "string"},
+              "attach_balance_owner_title": {"type": "string"},
+              "attach_balance_needed_title": {"type": "string"},
+              "op_color": {"type": "string"},
+              "op_remind": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  },
   "user/account/balance/add/post": {
     "type": "regular",
     "schema": {

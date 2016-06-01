@@ -565,7 +565,7 @@ function somi_feature_common_default_page_manager_pages() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
-  $page->name = 'somi_bugs_winner';
+  $page->name = 'somi_score_board';
   $page->task = 'page';
   $page->admin_title = 'Somi Bugs Winner';
   $page->admin_description = '';
@@ -592,9 +592,9 @@ function somi_feature_common_default_page_manager_pages() {
   $handler = new stdClass();
   $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
   $handler->api_version = 1;
-  $handler->name = 'page_somi_bugs_winner__panel';
+  $handler->name = 'page_somi_score_board__panel';
   $handler->task = 'page';
-  $handler->subtask = 'somi_bugs_winner';
+  $handler->subtask = 'somi_score_board';
   $handler->handler = 'panel_context';
   $handler->weight = 0;
   $handler->conf = array(
@@ -626,8 +626,8 @@ function somi_feature_common_default_page_manager_pages() {
     $pane = new stdClass();
     $pane->pid = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
     $pane->panel = 'middle';
-    $pane->type = 'somi_bugs_winner';
-    $pane->subtype = 'somi_bugs_winner';
+    $pane->type = 'somi_score_board';
+    $pane->subtype = 'somi_score_board';
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array();
@@ -646,7 +646,7 @@ function somi_feature_common_default_page_manager_pages() {
   $display->title_pane = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
-  $pages['somi_bugs_winner'] = $page;
+  $pages['somi_score_board'] = $page;
 
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */

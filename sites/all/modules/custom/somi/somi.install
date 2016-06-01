@@ -66,3 +66,11 @@ function somi_update_7004($context) {
 function somi_update_7005($context) {
   module_enable(['boolean_formatter']);
 }
+
+/**
+ * Enable modules.
+ * @param $context
+ */
+function somi_update_7006($context) {
+  module_enable(['config_pages', 'field_collection', 'field_group']);
+}

@@ -273,6 +273,15 @@ function somi_menu_position_rules() {
     array(
       // This gives opportunity to apply mask rule for several menu items.
       'menu_item_to_highlight' => array(
+        'admin/users',
+      ),
+      'page_mask' => array(
+        'admin/somi/score_board/*',
+      ),
+    ),
+    array(
+      // This gives opportunity to apply mask rule for several menu items.
+      'menu_item_to_highlight' => array(
         'admin/somi/chart',
       ),
       'page_mask' => array(

@@ -45,3 +45,8 @@ div.event-wrapper li div.field-name-field-color-picker {
 html body {
   overflow: hidden;
 }
+
+a.score-board {
+  margin: 10px 0 20px 0;
+  display: inline-block;
+}
