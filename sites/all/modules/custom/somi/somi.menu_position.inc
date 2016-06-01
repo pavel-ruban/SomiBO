@@ -276,7 +276,7 @@ function somi_menu_position_rules() {
         'admin/users',
       ),
       'page_mask' => array(
-        'admin/somi/score_board/*',
+        'admin/somi/score-board/*',
       ),
     ),
     array(
