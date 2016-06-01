@@ -565,92 +565,6 @@ function somi_feature_common_default_page_manager_pages() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
-  $page->name = 'somi_score_board';
-  $page->task = 'page';
-  $page->admin_title = 'Somi Bugs Winner';
-  $page->admin_description = '';
-  $page->path = 'admin/somi/bugs-winner';
-  $page->access = array(
-    'plugins' => array(
-      0 => array(
-        'name' => 'perm',
-        'settings' => array(
-          'perm' => 'access somi winner boards',
-        ),
-        'context' => 'logged-in-user',
-        'not' => FALSE,
-      ),
-    ),
-    'logic' => 'and',
-  );
-  $page->menu = array();
-  $page->arguments = array();
-  $page->conf = array(
-    'admin_paths' => FALSE,
-  );
-  $page->default_handlers = array();
-  $handler = new stdClass();
-  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
-  $handler->api_version = 1;
-  $handler->name = 'page_somi_score_board__panel';
-  $handler->task = 'page';
-  $handler->subtask = 'somi_score_board';
-  $handler->handler = 'panel_context';
-  $handler->weight = 0;
-  $handler->conf = array(
-    'title' => 'Somi Bugs Winner',
-    'no_blocks' => 1,
-    'pipeline' => 'standard',
-    'body_classes_to_remove' => '',
-    'body_classes_to_add' => '',
-    'css_id' => '',
-    'css' => '',
-    'contexts' => array(),
-    'relationships' => array(),
-    'name' => 'panel',
-  );
-  $display = new panels_display();
-  $display->layout = 'onecol';
-  $display->layout_settings = array();
-  $display->panel_settings = array(
-    'style_settings' => array(
-      'default' => NULL,
-      'middle' => NULL,
-    ),
-  );
-  $display->cache = array();
-  $display->title = 'Доска позора';
-  $display->uuid = '16b884d1-ed21-49be-bf44-0d2c65de1ccb';
-  $display->content = array();
-  $display->panels = array();
-    $pane = new stdClass();
-    $pane->pid = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
-    $pane->panel = 'middle';
-    $pane->type = 'somi_score_board';
-    $pane->subtype = 'somi_score_board';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array();
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 0;
-    $pane->locks = array();
-    $pane->uuid = '34206006-419b-4fd5-812f-5ac8b3ded1f8';
-    $display->content['new-34206006-419b-4fd5-812f-5ac8b3ded1f8'] = $pane;
-    $display->panels['middle'][0] = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
-  $display->hide_title = PANELS_TITLE_FIXED;
-  $display->title_pane = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
-  $handler->conf['display'] = $display;
-  $page->default_handlers[$handler->name] = $handler;
-  $pages['somi_score_board'] = $page;
-
-  $page = new stdClass();
-  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
-  $page->api_version = 1;
   $page->name = 'somi_charts';
   $page->task = 'page';
   $page->admin_title = 'Somi Charts';
@@ -793,7 +707,7 @@ function somi_feature_common_default_page_manager_pages() {
     ),
   );
   $display->cache = array();
-  $display->title = 'Доска почета';
+  $display->title = 'Доска награждений';
   $display->uuid = '2a308a35-be27-49e7-be9e-8ad12c45378f';
   $display->content = array();
   $display->panels = array();
@@ -898,6 +812,94 @@ function somi_feature_common_default_page_manager_pages() {
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
   $pages['somi_logs'] = $page;
+
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
+  $page->name = 'somi_score_board';
+  $page->task = 'page';
+  $page->admin_title = 'Somi Bugs Winner';
+  $page->admin_description = '';
+  $page->path = 'admin/somi/bugs-winner';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'perm',
+        'settings' => array(
+          'perm' => 'access somi winner boards',
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
+  );
+  $page->menu = array();
+  $page->arguments = array();
+  $page->conf = array(
+    'admin_paths' => FALSE,
+  );
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_somi_score_board__panel';
+  $handler->task = 'page';
+  $handler->subtask = 'somi_score_board';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Somi Bugs Winner',
+    'no_blocks' => 1,
+    'pipeline' => 'standard',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => 'panel',
+  );
+  $display = new panels_display();
+  $display->layout = 'onecol';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'middle' => NULL,
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'Доска позора';
+  $display->uuid = '16b884d1-ed21-49be-bf44-0d2c65de1ccb';
+  $display->content = array();
+  $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+    $pane->panel = 'middle';
+    $pane->type = 'somi_score_board';
+    $pane->subtype = 'somi_score_board';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array();
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '34206006-419b-4fd5-812f-5ac8b3ded1f8';
+    $display->content['new-34206006-419b-4fd5-812f-5ac8b3ded1f8'] = $pane;
+    $display->panels['middle'][0] = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = 'new-34206006-419b-4fd5-812f-5ac8b3ded1f8';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['somi_score_board'] = $page;
 
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */

@@ -95,22 +95,22 @@ function somi_month_reset_user_accounts_batch(&$context) {
       switch (TRUE) {
         case array_search('top', $roles) !== FALSE && user_has_role(array_search('top', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'top']);
-          $limit = SOMI_TOP_MONTH_ACCOUNT_BALANCE_LIMIT;
+          $limit = somi_get_role_account_month_limit('top');
           break;
 
         case array_search('core', $roles) !== FALSE && user_has_role(array_search('core', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'core']);
-          $limit = SOMI_CORE_MONTH_ACCOUNT_BALANCE_LIMIT;
+          $limit = somi_get_role_account_month_limit('core');
           break;
 
         case array_search('active', $roles) !== FALSE && user_has_role(array_search('active', $roles), $account):
           $message = t($msg . ' для роли :role', [':role' => 'active']);
-          $limit = SOMI_ACTIVE_MONTH_ACCOUNT_BALANCE_LIMIT;
+          $limit = somi_get_role_account_month_limit('active');
           break;
 
         default:
           $message = t($msg . ' для роли :role', [':role' => 'авторизованный пользователь']);
-          $limit = SOMI_REGULAR_MONTH_ACCOUNT_BALANCE_LIMIT;
+          $limit = somi_get_role_account_month_limit('regular');
           break;
       }
 

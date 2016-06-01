@@ -6,11 +6,6 @@ require_once 'somi.menu_position.inc';
 
 define('SOMI_MODULE_PATH', drupal_get_path('module', 'somi'));
 
-define('SOMI_TOP_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('top'));
-define('SOMI_CORE_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('core'));
-define('SOMI_ACTIVE_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('active'));
-define('SOMI_REGULAR_MONTH_ACCOUNT_BALANCE_LIMIT', somi_get_role_account_month_limit('regular'));
-
 const SOMI_WEB_REQUEST_RFID_TYPE_TID = 14;
 
 const SOMI_SERVER_IP = '95.172.148.149';
