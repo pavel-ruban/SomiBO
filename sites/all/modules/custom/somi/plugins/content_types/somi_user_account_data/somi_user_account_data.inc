@@ -112,7 +112,7 @@ function somi_user_account_data_content_type_render($subtype, $conf, $panel_args
 
       $currency_term = taxonomy_term_load($panel_args[1]);
 
-      $score_board_link = l('перейти на Score Board', 'admin/somi/score_board/' . $currency_term->tid, ['attributes' => ['class' => ['score-board']]]);
+      $score_board_link = l('перейти на Score Board', 'admin/somi/score-board/' . $currency_term->tid, ['attributes' => ['class' => ['score-board']]]);
 
       if ($currency_term->vocabulary_machine_name != SOMI_VOCABULARY_CURRENCIES) return;
 
