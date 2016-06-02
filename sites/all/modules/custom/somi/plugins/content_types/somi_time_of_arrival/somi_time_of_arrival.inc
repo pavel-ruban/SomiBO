@@ -39,7 +39,7 @@ function somi_time_of_arrival_content_type_form() {
     'sort_order' => [
       '#title' => 'Порядок',
       '#type' => 'select',
-      '#options' => ['ASC', 'DESC'],
+      '#options' => ['DESC', 'ASC'],
       '#default_value' => !empty($_GET['sort_order']) ? $_GET['sort_order'] : 0,
     ],
     'submit' => [
