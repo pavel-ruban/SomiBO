@@ -1449,7 +1449,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
           'width' => 15,
         ),
         'type' => 'color_field_swatch',
-        'weight' => 1,
+        'weight' => 0,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -1580,6 +1580,60 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
+  // Exported field_instance: 'taxonomy_term-departament-field_related_color'.
+  $field_instances['taxonomy_term-departament-field_related_color'] = array(
+    'bundle' => 'departament',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'entityreference',
+        'settings' => array(
+          'links' => 1,
+          'view_mode' => 'default',
+        ),
+        'type' => 'entityreference_entity_view',
+        'weight' => 0,
+      ),
+      'icon' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_related_color',
+    'label' => 'Color',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'references_dialog_add' => 1,
+        'references_dialog_edit' => 1,
+        'references_dialog_search' => 1,
+        'references_dialog_search_view' => '',
+        'size' => 255,
+      ),
+      'type' => 'entityreference_autocomplete',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'taxonomy_term-rfid_type-field_icon'.
   $field_instances['taxonomy_term-rfid_type-field_icon'] = array(
     'bundle' => 'rfid_type',
@@ -1704,6 +1758,53 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
+  // Exported field_instance: 'user-user-field_department'.
+  $field_instances['user-user-field_department'] = array(
+    'bundle' => 'user',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'entityreference',
+        'settings' => array(
+          'link' => FALSE,
+        ),
+        'type' => 'entityreference_label',
+        'weight' => 1,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_department',
+    'label' => 'Department',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => 1,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'references_dialog_add' => 1,
+        'references_dialog_edit' => 1,
+        'references_dialog_search' => 1,
+        'references_dialog_search_view' => '',
+        'size' => 255,
+      ),
+      'type' => 'entityreference_autocomplete',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'user-user-field_rfid_tags'.
   $field_instances['user-user-field_rfid_tags'] = array(
     'bundle' => 'user',
@@ -1745,7 +1846,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 7,
+      'weight' => 3,
     ),
   );
 
@@ -1759,6 +1860,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('CORE');
   t('Color');
   t('Comment');
+  t('Department');
   t('Icon');
   t('Image');
   t('REGULAR');

@@ -613,21 +613,187 @@ function somi_get_availability_data() {
 
   return $storage;
 }
+
+/**
+ * Get availability data.
+ * @throws \Exception
+ */
+function somi_get_time_of_arrival_data($department_tid = NULL) {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage)) {
+    if (!empty($department_tid)) {
+      $morning_limit = strtotime(date('d M y 05:00'));
+      $evening_limit = strtotime(date('Y-m-d 05:00:00') . ' + 1 day');
+
+      $query = <<<QUERY
+      SELECT l.* FROM log l
+      INNER JOIN users u ON l.uid = u.uid
+      INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+      INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+      WHERE u.status = 1 AND fd.field_department_target_id = $department_tid AND l.access >= $morning_limit AND l.access < $evening_limit
+      ORDER BY access ASC
+QUERY;
+    } else {
+      $query = "SELECT * FROM log WHERE access >= " . strtotime(date('d M y 05:00')) . " AND access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . " ORDER BY access ASC";
+    }
+
+    $availability_data = array();
+
+    $result = db_query($query)->fetchAllAssoc('access');
+
+    foreach ($result as $row) {
+      if (empty($availability_data[$row->uid]['access'])) {
+        $access = $row->access;
+
+        $availability_data[$row->uid] = array(
+          'uid' => $row->uid,
+          'name' => '',
+          'access' => $access,
+          'sort' => (int) $access,
+          'image_url' => '',
+          'image_class' => 'active',
+        );
+      }
+    }
+
+    uasort($availability_data, function ($a, $b) {
+      if ($a['access'] == $b['access']) {
+        return 0;
+      }
+
+      return $a['access'] > $b['access']
+        ? -1
+        : 1;
+    });
+
+
+    if (!empty($department_tid)) {
+      $query = <<<QUERY
+      SELECT * FROM users u
+      INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+      INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+      WHERE u.status = 1 AND fd.field_department_target_id = $department_tid
+QUERY;
+    } else {
+      $query = "select uid from users WHERE status = 1";
+    }
+    $uids = db_query($query)->fetchCol();
+    $users = user_load_multiple($uids);
+
+    foreach ($users as $uid => $account) {
+      if (!isset($availability_data[$account->uid])) {
+        $availability_data[$account->uid] = array(
+          'uid' => $account->uid,
+          'name' => $account->name,
+          'access' => 0,
+          'sort' => 0,
+          'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
+          'image_class' => 'grayscale',
+        );
+      }
+      else {
+        $availability_data[$account->uid]['image_url'] = "http://www.gravatar.com/avatar/" . md5($account->mail);
+        $availability_data[$account->uid]['name'] = $account->name;
+      }
+    }
+
+    foreach ($availability_data as $key => &$item) {
+      $class = $item['access'] ? 'active' : 'grayscale';
+
+      $item = [
+        'uid' => $item['uid'],
+        'info' => $item['access'] ? date('H:i:s', $item['access']) : '',
+        'class' => $class,
+        'l' => l(
+          theme('image', ['path' => $item['image_url'],
+            'attributes' => [
+              'title' => $item['name'] . ($item['access'] ? (PHP_EOL . date('H:i:s', $item['access'])) : ''),
+              'class' => [$class]
+            ]
+          ]),
+          '/admin/somi/chart/' . $item['uid'],
+          ['html' => TRUE]
+        )
+      ];
+    }
+
+    $storage = $availability_data;
+  }
+
+  return $storage;
+}
+
+/**
+ * Build departament filter links and sort them by scores of accounts summary.
+ *
+ * @param $path
+ * @param null $dep_scores
+ * @return array
+ */
+function somi_get_departaments_filter($path, $dep_scores = NULL) {
+  // Build departament filter links and sort them by scores of accounts summary.
+  $voc = taxonomy_vocabulary_machine_name_load('departament');
+  $departaments = taxonomy_get_tree($voc->vid);
+  $departaments_links = [];
+
+  array_walk($departaments, function($dep) use (&$departaments_links, $dep_scores, $path) {
+    $score = !empty($dep_scores[$dep->tid]) ? " ({$dep_scores[$dep->tid]})" : '';
+    $departaments_links[$dep->tid] = l($dep->name . $score, $path . '/' . $dep->tid);
+  });
+
+  uksort($departaments_links, function($a, $b) use ($dep_scores) {
+    if (!empty($dep_scores[$a]) && !empty($dep_scores[$b])) {
+      return $dep_scores[$a] > $dep_scores[$b] ? -1 : 1;
+    }
+    elseif (!empty($dep_scores[$a])) {
+      return -1;
+    }
+    elseif (!empty($dep_scores[$b])) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+  return array_merge([l(t('Все отделы'), $path)], $departaments_links);
+}
+
 /**
  * Get board accoutn data.
  * @throws \Exception
  */
-function somi_get_board_account_data($currency_tid) {
+function somi_get_board_account_data($currency_tid, $department_tid = 0, &$departament_scores = []) {
   $storage = &drupal_static(__FUNCTION__, array());
 
   if (!isset($storage[$currency_tid])) {
     $account_data = array();
 
-    $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
+    if (!empty($department_tid)) {
+      $query = <<<QUERY
+SELECT uid FROM users u
+INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+WHERE status = 1 AND fd.field_department_target_id = $department_tid;
+QUERY;
+      $uids = db_query($query)->fetchCol();
+    } else {
+      $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
+    }
+
     $users = user_load_multiple($uids);
 
     foreach ($users as $uid => $account) {
       $balance = somi_get_user_account_balance($account->uid, $currency_tid);
+
+      $uw = entity_metadata_wrapper('user', $account);
+      if ($dep = $uw->field_department->value()) {
+        if (!isset($departament_scores[$dep->tid])) {
+          $departament_scores[$dep->tid] = 0;
+        }
+
+        $departament_scores[$dep->tid] += $balance;
+      }
 
       $account_data[$account->uid] = array(
         'uid' => $account->uid,
@@ -727,4 +893,22 @@ function somi_get_cron_account_balance_tids() {
   }
 
   return $cron_account_tids;
+}
+
+/**
+ * @param $args
+ * @return null
+ */
+function somi_get_departament_tid_from_panel_args($args) {
+  foreach ($args as $arg) {
+    if (is_numeric($arg)) {
+      if ($department_term = taxonomy_term_load($arg)) {
+        if ($department_term->vocabulary_machine_name == 'departament') {
+          return $department_term->tid;
+        }
+      }
+    }
+  }
+
+  return NULL;
 }

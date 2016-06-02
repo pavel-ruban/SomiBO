@@ -46,6 +46,7 @@ function somi_feature_common_views_default_views() {
     'name_1' => 'name_1',
     'delete_term' => 'delete_term',
     'edit_term' => 'edit_term',
+    'field_related_color' => 'field_color_picker',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
@@ -98,6 +99,13 @@ function somi_feature_common_views_default_views() {
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
+    ),
+    'field_related_color' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
     ),
   );
   /* Field: Bulk operations: Taxonomy term */
@@ -258,6 +266,17 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['field'] = 'edit_term';
   $handler->display->display_options['fields']['edit_term']['label'] = 'Изменить';
   $handler->display->display_options['fields']['edit_term']['text'] = 'изменить';
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_related_color']['id'] = 'field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['table'] = 'field_data_field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['field'] = 'field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['label'] = '';
+  $handler->display->display_options['fields']['field_related_color']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_related_color']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_related_color']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Taxonomy term: Name */
@@ -324,6 +343,16 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['name']['link_to_taxonomy'] = TRUE;
+  /* Field: Field: Image */
+  $handler->display->display_options['fields']['field_image']['id'] = 'field_image';
+  $handler->display->display_options['fields']['field_image']['table'] = 'field_data_field_image';
+  $handler->display->display_options['fields']['field_image']['field'] = 'field_image';
+  $handler->display->display_options['fields']['field_image']['label'] = 'Изображение';
+  $handler->display->display_options['fields']['field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_image']['settings'] = array(
+    'image_style' => 'slack_thumb',
+    'image_link' => '',
+  );
   /* Field: Taxonomy vocabulary: Name */
   $handler->display->display_options['fields']['name_1']['id'] = 'name_1';
   $handler->display->display_options['fields']['name_1']['table'] = 'taxonomy_vocabulary';
@@ -394,6 +423,11 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['name']['link_to_taxonomy'] = TRUE;
+  /* Field: Taxonomy term: Term description */
+  $handler->display->display_options['fields']['description']['id'] = 'description';
+  $handler->display->display_options['fields']['description']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['fields']['description']['field'] = 'description';
+  $handler->display->display_options['fields']['description']['label'] = 'Описание';
   /* Field: Taxonomy vocabulary: Name */
   $handler->display->display_options['fields']['name_1']['id'] = 'name_1';
   $handler->display->display_options['fields']['name_1']['table'] = 'taxonomy_vocabulary';
@@ -436,6 +470,158 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['attach'] = array(
     0 => 'field_collection_item:field_case:field_cases_declensions',
     1 => 'field_collection_item:field_case:field_slack_op',
+  );
+
+  /* Display: Color Search */
+  $handler = $view->new_display('references_dialog', 'Color Search', 'references_dialog_3');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Цвета';
+  $handler->display->display_options['defaults']['access'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'perform manual account operations';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Taxonomy term: Term ID */
+  $handler->display->display_options['fields']['tid']['id'] = 'tid';
+  $handler->display->display_options['fields']['tid']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['fields']['tid']['field'] = 'tid';
+  $handler->display->display_options['fields']['tid']['label'] = 'ID';
+  $handler->display->display_options['fields']['tid']['separator'] = '';
+  /* Field: Taxonomy term: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['name']['link_to_taxonomy'] = TRUE;
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker']['id'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker']['settings'] = array(
+    'width' => '25',
+    'height' => '25',
+  );
+  /* Field: Taxonomy vocabulary: Name */
+  $handler->display->display_options['fields']['name_1']['id'] = 'name_1';
+  $handler->display->display_options['fields']['name_1']['table'] = 'taxonomy_vocabulary';
+  $handler->display->display_options['fields']['name_1']['field'] = 'name';
+  $handler->display->display_options['fields']['name_1']['label'] = 'Таксономия';
+  /* Field: Global: Reference button */
+  $handler->display->display_options['fields']['ref_dialog_button']['id'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['table'] = 'views';
+  $handler->display->display_options['fields']['ref_dialog_button']['field'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['label'] = 'Выбрать';
+  $handler->display->display_options['fields']['ref_dialog_button']['text'] = 'ok';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Taxonomy term: Name */
+  $handler->display->display_options['filters']['name']['id'] = 'name';
+  $handler->display->display_options['filters']['name']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['filters']['name']['field'] = 'name';
+  $handler->display->display_options['filters']['name']['operator'] = 'contains';
+  $handler->display->display_options['filters']['name']['group'] = 1;
+  $handler->display->display_options['filters']['name']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['name']['expose']['operator_id'] = 'name_op';
+  $handler->display->display_options['filters']['name']['expose']['label'] = 'Name';
+  $handler->display->display_options['filters']['name']['expose']['operator'] = 'name_op';
+  $handler->display->display_options['filters']['name']['expose']['identifier'] = 'name';
+  $handler->display->display_options['filters']['name']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    6 => 0,
+    5 => 0,
+    4 => 0,
+    3 => 0,
+  );
+  /* Filter criterion: Taxonomy term: Vocabulary */
+  $handler->display->display_options['filters']['vid']['id'] = 'vid';
+  $handler->display->display_options['filters']['vid']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['filters']['vid']['field'] = 'vid';
+  $handler->display->display_options['filters']['vid']['value'] = array(
+    3 => '3',
+  );
+  $handler->display->display_options['attach'] = array(
+    0 => 'taxonomy_term:field_related_color:departament',
+  );
+
+  /* Display: Department Search */
+  $handler = $view->new_display('references_dialog', 'Department Search', 'references_dialog_4');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Департаменты';
+  $handler->display->display_options['defaults']['access'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'perform manual account operations';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Taxonomy term: Term ID */
+  $handler->display->display_options['fields']['tid']['id'] = 'tid';
+  $handler->display->display_options['fields']['tid']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['fields']['tid']['field'] = 'tid';
+  $handler->display->display_options['fields']['tid']['label'] = 'ID';
+  $handler->display->display_options['fields']['tid']['separator'] = '';
+  /* Field: Taxonomy term: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['name']['link_to_taxonomy'] = TRUE;
+  /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_related_color']['id'] = 'field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['table'] = 'field_data_field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['field'] = 'field_related_color';
+  $handler->display->display_options['fields']['field_related_color']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_related_color']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
+  /* Field: Taxonomy vocabulary: Name */
+  $handler->display->display_options['fields']['name_1']['id'] = 'name_1';
+  $handler->display->display_options['fields']['name_1']['table'] = 'taxonomy_vocabulary';
+  $handler->display->display_options['fields']['name_1']['field'] = 'name';
+  $handler->display->display_options['fields']['name_1']['label'] = 'Таксономия';
+  /* Field: Global: Reference button */
+  $handler->display->display_options['fields']['ref_dialog_button']['id'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['table'] = 'views';
+  $handler->display->display_options['fields']['ref_dialog_button']['field'] = 'ref_dialog_button';
+  $handler->display->display_options['fields']['ref_dialog_button']['label'] = 'Выбрать';
+  $handler->display->display_options['fields']['ref_dialog_button']['text'] = 'ok';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Taxonomy term: Name */
+  $handler->display->display_options['filters']['name']['id'] = 'name';
+  $handler->display->display_options['filters']['name']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['filters']['name']['field'] = 'name';
+  $handler->display->display_options['filters']['name']['operator'] = 'contains';
+  $handler->display->display_options['filters']['name']['group'] = 1;
+  $handler->display->display_options['filters']['name']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['name']['expose']['operator_id'] = 'name_op';
+  $handler->display->display_options['filters']['name']['expose']['label'] = 'Name';
+  $handler->display->display_options['filters']['name']['expose']['operator'] = 'name_op';
+  $handler->display->display_options['filters']['name']['expose']['identifier'] = 'name';
+  $handler->display->display_options['filters']['name']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    6 => 0,
+    5 => 0,
+    4 => 0,
+    3 => 0,
+  );
+  /* Filter criterion: Taxonomy term: Vocabulary */
+  $handler->display->display_options['filters']['vid']['id'] = 'vid';
+  $handler->display->display_options['filters']['vid']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['filters']['vid']['field'] = 'vid';
+  $handler->display->display_options['filters']['vid']['value'] = array(
+    6 => '6',
+  );
+  $handler->display->display_options['attach'] = array(
+    0 => 'user:field_department:user',
   );
   $export['Taxonomies'] = $view;
 
@@ -939,6 +1125,7 @@ function somi_feature_common_views_default_views() {
     'gravatar_image' => 'gravatar_image',
     'name' => 'name',
     'mail' => 'mail',
+    'field_department' => 'field_department',
     'field_rfid_tags' => 'field_rfid_tags',
     'status' => 'status',
     'rid' => 'rid',
@@ -970,6 +1157,13 @@ function somi_feature_common_views_default_views() {
       'empty_column' => 1,
     ),
     'mail' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'field_department' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
@@ -1136,6 +1330,94 @@ function somi_feature_common_views_default_views() {
 
   /* Display: users */
   $handler = $view->new_display('page', 'users', 'users_admin');
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: User: Uid */
+  $handler->display->display_options['fields']['uid']['id'] = 'uid';
+  $handler->display->display_options['fields']['uid']['table'] = 'users';
+  $handler->display->display_options['fields']['uid']['field'] = 'uid';
+  /* Field: somi: Gravatar Image */
+  $handler->display->display_options['fields']['gravatar_image']['id'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['table'] = 'users';
+  $handler->display->display_options['fields']['gravatar_image']['field'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['label'] = 'Изображение';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['label'] = 'Имя';
+  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
+  /* Field: User: E-mail */
+  $handler->display->display_options['fields']['mail']['id'] = 'mail';
+  $handler->display->display_options['fields']['mail']['table'] = 'users';
+  $handler->display->display_options['fields']['mail']['field'] = 'mail';
+  $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
+  /* Field: User: Department */
+  $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
+  $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['label'] = 'Департамент';
+  $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_department']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
+  /* Field: User: rfid_tags */
+  $handler->display->display_options['fields']['field_rfid_tags']['id'] = 'field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['table'] = 'field_data_field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['field'] = 'field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['label'] = 'Устройства';
+  $handler->display->display_options['fields']['field_rfid_tags']['type'] = 'somi_devices';
+  $handler->display->display_options['fields']['field_rfid_tags']['settings'] = array(
+    'view_mode' => 'teaser',
+    'links' => 1,
+  );
+  $handler->display->display_options['fields']['field_rfid_tags']['delta_offset'] = '0';
+  /* Field: User: Active */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'users';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = 'Статус';
+  $handler->display->display_options['fields']['status']['type'] = 'unicode-yes-no';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: User: Roles */
+  $handler->display->display_options['fields']['rid']['id'] = 'rid';
+  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
+  $handler->display->display_options['fields']['rid']['field'] = 'rid';
+  $handler->display->display_options['fields']['rid']['label'] = 'Роль';
+  /* Field: User: Created date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'users';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = 'Дата создания';
+  $handler->display->display_options['fields']['created']['date_format'] = 'long';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
+  /* Field: User: Last login */
+  $handler->display->display_options['fields']['login']['id'] = 'login';
+  $handler->display->display_options['fields']['login']['table'] = 'users';
+  $handler->display->display_options['fields']['login']['field'] = 'login';
+  $handler->display->display_options['fields']['login']['label'] = 'Дата последнего посещения';
+  $handler->display->display_options['fields']['login']['date_format'] = 'long';
+  $handler->display->display_options['fields']['login']['second_date_format'] = 'long';
+  /* Field: User: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'users';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  /* Field: User: Activate link */
+  $handler->display->display_options['fields']['activate_user']['id'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['table'] = 'users';
+  $handler->display->display_options['fields']['activate_user']['field'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['label'] = 'Активировать';
+  $handler->display->display_options['fields']['activate_user']['text'] = 'активировать';
+  /* Field: User: Block link */
+  $handler->display->display_options['fields']['block_user']['id'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['table'] = 'users';
+  $handler->display->display_options['fields']['block_user']['field'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['label'] = 'Заблокировать';
+  $handler->display->display_options['fields']['block_user']['text'] = 'заблокировать';
   $handler->display->display_options['path'] = 'admin/users';
 
   /* Display: Crystalls */
@@ -1205,6 +1487,16 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['name']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['name']['link_to_user'] = FALSE;
+  /* Field: User: Department */
+  $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
+  $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['label'] = 'Департамент';
+  $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_department']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
   /* Field: User: Roles */
   $handler->display->display_options['fields']['rid']['id'] = 'rid';
   $handler->display->display_options['fields']['rid']['table'] = 'users_roles';

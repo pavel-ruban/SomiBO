@@ -312,6 +312,33 @@ function somi_menu_position_rules() {
     array(
       // This gives opportunity to apply mask rule for several menu items.
       'menu_item_to_highlight' => array(
+        'admin/somi/score-board/7',
+      ),
+      'page_mask' => array(
+        'admin/somi/score-board/7/*',
+      ),
+    ),
+    array(
+      // This gives opportunity to apply mask rule for several menu items.
+      'menu_item_to_highlight' => array(
+        'admin/somi/score-board/12',
+      ),
+      'page_mask' => array(
+        'admin/somi/score-board/12/*',
+      ),
+    ),
+    array(
+      // This gives opportunity to apply mask rule for several menu items.
+      'menu_item_to_highlight' => array(
+        'admin/somi/score-board/16',
+      ),
+      'page_mask' => array(
+        'admin/somi/score-board/16/*',
+      ),
+    ),
+    array(
+      // This gives opportunity to apply mask rule for several menu items.
+      'menu_item_to_highlight' => array(
         'admin/dashboard/car',
       ),
       'page_mask' => array(

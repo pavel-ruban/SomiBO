@@ -50,3 +50,12 @@ a.score-board {
   margin: 10px 0 20px 0;
   display: inline-block;
 }
+
+div.departament-filter li {
+ float: left;
+ margin: 8px;
+}
+
+div.departament-filter ul {
+  width: 150px;
+}

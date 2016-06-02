@@ -20,11 +20,13 @@ $plugin = array(
 function somi_score_board_content_type_render($subtype, $conf, $panel_args, $context) {
   $block = new stdClass();
   $block->content = '';
+  $department_tid = 0;
 
   if (!empty($panel_args[0]) && is_numeric($panel_args[0])) {
     if ($currency_term = taxonomy_term_load($panel_args[0])) {
       if ($currency_term->vocabulary_machine_name == 'currencies') {
-        $account_data = somi_get_board_account_data($currency_term->tid);
+        $account_data = somi_get_board_account_data($currency_term->tid, somi_get_departament_tid_from_panel_args($panel_args), $departament_scores);
+        $departaments_links = somi_get_departaments_filter('admin/somi/score-board/' . $currency_term->tid, $departament_scores);
 
         if (!empty($currency_term->field_board_name[LANGUAGE_NONE][0]['value'])) {
           $title = $currency_term->field_board_name[LANGUAGE_NONE][0]['value'];
@@ -33,7 +35,7 @@ function somi_score_board_content_type_render($subtype, $conf, $panel_args, $con
           $title = $currency_term->name;
         }
 
-        $block->content = theme('somi_board', array('data' => $account_data, 'title' => $title));
+        $block->content = theme('somi_board', array('data' => $account_data, 'title' => $title, 'departament_links' => $departaments_links));
       }
     }
   }
