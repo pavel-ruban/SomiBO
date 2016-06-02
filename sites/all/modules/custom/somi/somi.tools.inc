@@ -768,8 +768,8 @@ QUERY;
 
       $item = [
         'uid' => $item['uid'],
-        'info' => $item['access'] ? date('H:i:s', $item['access']) : '',
-        'sub_info' => $item['last_access'] ? date('H:i:s', $item['last_access']) : '',
+        'info' => $item['last_access'] ? date('H:i:s', $item['last_access']) : '',
+        'sub_info' => $item['access'] ? date('H:i:s', $item['access']) : '',
         'top_info' => str_pad($work_time->h, 2, '0', STR_PAD_LEFT) . ':' . str_pad($work_time->i, 2, '0', STR_PAD_LEFT),
         'class' => $class,
         'l' => l(
