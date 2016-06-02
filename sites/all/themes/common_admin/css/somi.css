@@ -79,9 +79,18 @@ div.departament-filter ul {
   clear: inherit;
 }
 
-.board-filter-form input[type="submit"],
+.board-filter-form .form-item.form-type-select.form-item-sort-order,
+.board-filter-form .form-item.form-type-radios.form-item-sort {
+  width: 101px;
+  margin-top: 10px;
+}
+
 .board-filter-form .form-item.form-type-date-popup {
   margin-top: 15px;
+}
+
+.board-filter-form input[type="submit"] {
+  margin-top: 5px;
 }
 
 .somi-board span.top-info {

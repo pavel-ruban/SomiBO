@@ -685,14 +685,47 @@ QUERY;
       }
     }
 
-    uasort($availability_data, function ($a, $b) {
-      if ($a['access'] == $b['access']) {
+    switch (TRUE) {
+      case empty($_GET['sort']):
+        $sort = 'access';
+        break;
+
+      case $_GET['sort'] == 1:
+        $sort = 'last_access';
+        break;
+
+      case $_GET['sort'] == 2:
+        $sort = 'average';
+        break;
+
+      default:
+        $sort = 'access';
+        break;
+    }
+
+    uasort($availability_data, function ($a, $b) use($sort) {
+      if ($sort == 'average') {
+        $ax = $a['last_access'] - $a['access'];
+        $bx = $b['last_access'] - $b['access'];
+      }
+      else {
+        $ax = $a[$sort];
+        $bx = $b[$sort];
+      }
+
+      if ($ax == $bx) {
         return 0;
       }
 
-      return $a['access'] > $b['access']
-        ? -1
-        : 1;
+      if (!empty($_GET['sort_order'])) {
+        return $ax > $bx
+          ? 1
+          : -1;
+      } else {
+        return $ax > $bx
+          ? -1
+          : 1;
+      }
     });
 
 

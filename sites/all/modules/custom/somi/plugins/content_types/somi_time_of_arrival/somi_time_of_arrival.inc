@@ -27,6 +27,21 @@ function somi_time_of_arrival_content_type_form() {
       '#date_year_range' => '-5:+5',
       '#default_value' => !empty($_GET['date']) ? $_GET['date']['date'] : '',
     ],
+    'sort' => [
+      '#title' => 'Сортировака',
+      '#type' => 'radios',
+      '#single' => TRUE,
+      '#options' => [
+        t('приход'), t('уход'), t('в офисе')
+      ],
+      '#default_value' => !empty($_GET['sort']) ? $_GET['sort'] : 0,
+    ],
+    'sort_order' => [
+      '#title' => 'Порядок',
+      '#type' => 'select',
+      '#options' => ['ASC', 'DESC'],
+      '#default_value' => !empty($_GET['sort_order']) ? $_GET['sort_order'] : 0,
+    ],
     'submit' => [
       '#type' => 'submit',
       '#value' => t('ok'),
