@@ -73,7 +73,7 @@ function somi_time_of_arrival_content_type_render($subtype, $conf, $panel_args, 
 
   $block->content = theme('somi_board', array(
     'title' => $title,
-    'class' => 'availability',
+    'class' => 'availability time-arrival',
     'data' => somi_get_time_of_arrival_data(somi_get_departament_tid_from_panel_args($panel_args)),
     'departament_links' => $departaments_links,
     'form' => $form

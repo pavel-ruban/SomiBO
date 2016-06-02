@@ -99,7 +99,20 @@ div.departament-filter ul {
   left: initial;
   bottom: initial;
 }
+
 .somi-board span.sub-info {
   bottom: 16px;
   left: 10px;
+}
+
+.somi-board span.time-arrival.board-counter {
+  color: #CDFBCE;
+}
+
+.somi-board span.time-arrival.sub-info {
+  color: #fffd9a;
+}
+
+.somi-board span.time-arrival.top-info {
+  color: #FFFFFF;
 }

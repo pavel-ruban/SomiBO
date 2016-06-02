@@ -768,9 +768,9 @@ QUERY;
 
       $item = [
         'uid' => $item['uid'],
-        'info' => $item['access'] ? '+ ' . date('H:i:s', $item['access']) : '',
-        'sub_info' => $item['last_access'] ? ' - ' . date('H:i:s', $item['last_access']) : '',
-        'top_info' => $work_time->h . ':' . $work_time->i . ':' . $work_time->s,
+        'info' => $item['access'] ? date('H:i:s', $item['access']) : '',
+        'sub_info' => $item['last_access'] ? date('H:i:s', $item['last_access']) : '',
+        'top_info' => str_pad($work_time->h, 2, '0', STR_PAD_LEFT) . ':' . str_pad($work_time->i, 2, '0', STR_PAD_LEFT),
         'class' => $class,
         'l' => l(
           theme('image', ['path' => $item['image_url'],
