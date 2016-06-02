@@ -602,7 +602,8 @@ function somi_get_availability_data() {
               'class' => [$class]
             ]
           ]),
-          '/admin/somi/chart/' . $item['uid'],
+          drupal_valid_path('/admin/somi/chart/' . $item['uid']) ? '/admin/somi/chart/' . $item['uid']
+            : 'admin/user/' . $item['uid'] . '/account',,
           ['html' => TRUE]
         )
       ];
@@ -779,7 +780,8 @@ QUERY;
               'class' => [$class]
             ]
           ]),
-          '/admin/somi/chart/' . $item['uid'],
+          drupal_valid_path('/admin/somi/chart/' . $item['uid']) ? '/admin/somi/chart/' . $item['uid']
+          : 'admin/user/' . $item['uid'] . '/account',
           ['html' => TRUE]
         )
       ];
