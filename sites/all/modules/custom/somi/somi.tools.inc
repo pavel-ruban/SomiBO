@@ -622,10 +622,16 @@ function somi_get_time_of_arrival_data($department_tid = NULL) {
   $storage = &drupal_static(__FUNCTION__);
 
   if (!isset($storage)) {
-    if (!empty($department_tid)) {
+    if (!empty($_GET['date']['date'])) {
+      $morning_limit = strtotime(date($_GET['date']['date'] . ' 05:00'));
+      $evening_limit = strtotime(date($_GET['date']['date'] . ' 05:00:00') . ' + 1 day');
+    }
+    else {
       $morning_limit = strtotime(date('d M y 05:00'));
       $evening_limit = strtotime(date('Y-m-d 05:00:00') . ' + 1 day');
+    }
 
+    if (!empty($department_tid)) {
       $query = <<<QUERY
       SELECT l.* FROM log l
       INNER JOIN users u ON l.uid = u.uid
@@ -635,7 +641,7 @@ function somi_get_time_of_arrival_data($department_tid = NULL) {
       ORDER BY access ASC
 QUERY;
     } else {
-      $query = "SELECT * FROM log WHERE access >= " . strtotime(date('d M y 05:00')) . " AND access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . " ORDER BY access ASC";
+      $query = "SELECT l.* FROM log l INNER JOIN users u ON l.uid = u.uid WHERE l.access >= $morning_limit AND l.access < $evening_limit ORDER BY l.access ASC";
     }
 
     $availability_data = array();
@@ -650,10 +656,32 @@ QUERY;
           'uid' => $row->uid,
           'name' => '',
           'access' => $access,
+          'last_access' => NULL,
           'sort' => (int) $access,
           'image_url' => '',
           'image_class' => 'active',
         );
+      }
+    }
+
+    if (!empty($department_tid)) {
+      $query = <<<QUERY
+      SELECT l.* FROM log l
+      INNER JOIN users u ON l.uid = u.uid
+      INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+      INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+      WHERE u.status = 1 AND fd.field_department_target_id = $department_tid AND l.access >= $morning_limit AND l.access < $evening_limit
+      ORDER BY access DESC
+QUERY;
+    } else {
+      $query = "SELECT l.* FROM log l INNER JOIN users u ON l.uid = u.uid WHERE l.access >= $morning_limit AND l.access < $evening_limit ORDER BY l.access DESC";
+    }
+
+    $result = db_query($query)->fetchAllAssoc('access');
+
+    foreach ($result as $row) {
+      if (isset($availability_data[$row->uid]) && empty($availability_data[$row->uid]['last_access'])) {
+        $availability_data[$row->uid]['last_access'] = $row->access;
       }
     }
 
@@ -687,6 +715,7 @@ QUERY;
           'uid' => $account->uid,
           'name' => $account->name,
           'access' => 0,
+          'last_access' => 0,
           'sort' => 0,
           'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
           'image_class' => 'grayscale',
@@ -701,9 +730,14 @@ QUERY;
     foreach ($availability_data as $key => &$item) {
       $class = $item['access'] ? 'active' : 'grayscale';
 
+      $in_date = new DateTime(date('Y-m-d H:i:s', $item['access']));
+      $work_time = $in_date->diff(new DateTime(date('Y-m-d H:i:s', $item['last_access'])));
+
       $item = [
         'uid' => $item['uid'],
-        'info' => $item['access'] ? date('H:i:s', $item['access']) : '',
+        'info' => $item['access'] ? '+ ' . date('H:i:s', $item['access']) : '',
+        'sub_info' => $item['last_access'] ? ' - ' . date('H:i:s', $item['last_access']) : '',
+        'top_info' => $work_time->h . ':' . $work_time->i . ':' . $work_time->s,
         'class' => $class,
         'l' => l(
           theme('image', ['path' => $item['image_url'],

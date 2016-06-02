@@ -15,22 +15,53 @@ $plugin = array(
 );
 
 /**
+ * @return mixed
+ */
+function somi_time_of_arrival_content_type_form() {
+  $form = [
+    '#method' => 'GET',
+    'date' => [
+      '#type' => 'date_popup',
+      '#id' => 'date-filter',
+      '#date_format' => 'Y-m-d',
+      '#date_year_range' => '-5:+5',
+      '#default_value' => !empty($_GET['date']) ? $_GET['date']['date'] : '',
+    ],
+    'submit' => [
+      '#type' => 'submit',
+      '#value' => t('ok'),
+    ]
+  ];
+
+  return $form;
+}
+
+/**
  * Output function for the content type.
  */
 function somi_time_of_arrival_content_type_render($subtype, $conf, $panel_args, $context) {
   $block = new stdClass();
   $block->content = '';
-  $title = "Время прихода сотрудников I20 на " . date('d.m.y', time()) . ", текущее время " . date('H:i:s', time());
+
+  if (!empty($_GET['date']['date'])) {
+    $title = "Время прихода сотрудников I20 на " . date('d.m.y', strtotime($_GET['date']['date']));
+  }
+  else {
+    $title = "Время прихода сотрудников I20 на " . date('d.m.y', time()) . ", текущее время " . date('H:i:s', time());
+  }
 
   drupal_add_css(SOMI_MODULE_PATH . '/theme/css/availability.css');
 
   $departaments_links = somi_get_departaments_filter('admin/somi/time-of-arrival');
 
+  $form = drupal_get_form('somi_time_of_arrival_content_type_form');
+
   $block->content = theme('somi_board', array(
     'title' => $title,
     'class' => 'availability',
     'data' => somi_get_time_of_arrival_data(somi_get_departament_tid_from_panel_args($panel_args)),
-    'departament_links' => $departaments_links
+    'departament_links' => $departaments_links,
+    'form' => $form
   ));
   return $block;
 }

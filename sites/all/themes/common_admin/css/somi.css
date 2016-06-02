@@ -59,3 +59,38 @@ div.departament-filter li {
 div.departament-filter ul {
   width: 150px;
 }
+
+.board-filter-form {
+  float: left;
+  clear: left;
+}
+
+.board-filter-form input[id^="date-filter-datepicker-popup"] {
+  width: 113px;
+}
+
+.board-filter-form div.form-item.form-type-date-popup.form-item-date,
+.board-filter-form div.form-item.form-type-textfield.form-item-date-date {
+  border: 0;
+  padding: 0;
+}
+
+.board-filter-form .container-inline-date {
+  clear: inherit;
+}
+
+.board-filter-form input[type="submit"],
+.board-filter-form .form-item.form-type-date-popup {
+  margin-top: 15px;
+}
+
+.somi-board span.top-info {
+  top: 5px;
+  right: 11px;
+  left: initial;
+  bottom: initial;
+}
+.somi-board span.sub-info {
+  bottom: 16px;
+  left: 10px;
+}

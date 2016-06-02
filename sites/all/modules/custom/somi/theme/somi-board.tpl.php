@@ -11,6 +11,11 @@
       </ul>
     </div>
   <?php endif; ?>
+  <?php if (!empty($form)): ?>
+    <div class="board-filter-form">
+      <?php echo drupal_render($form); ?>
+    </div>
+  <?php endif; ?>
   <table class="somi-board">
     <?php $i = 0; $tr_i = 1; ?>
     <?php foreach ($data as $v): ?>
@@ -19,6 +24,12 @@
       <?php endif; ?>
       <td id="<?php echo $v['uid']; ?>" class="<?php echo $v['class']; ?>">
         <span class="<?php echo !empty($class) ? $class . ' ' : ''; ?>board-counter"><?php echo $v['info']; ?></span>
+        <?php if (!empty($v['sub_info'])): ?>
+          <span class="sub-info <?php echo !empty($class) ? $class . ' ' : ''; ?>board-counter"><?php echo $v['sub_info']; ?></span>
+        <?php endif; ?>
+        <?php if (!empty($v['top_info'])): ?>
+          <span class="top-info <?php echo !empty($class) ? $class . ' ' : ''; ?>board-counter"><?php echo $v['top_info']; ?></span>
+        <?php endif; ?>
         <?php echo  $v['l']; ?>
       </td>
       <?php if ($i > 8): ?>
