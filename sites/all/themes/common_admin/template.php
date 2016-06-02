@@ -84,7 +84,7 @@ function common_admin_preprocess_page(&$vars) {
       'title' => t('Log out'),
     );
   }
-  
+
   $vars['user_name'] = $name;
   if (!user_access('administer site configuration') && in_array('page__admin__structure__taxonomy__tags', $vars['theme_hook_suggestions'], TRUE)) {
     $vars['primary_local_tasks'] = '';
@@ -98,7 +98,7 @@ function common_admin_preprocess_page(&$vars) {
       unset($admin_level_1['subject_array']);
       unset($admin_level_1['subject']);
 
-      if (user_is_logged_in()) {
+      if (user_is_logged_in() && !empty($admin_level_1['content']['#content'])) {
         foreach (element_children($admin_level_1['content']['#content']) as $key) {
           if (in_array($admin_level_1['content']['#content'][$key]['#title'], ['Войти', 'Восстановить пароль'])) {
             unset($admin_level_1['content']['#content'][$key]);
