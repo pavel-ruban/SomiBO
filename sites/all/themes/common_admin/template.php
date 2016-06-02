@@ -76,11 +76,15 @@ function common_admin_preprocess_page(&$vars) {
     'account' => array(
       'title' => t('Bonjour @name @role', array('@name' => $name, '@role' => $role_name)),
     ),
-    'logout' => array(
+  );
+
+  if (!empty($user->uid)) {
+    $vars['secondary_menu']['logout'] = array(
       'href' => 'user/logout',
       'title' => t('Log out'),
-    ),
-  );
+    );
+  }
+  
   $vars['user_name'] = $name;
   if (!user_access('administer site configuration') && in_array('page__admin__structure__taxonomy__tags', $vars['theme_hook_suggestions'], TRUE)) {
     $vars['primary_local_tasks'] = '';
