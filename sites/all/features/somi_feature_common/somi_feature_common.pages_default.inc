@@ -818,9 +818,9 @@ function somi_feature_common_default_page_manager_pages() {
   $page->api_version = 1;
   $page->name = 'somi_score_board';
   $page->task = 'page';
-  $page->admin_title = 'Somi Bugs Winner';
+  $page->admin_title = 'Somi Score Board';
   $page->admin_description = '';
-  $page->path = 'admin/somi/bugs-winner';
+  $page->path = 'admin/somi/score-board';
   $page->access = array(
     'plugins' => array(
       0 => array(
@@ -851,7 +851,7 @@ function somi_feature_common_default_page_manager_pages() {
   $handler->handler = 'panel_context';
   $handler->weight = 0;
   $handler->conf = array(
-    'title' => 'Somi Bugs Winner',
+    'title' => 'Somi Score Board',
     'no_blocks' => 1,
     'pipeline' => 'standard',
     'body_classes_to_remove' => '',
@@ -872,7 +872,7 @@ function somi_feature_common_default_page_manager_pages() {
     ),
   );
   $display->cache = array();
-  $display->title = 'Доска позора';
+  $display->title = 'Score Board';
   $display->uuid = '16b884d1-ed21-49be-bf44-0d2c65de1ccb';
   $display->content = array();
   $display->panels = array();
