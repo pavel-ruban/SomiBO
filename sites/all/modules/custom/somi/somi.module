@@ -603,7 +603,7 @@ function somi_library() {
 function somi_init() {
   setlocale(LC_ALL, 'ru_RU.UTF-8', 'ru_RU.utf8');
 
-  if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q']) && empty(API_PLATFORM_DRUPAL)) {
+  if (!drupal_is_cli() && user_is_anonymous() && !preg_match('/^user/', $_GET['q']) && !defined(API_PLATFORM_DRUPAL)) {
     drupal_goto('/user');
   }
 
