@@ -19,7 +19,7 @@ span#rfid-tracker {
   position: relative;
   margin-right: 31px;
   padding: 4px;
-  border: 1px black solid;
+  /*border: 1px black solid;*/
 }
 
 #somi-door-utils form {
@@ -40,10 +40,6 @@ div.event-wrapper li div.type-icon img {
 }
 div.event-wrapper li div.field-name-field-color-picker {
   display: inline-block;
-}
-
-html body {
-  overflow: hidden;
 }
 
 a.score-board {
@@ -115,4 +111,8 @@ div.departament-filter ul {
 
 .somi-board span.time-arrival.top-info {
   color: #FFFFFF;
+}
+
+.board-filter-form form {
+  margin-bottom: 15px;
 }

@@ -796,6 +796,50 @@ QUERY;
 }
 
 /**
+ * @return bool
+ */
+function somi_is_mobile_agent() {
+  $mobile_browser = '0';
+
+  if (preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|android)/i', strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_browser++;
+  }
+
+  if ((strpos(strtolower($_SERVER['HTTP_ACCEPT']),'application/vnd.wap.xhtml+xml') > 0) or ((isset($_SERVER['HTTP_X_WAP_PROFILE']) or isset($_SERVER['HTTP_PROFILE'])))) {
+    $mobile_browser++;
+  }
+
+  $mobile_ua = strtolower(substr($_SERVER['HTTP_USER_AGENT'], 0, 4));
+  $mobile_agents = array(
+    'w3c ','acs-','alav','alca','amoi','audi','avan','benq','bird','blac',
+    'blaz','brew','cell','cldc','cmd-','dang','doco','eric','hipt','inno',
+    'ipaq','java','jigs','kddi','keji','leno','lg-c','lg-d','lg-g','lge-',
+    'maui','maxo','midp','mits','mmef','mobi','mot-','moto','mwbp','nec-',
+    'newt','noki','oper','palm','pana','pant','phil','play','port','prox',
+    'qwap','sage','sams','sany','sch-','sec-','send','seri','sgh-','shar',
+    'sie-','siem','smal','smar','sony','sph-','symb','t-mo','teli','tim-',
+    'tosh','tsm-','upg1','upsi','vk-v','voda','wap-','wapa','wapi','wapp',
+    'wapr','webc','winw','winw','xda ','xda-');
+
+  if (in_array($mobile_ua,$mobile_agents)) {
+    $mobile_browser++;
+  }
+
+  if (!empty($_SERVER['ALL_HTTP']) && strpos(strtolower($_SERVER['ALL_HTTP']), 'OperaMini') > 0) {
+    $mobile_browser++;
+  }
+
+  if (strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'windows') > 0) {
+    $mobile_browser = 0;
+  }
+
+  if (preg_match('/iPad/i', $_SERVER['HTTP_USER_AGENT']) || $mobile_browser > 0) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
  * Build departament filter links and sort them by scores of accounts summary.
  *
  * @param $path
@@ -808,9 +852,13 @@ function somi_get_departaments_filter($path, $dep_scores = NULL) {
   $departaments = taxonomy_get_tree($voc->vid);
   $departaments_links = [];
 
-  array_walk($departaments, function($dep) use (&$departaments_links, $dep_scores, $path) {
+  $get = $_GET;
+  unset($get['q']);
+
+  array_walk($departaments, function($dep) use (&$departaments_links, $dep_scores, $path, $get) {
     $score = !empty($dep_scores[$dep->tid]) ? " ({$dep_scores[$dep->tid]})" : '';
-    $departaments_links[$dep->tid] = l($dep->name . $score, $path . '/' . $dep->tid);
+
+    $departaments_links[$dep->tid] = l($dep->name . $score, $path . '/' . $dep->tid, ['query' => $get]);
   });
 
   uksort($departaments_links, function($a, $b) use ($dep_scores) {
@@ -827,7 +875,7 @@ function somi_get_departaments_filter($path, $dep_scores = NULL) {
     return 0;
   });
 
-  return array_merge([l(t('Все отделы'), $path)], $departaments_links);
+  return array_merge([l(t('Все отделы'), $path, ['query' => $get])], $departaments_links);
 }
 
 /**

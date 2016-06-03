@@ -32,7 +32,7 @@
         <?php endif; ?>
         <?php echo  $v['l']; ?>
       </td>
-      <?php if ($i > 8): ?>
+      <?php if ($i > $row_limit): ?>
         <?php $i = 0; ?>
         </tr>
       <?php else: ?>
