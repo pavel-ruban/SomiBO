@@ -116,3 +116,7 @@ div.departament-filter ul {
 .board-filter-form form {
   margin-bottom: 15px;
 }
+
+.page-content .form-item .description {
+  left: -12px;
+}
