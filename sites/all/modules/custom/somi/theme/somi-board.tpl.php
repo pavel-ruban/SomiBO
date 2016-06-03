@@ -16,11 +16,26 @@
       <?php echo drupal_render($form); ?>
     </div>
   <?php endif; ?>
+  <?php $group = NULL; ?>
+  <?php $v = reset($data); ?>
+  <?php if (!empty($v['group'])): ?>
+    <h3 class="departament"><?php echo $v['group']; ?></h3>
+  <?php endif; ?>
   <table class="somi-board">
-    <?php $i = 0; $tr_i = 1; ?>
+    <?php $i = 0; $tr_i = 1; $table = 0; ?>
     <?php foreach ($data as $v): ?>
+      <?php if (!empty($v['group']) && $v['group'] != $group): ?>
+        <?php if (isset($group)): ?>
+          </table>
+          <h3 class="departament"><?php echo $v['group']; ?></h3>
+          <table class="somi-board">
+          <?php $i = 0; $tr_i = 1; ++$table; ?>
+        <?php endif; ?>
+        <?php $group = $v['group']; ?>
+      <?php endif; ?>
+
       <?php if ($i == 0): ?>
-        <tr id="tr-<?php echo $tr_i++; ?>">
+        <tr id="tr-<?php echo $tr_i++; ?><?php echo !empty($table) ? '-' . $table : ''; ?>">
       <?php endif; ?>
       <td id="<?php echo $v['uid']; ?>" class="<?php echo $v['class']; ?>">
         <span class="<?php echo !empty($class) ? $class . ' ' : ''; ?>board-counter"><?php echo $v['info']; ?></span>

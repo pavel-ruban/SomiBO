@@ -781,3 +781,7 @@ tbody td {
 div.color-swatch {
   border: 1px solid black;
 }
+
+h3.departament {
+  text-align: center;
+}

@@ -75,6 +75,7 @@ div.departament-filter ul {
 }
 
 .board-filter-form .form-item.form-type-select.form-item-sort-order,
+.board-filter-form .form-item.form-type-checkbox.form-item-group,
 .board-filter-form .form-item.form-type-radios.form-item-sort {
   width: 101px;
   margin-top: 10px;

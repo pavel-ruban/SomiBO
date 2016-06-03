@@ -658,6 +658,7 @@ QUERY;
           'uid' => $row->uid,
           'name' => '',
           'access' => $access,
+          'departament' => 0,
           'last_access' => NULL,
           'sort' => (int) $access,
           'image_url' => '',
@@ -750,6 +751,7 @@ QUERY;
           'uid' => $account->uid,
           'name' => $account->name,
           'access' => 0,
+          'departament' => 0,
           'last_access' => 0,
           'sort' => 0,
           'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
@@ -762,11 +764,33 @@ QUERY;
       }
     }
 
+    if (!empty($_GET['group'])) {
+      $availability_data_by_dep = [];
+      foreach ($availability_data as $uid => $item) {
+        $account = user_load($uid);
+        $aw = entity_metadata_wrapper('user', $account);
+
+        if ($department_tid = $aw->field_department->getIdentifier()) {
+          $availability_data_by_dep[$department_tid][$uid] = $item;
+          $availability_data_by_dep[$department_tid][$uid]['group'] = $aw->field_department->value()->name;
+        }
+      }
+
+      $availability_data = [];
+      foreach($availability_data_by_dep as $group) {
+        foreach ($group as $uid => $user_data) {
+          $availability_data[$uid] = $user_data;
+        }
+      }
+    }
+
     foreach ($availability_data as $key => &$item) {
       $class = $item['access'] ? 'active' : 'grayscale';
 
       $in_date = new DateTime(date('Y-m-d H:i:s', $item['access']));
       $work_time = $in_date->diff(new DateTime(date('Y-m-d H:i:s', $item['last_access'])));
+
+      $group = !empty($item['group']) ? $item['group'] : NULL;
 
       $item = [
         'uid' => $item['uid'],
@@ -787,6 +811,8 @@ QUERY;
           ['html' => TRUE]
         )
       ];
+
+      if ($group) $item['group'] = $group;
     }
 
     $storage = $availability_data;

@@ -36,6 +36,12 @@ function somi_time_of_arrival_content_type_form() {
       ],
       '#default_value' => !empty($_GET['sort']) ? $_GET['sort'] : 0,
     ],
+    'group' => [
+      '#title' => 'Группировка',
+      '#description' => 'По департаменту',
+      '#type' => 'checkbox',
+      '#default_value' => !empty($_GET['group']) ? $_GET['group'] : 0,
+    ],
     'sort_order' => [
       '#title' => 'Порядок',
       '#type' => 'select',
