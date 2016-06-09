@@ -35,3 +35,29 @@ body table td,
 body table th {
   border-color: #000000;
 }
+
+body table td img {
+  width: 63px;
+  height: 63px;
+}
+
+body table {
+  margin: 0 auto;
+}
+
+h1 {
+  display: none;
+}
+
+html body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+html body > div {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  padding-right: 17px;
+}

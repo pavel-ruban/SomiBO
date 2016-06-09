@@ -642,7 +642,7 @@ function somi_realtime_board_delivery_callback($content) {
     $scripts
   </head>
   <body>
-    $content;
+    $content
   </body>
 </html>
 HTML;
