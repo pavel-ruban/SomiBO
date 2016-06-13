@@ -382,6 +382,8 @@ function somi_api_get_somi_config($force = FALSE, $time = NULL) {
 
     $cp = config_pages_load_entity('somi_settings');
     $cpw = entity_metadata_wrapper('config_pages', $cp);
+    $vocabulary = taxonomy_vocabulary_machine_name_load('notification');
+    $notice_terms = taxonomy_term_load_multiple([], ['vid' => $vocabulary->vid]);
 
     if ($force || $cp->changed > $time) {
       $storage = [];
@@ -428,6 +430,17 @@ function somi_api_get_somi_config($force = FALSE, $time = NULL) {
               }
             }
           }
+        }
+      }
+
+      foreach ($notice_terms as $tid => $term) {
+        $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+        $storage['warnings'][$tid]['color'] = $term_wrapper->field_color->field_color_picker->rgb->value();
+        $storage['warnings'][$tid]['op_header'] = $term_wrapper->field_op_msg->value();
+        $storage['warnings'][$tid]['icon'] = str_replace('api/', '', file_create_url($term_wrapper->field_icon->value()['uri']));
+        $storage['warnings'][$tid]['react_on'] = $term_wrapper->field_react_on->value();
+        foreach ($term_wrapper->field_webhooks->value() as $webhook) {
+          $storage['warnings'][$tid]['webhooks'][] = $webhook->field_webhook_url[LANGUAGE_NONE][0]['value'];
         }
       }
 
