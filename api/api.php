@@ -102,6 +102,10 @@ function api_methods() {
         'field',
       ),
     ) + $base,
+    'create/history/post' => array(
+        'callback' => 'api_create_history',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+      ) + $base,
   );
 
   // @TODO: Remove dependency from campuz_export.
@@ -1079,4 +1083,68 @@ function api_user_account_balance_post() {
   }
 
   return $response;
+}
+
+/**
+ * Create history for message and send via webhooks.
+ */
+function api_create_history() {
+  $data = api_request_data();
+  $user = user_load_by_name($data->author_name);
+  $query_data = [
+    'tid' => $data->tid,
+    'uid' => $user->uid,
+    'message' => $data->message,
+    'date' => REQUEST_TIME
+  ];
+  drupal_write_record('notifications', $query_data);
+
+  // PHP apache doesn't able deal with pcntl functions, only CDG or CLI modes.
+  // so do it in the same process for web request access loging :'C.
+  if (function_exists('pcntl_fork')) {
+    $pid = pcntl_fork();
+
+    // Parent process should immediately response to hardware.
+    if ($pid === -1 || $pid > 0) {
+      return;
+    }
+
+    // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+    fclose(STDIN);
+    fclose(STDOUT);
+    fclose(STDERR);
+  }
+
+  // Child process continues HTTP Slack API invocation.
+  $slack_webhook_url = $data->webhooks;
+
+
+  $slack_payload = json_encode($data->options);
+
+  $params = http_build_query(['payload' => $slack_payload]);
+
+  // Send event to all listeners.
+  foreach ($slack_webhook_url as $webhook_url) {
+    $defaults = array(
+      CURLOPT_URL => $webhook_url,
+      CURLOPT_POST => TRUE,
+      CURLOPT_POSTFIELDS => $params,
+    );
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, $defaults);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-type: application/x-www-form-urlencoded',
+    ));
+
+    curl_exec($ch);
+    curl_close($ch);
+  }
+
+  if (function_exists('pcntl_fork')) {
+    exit;
+  }
 }
