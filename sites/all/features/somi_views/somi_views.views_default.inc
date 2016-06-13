@@ -82,7 +82,7 @@ function somi_views_views_default_views() {
   $handler->display->display_options['fields']['field_icon']['label'] = 'Иконка';
   $handler->display->display_options['fields']['field_icon']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_icon']['settings'] = array(
-    'image_style' => '',
+    'image_style' => 'thumbnail',
     'image_link' => '',
   );
   /* Filter criterion: User: Name */

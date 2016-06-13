@@ -224,6 +224,43 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
+  // Exported field_instance: 'config_pages-somi_settings-field_notifications'.
+  $field_instances['config_pages-somi_settings-field_notifications'] = array(
+    'bundle' => 'somi_settings',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'field_collection',
+        'settings' => array(
+          'add' => 'Add',
+          'delete' => 'Delete',
+          'description' => TRUE,
+          'edit' => 'Edit',
+          'view_mode' => 'full',
+        ),
+        'type' => 'field_collection_view',
+        'weight' => 4,
+      ),
+    ),
+    'entity_type' => 'config_pages',
+    'field_name' => 'field_notifications',
+    'label' => 'notifications',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'field_collection',
+      'settings' => array(),
+      'type' => 'field_collection_embed',
+      'weight' => 3,
+    ),
+  );
+
   // Exported field_instance: 'config_pages-somi_settings-field_op_limit'.
   $field_instances['config_pages-somi_settings-field_op_limit'] = array(
     'bundle' => 'somi_settings',
@@ -778,6 +815,76 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
       'settings' => array(),
       'type' => 'number',
       'weight' => 1,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_notifications-field_notifications_term'.
+  $field_instances['field_collection_item-field_notifications-field_notifications_term'] = array(
+    'bundle' => 'field_notifications',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_notifications_term',
+    'label' => 'Notifications term',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'taxonomy',
+      'settings' => array(
+        'autocomplete_path' => 'taxonomy/autocomplete',
+        'size' => 60,
+      ),
+      'type' => 'taxonomy_autocomplete',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_notifications-field_react_on'.
+  $field_instances['field_collection_item-field_notifications-field_react_on'] = array(
+    'bundle' => 'field_notifications',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_react_on',
+    'label' => 'React on',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 2,
     ),
   );
 
@@ -1818,52 +1925,6 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-notification-field_react_on'.
-  $field_instances['taxonomy_term-notification-field_react_on'] = array(
-    'bundle' => 'notification',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 3,
-      ),
-      'icon' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'taxonomy_term',
-    'field_name' => 'field_react_on',
-    'label' => 'React on',
-    'required' => 0,
-    'settings' => array(
-      'text_processing' => 0,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'size' => 60,
-      ),
-      'type' => 'text_textfield',
-      'weight' => 1,
-    ),
-  );
-
   // Exported field_instance: 'taxonomy_term-notification-field_webhooks'.
   $field_instances['taxonomy_term-notification-field_webhooks'] = array(
     'bundle' => 'notification',
@@ -2143,6 +2204,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('Header message');
   t('Icon');
   t('Image');
+  t('Notifications term');
   t('REGULAR');
   t('React on');
   t('Slack Op');
@@ -2154,6 +2216,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('active account');
   t('currencies');
   t('emoticon');
+  t('notifications');
   t('op_alt');
   t('op_id');
   t('op_msg');
