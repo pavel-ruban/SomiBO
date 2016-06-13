@@ -549,6 +549,54 @@ function somi_feature_vocabularies_content_types_field_default_field_bases() {
     'type' => 'field_collection',
   );
 
+  // Exported field_base: 'field_notifications'.
+  $field_bases['field_notifications'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_notifications',
+    'indexes' => array(
+      'revision_id' => array(
+        0 => 'revision_id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'field_collection',
+    'settings' => array(
+      'hide_blank_items' => 1,
+      'path' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'field_collection',
+  );
+
+  // Exported field_base: 'field_notifications_term'.
+  $field_bases['field_notifications_term'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_notifications_term',
+    'indexes' => array(
+      'tid' => array(
+        0 => 'tid',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'taxonomy',
+    'settings' => array(
+      'allowed_values' => array(
+        0 => array(
+          'vocabulary' => 'notification',
+          'parent' => 0,
+        ),
+      ),
+    ),
+    'translatable' => 0,
+    'type' => 'taxonomy_term_reference',
+  );
+
   // Exported field_base: 'field_op_alt'.
   $field_bases['field_op_alt'] = array(
     'active' => 1,
@@ -693,7 +741,7 @@ function somi_feature_vocabularies_content_types_field_default_field_bases() {
   // Exported field_base: 'field_react_on'.
   $field_bases['field_react_on'] = array(
     'active' => 1,
-    'cardinality' => 1,
+    'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_react_on',
