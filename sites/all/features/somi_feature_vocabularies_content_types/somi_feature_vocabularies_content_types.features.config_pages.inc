@@ -1473,35 +1473,6 @@ function somi_feature_vocabularies_content_types_config_pages_default_data() {
         ),
       ),
     ),
-    'field_collection_item:field_notifications' => array(
-      0 => array(
-        'field_react_on' => array(
-          'und' => array(
-            0 => array(
-              'value' => 'first',
-              'format' => NULL,
-              'safe_value' => 'first',
-            ),
-            1 => array(
-              'value' => 'second',
-              'format' => NULL,
-              'safe_value' => 'second',
-            ),
-          ),
-        ),
-      ),
-      1 => array(
-        'field_react_on' => array(
-          'und' => array(
-            0 => array(
-              'value' => 'second',
-              'format' => NULL,
-              'safe_value' => 'second',
-            ),
-          ),
-        ),
-      ),
-    ),
     'field_collection_item:field_op_limit' => array(
       0 => array(
         'field_collection_item:field_limit' => array(
