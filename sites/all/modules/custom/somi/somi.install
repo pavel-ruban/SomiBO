@@ -74,8 +74,7 @@ function somi_schema_alter(&$schema) {
   );
   $schema['log']['fields']['node_id'] = array(
     'description' => 'RFID PCM (node) ID.',
-    'type' => 'serial',
-    'unsigned' => TRUE,
+    'type' => 'int',
     'not null' => TRUE,
     'default' => 0,
   );
