@@ -143,9 +143,13 @@ function somi_update_7007($context) {
  */
 function somi_update_7008($context) {
   if(db_table_exists('log')) {
-    $spec = array();
-    somi_schema_alter($spec);
+    $spec = array(
+      'description' => 'RFID PCM (node) ID.',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+    );
 
-    db_add_field('log', 'node_id', ['log']['fields']['node_id']);
+    db_add_field('log', 'node_id', $spec);
   }
 }
