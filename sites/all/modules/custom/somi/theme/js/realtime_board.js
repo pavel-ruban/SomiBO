@@ -74,6 +74,18 @@ var SOMI = SOMI || {};
     }
   }
 
+  var now = new Date();
+  // Set function execute at 05 am. To reload the page.
+  var secsToDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0) - now;
+  if (secsToDate < 0) {
+    secsToDate += 86400000; // if it's after 05am, try 10am tomorrow.
+  }
+
+  // Reload page to clear previous date data.
+  setTimeout(function(){
+    window.location.reload(false);
+  }, secsToDate);
+
   // Получить полноценный tcp туннель для работы в обе стороны, протокол websocket.
   var socket = io.connect('http://95.172.148.149:8080');
   //var socket = io.connect('http://127.0.0.1:8080');
