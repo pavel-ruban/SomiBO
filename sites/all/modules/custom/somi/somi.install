@@ -138,3 +138,15 @@ function somi_update_7007($context) {
     drupal_install_schema('somi');
   }
 }
+/**
+ * Create notification table.
+ * @param $context
+ */
+function somi_update_7008($context) {
+  if(db_table_exists('log')) {
+    $spec = array();
+    somi_schema_alter($spec);
+
+    db_add_field('log', 'node_id', ['log']['fields']['node_id']);
+  }
+}
