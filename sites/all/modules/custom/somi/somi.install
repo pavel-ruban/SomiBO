@@ -72,6 +72,13 @@ function somi_schema_alter(&$schema) {
     'default' => '',
     'description' => 'Message contains vote details',
   );
+  $schema['log']['fields']['node_id'] = array(
+    'description' => 'RFID PCM (node) ID.',
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  );
 }
 
 /**

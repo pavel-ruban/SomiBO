@@ -35,7 +35,7 @@ function somi_log_event($context, $access) {
     $query = db_query("select * from log WHERE uid = '{$context['uid']}' AND access >= $log_fq_limit;");
 
     if (!$query->rowCount()) {
-      db_query("insert into log (id, uid, access) values('{$context['rfid']}', '{$context['uid']}', {$context['time']});");
+      db_query("insert into log (id, uid, access, node_id) values('{$context['rfid']}', '{$context['uid']}', {$context['time']}, {$context['rfid_node']});");
     }
   }
   catch (Exception $e) {
@@ -144,7 +144,7 @@ function somi_month_reset_user_accounts_batch(&$context) {
 /**
  * A command callback.
  */
-function drush_somi_manager($id = NULL) {
+function drush_somi_manager($id = NULL, $rfid_node) {
   $time = time();
 
   // If no path is provided by the user, set our default path.
@@ -171,6 +171,7 @@ function drush_somi_manager($id = NULL) {
       $context = array(
         'uid' => $account->uid,
         'rfid' => $rfid->nid,
+        'rfid_node' => $rfid_node,
         'name' => $account->name,
         'time' => $time,
         'mail' => $account->mail,
