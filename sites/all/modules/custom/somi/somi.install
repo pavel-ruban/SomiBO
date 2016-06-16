@@ -14,6 +14,53 @@ function somi_install() {
 }
 
 /**
+ * Create table for notifications.
+ */
+function somi_schema() {
+  $schema['notifications'] = array(
+    'description' => 'The base table for notifications.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a notification.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'tid' => array(
+        'description' => 'The tid of the notification term.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'The author of the message',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'message' => array(
+        'description' => 'Message which is sent from slack.',
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'date' => array(
+        'description' => 'When message was posted',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'unique keys' => array(
+      'id' => array('id'),
+    ),
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
+
+/**
  * @param $schema
  */
 function somi_schema_alter(&$schema) {
@@ -73,4 +120,14 @@ function somi_update_7005($context) {
  */
 function somi_update_7006($context) {
   module_enable(['config_pages', 'field_collection', 'field_group']);
+}
+
+/**
+ * Create notification table.
+ * @param $context
+ */
+function somi_update_7007($context) {
+  if(!db_table_exists('notifications')) {
+    drupal_install_schema('somi');
+  }
 }

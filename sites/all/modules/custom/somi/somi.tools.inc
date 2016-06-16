@@ -431,6 +431,21 @@ function somi_api_get_somi_config($force = FALSE, $time = NULL) {
         }
       }
 
+      foreach ($cpw->field_notifications->value() as $notification) {
+        $term = taxonomy_term_load($notification->field_notifications_term[LANGUAGE_NONE][0]['tid']);
+        $tid = $term->tid;
+        $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+        $storage['warnings'][$tid]['color'] = $term_wrapper->field_color->field_color_picker->rgb->value();
+        $storage['warnings'][$tid]['op_header'] = $term_wrapper->field_op_msg->value();
+        $storage['warnings'][$tid]['icon'] = str_replace('api/', '', file_create_url($term_wrapper->field_icon->value()['uri']));
+        foreach ($notification->field_react_on[LANGUAGE_NONE] as $react) {
+          $storage['warnings'][$tid]['react_on'][] = $react['value'];
+        }
+        foreach ($term_wrapper->field_webhooks->value() as $webhook) {
+          $storage['warnings'][$tid]['webhooks'][] = $webhook->field_webhook_url[LANGUAGE_NONE][0]['value'];
+        }
+      }
+
       $storage['timestamp'] = $cp->changed;
     }
   }

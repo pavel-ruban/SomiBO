@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Somi views feature.
+ */
+
+include_once 'somi_views.features.inc';

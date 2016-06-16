@@ -265,6 +265,36 @@
               "op_remind": {"type": "string"}
             }
           }
+        },
+        "warnings": {
+          "type": "array",
+          "associative": true,
+          "optional": true,
+          "items": {
+            "type": "object",
+            "optional": true,
+            "properties": {
+              "color": {"type": "string"},
+              "op_header": {"type": "string"},
+              "icon": {"type": "string"},
+              "react_on": {
+                "type": "array",
+                "associative": true,
+                "optional": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "webhooks": {
+                "type": "array",
+                "associative": true,
+                "optional": true,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     }
