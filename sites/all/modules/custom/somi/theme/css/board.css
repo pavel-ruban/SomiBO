@@ -152,7 +152,7 @@ ul.menu *,
   font-weight: bold;
 }
 
-a#open-door
+a.open-node
 {
   position: absolute;
   right: 3%;

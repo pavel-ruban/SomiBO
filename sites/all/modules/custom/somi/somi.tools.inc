@@ -43,12 +43,19 @@ function event_list_user_link($event) {
     ? ("<img class=\"avatar\" src=\"http://www.gravatar.com/avatar/" . md5($event['mail']) . "\" />")
     : "<img src=\"http://www.gravatar.com/avatar\" />";
 
-  $link = sprintf('%s<div class="wrapper"><div>%s</div><div><span>uid</span>: %s | <span class="time">%s</span></div><div><span>card</span>: "%s"</div><div class="type-icon"><span>type</span>: %s <span>color</span>: %s</div></div>',
+  $node = "ресепшен";
+  $rfid_node = somi_get_rfid_pcd_node_by_id($event['rfid_node']);
+  if (!empty($rfid_node->title)) {
+    $node = $rfid_node->title;
+  }
+
+  $link = sprintf('%s<div class="wrapper"><div>%s</div><div><span>uid</span>: %s | <span class="time">%s</span></div><div><span>card</span>: "%s" <span>node</span>: "%s"</div><div class="type-icon"><span>type</span>: %s <span>color</span>: %s</div></div>',
     l($img, '/admin/somi/chart/' . $event['uid'], ['html' => TRUE]),
     "{$event['name']}",
     $event['uid'],
     date('H:i:s d.m.y', $event['time']),
     $event['card'],
+    $node,
     $device_type,
     $device_color
   );
@@ -1071,4 +1078,20 @@ function somi_get_departament_tid_from_panel_args($args) {
   }
 
   return NULL;
+}
+
+function somi_get_rfid_pcd_node_by_id($id) {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'node');
+  $query->fieldCondition('field_rfid_node_id', 'value', $id, '=')
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if (isset($result['node'])) {
+    return $result['node'];
+  }
+
+  return FALSE;
 }

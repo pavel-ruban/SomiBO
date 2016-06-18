@@ -71,6 +71,7 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
         'uid' => $account->uid,
         'time' => $row->access,
         'card' => $rfid->title,
+        'rfid_node' => $row->node_id,
         'name' => $account->name,
         'mail' => $account->mail,
       );

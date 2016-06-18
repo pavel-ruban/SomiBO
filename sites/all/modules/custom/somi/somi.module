@@ -8,7 +8,8 @@ define('SOMI_MODULE_PATH', drupal_get_path('module', 'somi'));
 
 const SOMI_WEB_REQUEST_RFID_TYPE_TID = 14;
 
-const SOMI_SERVER_IP = '95.172.148.149';
+const SOMI_SERVER_HOST = 'somibo.qajedi.ru';
+const SOMI_SERVER_IP = '195.211.7.205';
 const SOMI_SERVER_PORT = '36208';
 
 const SOMI_BUGS_CURRENCY_TID = 12;
@@ -50,9 +51,10 @@ function somi_menu() {
     'file' => 'somi.pages.inc',
   );
 
-  $items['open-door'] = array(
+  $items['open-node'] = array(
     'title' => t('Somi open door'),
-    'page callback' => 'somi_open_door',
+    'page callback' => 'somi_open_node',
+    'page arguments' => [1],
     'access arguments' => array('manage somi door'),
     'file' => 'somi.pages.inc',
   );

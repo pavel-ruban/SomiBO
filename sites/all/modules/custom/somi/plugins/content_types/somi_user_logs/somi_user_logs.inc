@@ -96,6 +96,7 @@ function somi_user_logs_content_type_render($subtype, $conf, $panel_args, $conte
       $events_data[] = array(
         'uid' => $uid,
         'time' => $row->access,
+        'rfid_node' => $row->node_id,
         'card' => $d->title,
         'name' => $account->name,
         'mail' => $account->mail,

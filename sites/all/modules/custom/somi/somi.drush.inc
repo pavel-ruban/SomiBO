@@ -171,7 +171,7 @@ function drush_somi_manager($id = NULL, $rfid_node) {
       $context = array(
         'uid' => $account->uid,
         'rfid' => $rfid->nid,
-        'rfid_node' => $rfid_node,
+        'rfid_node' => hexdec($rfid_node),
         'name' => $account->name,
         'time' => $time,
         'mail' => $account->mail,
@@ -225,6 +225,11 @@ function somi_slack_webhook_trigger($id, $context, $status) {
   $color = $status ? '' : '"color": "danger",';
   $status_msg = $status ? 'доступ разрешен' : 'доступ запрещен';
   $node = "ресепшен";
+  $rfid_node = somi_get_rfid_pcd_node_by_id($context['rfid_node']);
+  if (!empty($rfid_node->title)) {
+    $node = $rfid_node->title;
+  }
+
   $event = "запрос доступа";
   $rfid_tag = $context['card'];
   $time = date('H:i:s d.m', $context['time']);

@@ -40,11 +40,11 @@ function somi_taxonomy_add_page($check = FALSE) {
 /**
  * Opens Somi Door.
  */
-function somi_open_door() {
+function somi_open_node($node_id) {
   global $user;
-  $server_ip   = SOMI_SERVER_IP;
+  $server_ip   = gethostbyname(SOMI_SERVER_HOST);;
   $server_port = SOMI_SERVER_PORT;
-  $message     = 'command: admin open';
+  $message     = "command: admin open $node_id";
 
   ob_clean();
 

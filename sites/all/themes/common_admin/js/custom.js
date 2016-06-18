@@ -24,10 +24,10 @@
     }
   }
 
-  function open_door()
+  function open_node(node_id)
   {
     $.ajax({
-      url: "/open-door",
+      url: "/open-node/" + node_id,
       success: door_status
     });
   }
@@ -81,10 +81,11 @@
         });
       });
 
-      $('a#somi-open-door').once('open-door', function () {
-        $(this).click(function (e) {
+      $('a.somi-open-node').once('open-node', function () {
+        $this = $(this);
+        $this.click(function (e) {
           e.preventDefault();
-          open_door();
+          open_node($this.attr('node-id'));
           return false;
         });
       });
