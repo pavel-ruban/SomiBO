@@ -44,7 +44,17 @@ function somi_open_node($node_id) {
   global $user;
   $server_ip   = gethostbyname(SOMI_SERVER_HOST);;
   $server_port = SOMI_SERVER_PORT;
-  $message     = "command: admin open $node_id";
+
+  // @todo make dynamic node_id open.
+  switch ($node_id) {
+    case 255:
+      $message = "command: admin academ open $node_id";
+      break;
+
+    default:
+      $message = "command: admin open $node_id";
+      break;
+  }
 
   ob_clean();
 
