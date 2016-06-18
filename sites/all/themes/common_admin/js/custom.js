@@ -7,10 +7,10 @@
 
   }
 
-  function door_status(data)
+  function node_status(data, $this)
   {
     if (data && data.status) {
-      $tracker = $('#somi-door-utils a');
+      $tracker = $this;
       var old_data = $tracker.text();
 
       var color;
@@ -20,15 +20,15 @@
         color = 'rgb(248, 255, 204)';
       }
       $tracker.css('background-color', color).text(data.status);
-      setTimeout(default_door_status, 1000, $tracker, 'Open Door');
+      setTimeout(default_door_status, 1000, $tracker, old_data);
     }
   }
 
-  function open_node(node_id)
+  function open_node(node_id, $this)
   {
     $.ajax({
       url: "/open-node/" + node_id,
-      success: door_status
+      success: function(data) { node_status(datam, $this)}
     });
   }
 
@@ -85,7 +85,7 @@
         $this = $(this);
         $this.click(function (e) {
           e.preventDefault();
-          open_node($this.attr('node-id'));
+          open_node($this.attr('node-id'), $this);
           return false;
         });
       });
