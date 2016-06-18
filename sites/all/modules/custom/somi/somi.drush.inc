@@ -167,11 +167,13 @@ function drush_somi_manager($id = NULL, $rfid_node) {
       echo "denied";
     }
 
+    $rfid_node = hexdec($rfid_node);
+    watchdog(WATCHDOG_DEBUG, "card:$id node:$rfid_node");
     if ($account && $rfid) {
       $context = array(
         'uid' => $account->uid,
         'rfid' => $rfid->nid,
-        'rfid_node' => hexdec($rfid_node),
+        'rfid_node' => $rfid_node,
         'name' => $account->name,
         'time' => $time,
         'mail' => $account->mail,
