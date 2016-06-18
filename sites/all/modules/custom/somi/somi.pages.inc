@@ -61,6 +61,7 @@ function somi_open_node($node_id) {
     $context = array(
       'uid' => $user->uid,
       'rfid' => $rfid->nid,
+      'rfid_node' => 0,
       'name' => $user->name,
       'time' => time(),
       'mail' => $user->mail,
