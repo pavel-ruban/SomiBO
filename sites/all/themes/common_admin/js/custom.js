@@ -28,7 +28,7 @@
   {
     $.ajax({
       url: "/open-node/" + node_id,
-      success: function(data) { node_status(datam, $this)}
+      success: function(data) { node_status(data, $this)}
     });
   }
 
