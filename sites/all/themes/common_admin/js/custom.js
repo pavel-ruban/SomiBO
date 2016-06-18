@@ -81,12 +81,14 @@
         });
       });
 
-      $('a.somi-open-node').once('open-node', function () {
-        $this = $(this);
-        $this.click(function (e) {
-          e.preventDefault();
-          open_node($this.attr('node-id'), $this);
-          return false;
+      $('a.somi-open-node').each(function(i, v) {
+        $(v).once('open-node', function () {
+          $this = $(this);
+          $this.click(function (e) {
+            e.preventDefault();
+            open_node($this.attr('node-id'), $this);
+            return false;
+          });
         });
       });
     }
