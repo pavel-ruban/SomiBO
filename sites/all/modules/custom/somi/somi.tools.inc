@@ -1090,7 +1090,7 @@ function somi_get_rfid_pcd_node_by_id($id) {
   $result = $query->execute();
 
   if (isset($result['node'])) {
-    return $result['node'];
+    return node_load(reset($result['node'])->nid);
   }
 
   return FALSE;
