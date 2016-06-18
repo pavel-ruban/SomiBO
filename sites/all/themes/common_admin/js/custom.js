@@ -83,11 +83,10 @@
 
       $('a.somi-open-node').each(function(i, v) {
         $(v).once('open-node', function () {
-          $this = $(this);
+          var $this = $(this);
           $this.click(function (e) {
-            $current_node_link = $this;
             e.preventDefault();
-            open_node($this.attr('node-id'), $current_node_link);
+            open_node($this.attr('node-id'), $this);
             return false;
           });
         });
