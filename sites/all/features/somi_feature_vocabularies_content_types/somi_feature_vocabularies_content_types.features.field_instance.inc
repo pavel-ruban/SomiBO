@@ -1184,6 +1184,102 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
+  // Exported field_instance: 'node-node-body'.
+  $field_instances['node-node-body'] = array(
+    'bundle' => 'node',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+      'icon' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 600,
+        ),
+        'type' => 'text_summary_or_trimmed',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'body',
+    'label' => 'Body',
+    'required' => FALSE,
+    'settings' => array(
+      'display_summary' => TRUE,
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 20,
+        'summary_rows' => 5,
+      ),
+      'type' => 'text_textarea_with_summary',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance: 'node-node-field_rfid_node_id'.
+  $field_instances['node-node-field_rfid_node_id'] = array(
+    'bundle' => 'node',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Идентификатор PCD который устройство сообщает серверу при считывании карты или другого устройства',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 1,
+      ),
+      'icon' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_rfid_node_id',
+    'label' => 'Rfid ID',
+    'required' => 1,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 255,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'node-rfid_tag-body'.
   $field_instances['node-rfid_tag-body'] = array(
     'bundle' => 'rfid_tag',
@@ -1500,6 +1596,59 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
+      'weight' => 2,
+    ),
+  );
+
+  // Exported field_instance: 'node-rfid_tag-field_rfid_nodes'.
+  $field_instances['node-rfid_tag-field_rfid_nodes'] = array(
+    'bundle' => 'rfid_tag',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Позволяет устройству пользвотаться тем или иным узлом',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'entityreference',
+        'settings' => array(
+          'link' => FALSE,
+        ),
+        'type' => 'entityreference_label',
+        'weight' => 6,
+      ),
+      'icon' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_rfid_nodes',
+    'label' => 'Узлы',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'references_dialog_add' => 1,
+        'references_dialog_edit' => 1,
+        'references_dialog_search' => 1,
+        'references_dialog_search_view' => '',
+        'size' => 255,
+      ),
+      'type' => 'entityreference_autocomplete',
       'weight' => 3,
     ),
   );
@@ -1555,7 +1704,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 2,
+      'weight' => 1,
     ),
   );
 
@@ -2197,6 +2346,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('3 склонение');
   t('ACTIVE');
   t('Board Name');
+  t('Body');
   t('CORE');
   t('Color');
   t('Comment');
@@ -2207,6 +2357,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('Notifications term');
   t('REGULAR');
   t('React on');
+  t('Rfid ID');
   t('Slack Op');
   t('TOP');
   t('Type');
@@ -2225,18 +2376,21 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('Выводит сообщение об ошибке в слак, токет !qty');
   t('Выводится на доске наличия (score board)');
   t('Дата выдачи устройства');
+  t('Идентификатор PCD который устройство сообщает серверу при считывании карты или другого устройства');
   t('Лимит');
   t('Лимит Операции');
   t('Падеж');
   t('Падежи и склонения');
   t('Пассивный счет');
   t('Пассивный счет, с этого счета списываются активы пользователя при совершении им операций например в Слаке, он не может распоряжаться этим счетом (покупать с него что-то), кроме случаев когда пассивный счет одновременно является активным. Но может переводить или награждать с этого счета других пользователей в слаке (пример - друпликоны, админ имеет на пассивном счете 1000 друпликонов, на аукционе он не может покупать за них что-то, но может нагрждать других пользоваталей в слаке, т.е. переводить со своего пассивного счета на другие активные счета других пользователей)');
+  t('Позволяет устройству пользвотаться тем или иным узлом');
   t('Связывает emoticon (:gem:) с активным счетом, с помощью которого пользователь может совершать операции кредита (покупать что-либо, с него списываются средства).
 
 В слаке по этому emoticon\'у начисляются на этот счет активы и списываются с пассивных счетов людей который наградали\\перевели средства указанному пользователю на активный счет');
   t('Собственность i20');
   t('Сообщение');
   t('Счета');
+  t('Узлы');
   t('Эти счета будут обновляться кронов каждый месяц 1го числа согласно установленным лимитам');
   t('Это поле используется пока только для op "event_channel" позволяет задавать альтернативное сообщение (в этом op\'е оно используется для двух случаев когда награждается 1 человек и 2ой случай когда награждается 2 или более лиц)');
   t('Это счет с которого происходит списание, каждому реципиенту нельзя будет переводить больше чем сумма указанная в соответствующей роли.');

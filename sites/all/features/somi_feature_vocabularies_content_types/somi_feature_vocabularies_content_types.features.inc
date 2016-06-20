@@ -52,6 +52,14 @@ function somi_feature_vocabularies_content_types_node_info() {
       'title_label' => t('Title'),
       'help' => '',
     ),
+    'node' => array(
+      'name' => t('Узел'),
+      'base' => 'node_content',
+      'description' => t('Это smartoffice PCD (база, которая считывает RFID устройства)'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'help' => '',
+    ),
     'page' => array(
       'name' => t('Basic page'),
       'base' => 'node_content',

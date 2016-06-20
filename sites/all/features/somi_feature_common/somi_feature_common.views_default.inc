@@ -741,7 +741,7 @@ function somi_feature_common_views_default_views() {
       'empty_column' => 1,
     ),
   );
-  /* Relationship: Content: Color (field_color) */
+  /* Relationship: Field: Color (field_color) */
   $handler->display->display_options['relationships']['field_color_tid']['id'] = 'field_color_tid';
   $handler->display->display_options['relationships']['field_color_tid']['table'] = 'field_data_field_color';
   $handler->display->display_options['relationships']['field_color_tid']['field'] = 'field_color_tid';
@@ -886,7 +886,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['filters']['field_type_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_type_tid']['vocabulary'] = 'rfid_type';
   $handler->display->display_options['filters']['field_type_tid']['hierarchy'] = 1;
-  /* Filter criterion: Content: Color (field_color) */
+  /* Filter criterion: Field: Color (field_color) */
   $handler->display->display_options['filters']['field_color_tid']['id'] = 'field_color_tid';
   $handler->display->display_options['filters']['field_color_tid']['table'] = 'field_data_field_color';
   $handler->display->display_options['filters']['field_color_tid']['field'] = 'field_color_tid';
