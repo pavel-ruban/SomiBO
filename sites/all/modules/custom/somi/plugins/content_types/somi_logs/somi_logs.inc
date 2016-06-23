@@ -25,7 +25,7 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
   $chart_data = array();
   $events_data = array();
 
-  $result = db_query("select * from log ORDER BY access DESC;")->fetchAllAssoc('access');
+  $result = db_query("select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 ORDER BY l.access DESC;")->fetchAllAssoc('access');
 
   $event_ids = array();
   $event_rfids = array();
@@ -63,7 +63,7 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
     return ($a['access_count'] < $b['access_count']) ? 1 : -1;
   });
 
-  $result = db_query("select * from log ORDER BY access DESC LIMIT 60;")->fetchAllAssoc('access');
+  $result = db_query("select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 ORDER BY l.access DESC LIMIT 60;")->fetchAllAssoc('access');
 
   foreach ($result as $row) {
     if (($account = $users[$row->uid]) && ($rfid = $rfids[$row->id])) {

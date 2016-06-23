@@ -554,7 +554,7 @@ function somi_get_availability_data() {
   $storage = &drupal_static(__FUNCTION__);
 
   if (!isset($storage)) {
-    $query = "select * from log WHERE access >= " . strtotime(date('d M y 05:00')) . " AND access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . ";";
+    $query = "select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 AND l.access >= " . strtotime(date('d M y 05:00')) . " AND l.access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . ";";
 
     $availability_data = array();
 
