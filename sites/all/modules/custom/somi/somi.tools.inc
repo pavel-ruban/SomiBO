@@ -1022,8 +1022,15 @@ function somi_get_departaments_filter($path, $dep_scores = NULL) {
   });
 
   uksort($departaments_links, function($a, $b) use ($dep_scores) {
+    if (!empty($_GET['sort_order'])) {
+      $x = 1; $y = -1;
+    }
+    else {
+      $x = -1; $y = 1;
+    }
+    
     if (!empty($dep_scores[$a]) && !empty($dep_scores[$b])) {
-      return $dep_scores[$a] > $dep_scores[$b] ? -1 : 1;
+      return $dep_scores[$a] > $dep_scores[$b] ? $x : $y;
     }
     elseif (!empty($dep_scores[$a])) {
       return -1;
