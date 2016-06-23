@@ -793,3 +793,7 @@ div.form-item.form-type-radios.form-item-groupby {
 div.form-item.form-type-select.form-item-sort-order select {
   width: 100%;
 }
+
+div.board-tables {
+  margin-left: 135px;
+}

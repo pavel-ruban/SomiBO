@@ -18,6 +18,7 @@
   <?php endif; ?>
   <?php $group = NULL; ?>
   <?php $v = reset($data); ?>
+  <div class="board-tables">
   <?php if (!empty($v['group'])): ?>
     <h3 class="board-group"><?php echo $v['group']; ?></h3>
   <?php endif; ?>
@@ -58,4 +59,5 @@
       </tr>
     <?php endif; ?>
   </table>
+  </div>
 </div>
