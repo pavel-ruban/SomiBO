@@ -19,7 +19,7 @@
   <?php $group = NULL; ?>
   <?php $v = reset($data); ?>
   <?php if (!empty($v['group'])): ?>
-    <h3 class="departament"><?php echo $v['group']; ?></h3>
+    <h3 class="board-group"><?php echo $v['group']; ?></h3>
   <?php endif; ?>
   <table class="somi-board">
     <?php $i = 0; $tr_i = 1; $table = 0; ?>
@@ -27,7 +27,7 @@
       <?php if (!empty($v['group']) && $v['group'] != $group): ?>
         <?php if (isset($group)): ?>
           </table>
-          <h3 class="departament"><?php echo $v['group']; ?></h3>
+          <h3 class="board-group"><?php echo $v['group']; ?></h3>
           <table class="somi-board">
           <?php $i = 0; $tr_i = 1; ++$table; ?>
         <?php endif; ?>

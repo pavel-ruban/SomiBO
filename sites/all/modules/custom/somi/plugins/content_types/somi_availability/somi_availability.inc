@@ -24,10 +24,15 @@ function somi_availability_content_type_render($subtype, $conf, $panel_args, $co
 
   drupal_add_css(SOMI_MODULE_PATH . '/theme/css/availability.css');
 
+  $departaments_links = somi_get_departaments_filter('admin/somi/availability');
+
+  $form = drupal_get_form('somi_group_order_board_form');
   $block->content = theme('somi_board', array(
     'title' => $title,
     'class' => 'availability',
-    'data' => somi_get_availability_data()
+    'data' => somi_get_availability_data(somi_get_departament_tid_from_panel_args($panel_args)),
+    'form' => $form,
+    'departament_links' => $departaments_links
   ));
   return $block;
 }

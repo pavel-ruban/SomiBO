@@ -39,7 +39,7 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
   $rfids = node_load_multiple($event_rfids);
 
   foreach ($result as $row) {
-    if (!empty($users[$row->uid])) {
+    if (!empty($users[$row->uid]) && !empty($rfids[$row->id])) {
       if (!isset($chart_data[$row->uid])) {
         $chart_data[$row->uid] = array(
           'uid' => $row->uid,
@@ -66,11 +66,12 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
   $result = db_query("select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 ORDER BY l.access DESC LIMIT 60;")->fetchAllAssoc('access');
 
   foreach ($result as $row) {
-    if (($account = $users[$row->uid]) && ($rfid = $rfids[$row->id])) {
-      $events_data[] = array(
+    if (($account = $users[$row->uid]) && !empty($rfids[$row->id])) {
+      $events_data[$account->uid] = array(
         'uid' => $account->uid,
         'time' => $row->access,
-        'card' => $rfid->title,
+        'id' => $row->id,
+        'card' => $rfids[$row->id]->title,
         'rfid_node' => $row->node_id,
         'name' => $account->name,
         'mail' => $account->mail,

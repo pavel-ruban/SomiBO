@@ -25,7 +25,7 @@ function somi_time_of_arrival_content_type_form() {
       '#id' => 'date-filter',
       '#date_format' => 'Y-m-d',
       '#date_year_range' => '-5:+5',
-      '#default_value' => !empty($_GET['date']) ? $_GET['date']['date'] : '',
+      '#default_value' => !empty($_GET['date']) ? $_GET['date']['date'] : date('Y-m-d'),
     ],
     'sort' => [
       '#title' => 'Сортировака',
@@ -36,11 +36,13 @@ function somi_time_of_arrival_content_type_form() {
       ],
       '#default_value' => !empty($_GET['sort']) ? $_GET['sort'] : 0,
     ],
-    'group' => [
+    'groupby' => [
       '#title' => 'Группировка',
       '#description' => 'По департаменту',
-      '#type' => 'checkbox',
-      '#default_value' => !empty($_GET['group']) ? $_GET['group'] : 0,
+      '#single' => TRUE,
+      '#type' => 'radios',
+      '#options' => ['отсутствует', 'департамен', 'нода'],
+      '#default_value' => !empty($_GET['groupby']) ? $_GET['groupby'] : 0,
     ],
     'sort_order' => [
       '#title' => 'Порядок',

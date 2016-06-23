@@ -550,11 +550,25 @@ function somi_set_additional_submit_callback(&$form, $name, $first = FALSE) {
  * Get availability data.
  * @throws \Exception
  */
-function somi_get_availability_data() {
+function somi_get_availability_data($department_tid = NULL) {
   $storage = &drupal_static(__FUNCTION__);
 
   if (!isset($storage)) {
-    $query = "select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 AND l.access >= " . strtotime(date('d M y 05:00')) . " AND l.access <" . strtotime(date('Y-m-d 05:00:00') . ' + 1 day') . ";";
+    $start_date = strtotime(date('d M y 05:00'));
+    $end_date = strtotime(date('Y-m-d 05:00:00') . ' + 1 day');
+
+    if (!empty($department_tid)) {
+      $query = <<<QUERY
+      SELECT l.* FROM log l
+      INNER JOIN users u ON l.uid = u.uid
+      INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+      INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+      WHERE u.status = 1 AND fd.field_department_target_id = $department_tid AND l.access >= $start_date AND l.access < $end_date
+      ORDER BY access ASC
+QUERY;
+    } else {
+      $query = "select l.* from log l INNER JOIN users u ON u.uid = l.uid WHERE u.status = 1 AND l.access >= " . $start_date . " AND l.access <" . $end_date . ";";
+    }
 
     $availability_data = array();
 
@@ -573,6 +587,7 @@ function somi_get_availability_data() {
       $availability_data[$row->uid] = array(
         'uid' => $row->uid,
         'name' => '',
+        'node_id' => $row->node_id,
         'access' => $access,
         'sort' => (int) $access,
         'image_url' => '',
@@ -580,17 +595,38 @@ function somi_get_availability_data() {
       );
     }
 
-    uasort($availability_data, function ($a, $b) {
+    $get = $_GET;
+
+    uasort($availability_data, function ($a, $b) use($get) {
       if ($a['access'] == $b['access']) {
         return 0;
       }
 
-      return $a['access'] > $b['access']
-        ? -1
-        : 1;
+      if (!empty($get['sort_order'])) {
+        return $a['access'] > $b['access']
+          ? 1
+          : -1;
+      }
+      else {
+        return $a['access'] > $b['access']
+          ? -1
+          : 1;
+      }
     });
 
-    $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
+
+    if (!empty($department_tid)) {
+      $query = <<<QUERY
+      SELECT uid FROM users u
+      INNER JOIN field_data_field_department fd ON fd.entity_id = u.uid AND fd.bundle = 'user' AND fd.deleted = 0
+      INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
+      WHERE u.status = 1 AND fd.field_department_target_id = $department_tid
+QUERY;
+    } else {
+      $query = 'select uid from users WHERE status = 1';
+    }
+
+    $uids = db_query($query)->fetchCol();
     $users = user_load_multiple($uids);
 
     foreach ($users as $uid => $account) {
@@ -610,8 +646,56 @@ function somi_get_availability_data() {
       }
     }
 
+
+    if (!empty($_GET['groupby'])) {
+      switch ($_GET['groupby']) {
+        case 1:
+          $availability_data_by_dep = [];
+          foreach ($availability_data as $uid => $item) {
+            $account = user_load($uid);
+            $aw = entity_metadata_wrapper('user', $account);
+
+            if ($department_tid = $aw->field_department->getIdentifier()) {
+              $availability_data_by_dep[$department_tid][$uid] = $item;
+              $availability_data_by_dep[$department_tid][$uid]['group'] = $aw->field_department->value()->name;
+            }
+          }
+
+          $availability_data = [];
+          foreach($availability_data_by_dep as $group) {
+            foreach ($group as $uid => $user_data) {
+              $availability_data[$uid] = $user_data;
+            }
+          }
+          break;
+
+        case 2;
+          $availability_data_by_node = [];
+          foreach ($availability_data as $uid => $item) {
+            if (isset($item['node_id'])) {
+              $availability_data_by_node[$item['node_id']][$uid] = $item;
+              $availability_data_by_node[$item['node_id']][$uid]['group'] = somi_get_rfid_pcd_node_by_id($item['node_id'])->title;
+            }
+            else {
+              $availability_data_by_node['misc'][$uid] = $item;
+              $availability_data_by_node['misc'][$uid]['group'] = 'misc';
+            }
+          }
+
+          $availability_data = [];
+          foreach($availability_data_by_node as $group) {
+            foreach ($group as $uid => $user_data) {
+              $availability_data[$uid] = $user_data;
+            }
+          }
+          break;
+      }
+    }
+
     foreach ($availability_data as $key => &$item) {
       $class = $item['access'] ? 'active' : 'grayscale';
+
+      $group = !empty($item['group']) ? $item['group'] : NULL;
 
       $item = [
         'uid' => $item['uid'],
@@ -630,6 +714,8 @@ function somi_get_availability_data() {
           ['html' => TRUE]
         )
       ];
+
+      if ($group) $item['group'] = $group;
     }
 
     $storage = $availability_data;
@@ -707,6 +793,7 @@ QUERY;
     foreach ($result as $row) {
       if (isset($availability_data[$row->uid]) && empty($availability_data[$row->uid]['last_access'])) {
         $availability_data[$row->uid]['last_access'] = $row->access;
+        $availability_data[$row->uid]['node_id'] = $row->node_id;
       }
     }
 
@@ -786,23 +873,48 @@ QUERY;
       }
     }
 
-    if (!empty($_GET['group'])) {
-      $availability_data_by_dep = [];
-      foreach ($availability_data as $uid => $item) {
-        $account = user_load($uid);
-        $aw = entity_metadata_wrapper('user', $account);
+    if (!empty($_GET['groupby'])) {
+      switch ($_GET['groupby']) {
+        case 1:
+          $availability_data_by_dep = [];
+          foreach ($availability_data as $uid => $item) {
+            $account = user_load($uid);
+            $aw = entity_metadata_wrapper('user', $account);
 
-        if ($department_tid = $aw->field_department->getIdentifier()) {
-          $availability_data_by_dep[$department_tid][$uid] = $item;
-          $availability_data_by_dep[$department_tid][$uid]['group'] = $aw->field_department->value()->name;
-        }
-      }
+            if ($department_tid = $aw->field_department->getIdentifier()) {
+              $availability_data_by_dep[$department_tid][$uid] = $item;
+              $availability_data_by_dep[$department_tid][$uid]['group'] = $aw->field_department->value()->name;
+            }
+          }
 
-      $availability_data = [];
-      foreach($availability_data_by_dep as $group) {
-        foreach ($group as $uid => $user_data) {
-          $availability_data[$uid] = $user_data;
-        }
+          $availability_data = [];
+          foreach($availability_data_by_dep as $group) {
+            foreach ($group as $uid => $user_data) {
+              $availability_data[$uid] = $user_data;
+            }
+          }
+          break;
+
+        case 2;
+          $availability_data_by_node = [];
+          foreach ($availability_data as $uid => $item) {
+            if (isset($item['node_id'])) {
+              $availability_data_by_node[$item['node_id']][$uid] = $item;
+              $availability_data_by_node[$item['node_id']][$uid]['group'] = somi_get_rfid_pcd_node_by_id($item['node_id'])->title;
+            }
+            else {
+              $availability_data_by_node['misc'][$uid] = $item;
+              $availability_data_by_node['misc'][$uid]['group'] = 'misc';
+            }
+          }
+
+          $availability_data = [];
+          foreach($availability_data_by_node as $group) {
+            foreach ($group as $uid => $user_data) {
+              $availability_data[$uid] = $user_data;
+            }
+          }
+          break;
       }
     }
 
@@ -975,13 +1087,65 @@ QUERY;
     uasort($account_data, function($a, $b) {
       if ($a['balance'] == $b['balance']) return 0;
 
-      return $a['balance'] > $b['balance']
-        ? -1
-        : 1;
+      if (!$a['balance']) return 1;
+      if (!$b['balance']) return -1;
+      
+      if (!empty($_GET['sort_order'])) {
+        return $a['balance'] > $b['balance']
+          ? 1
+          : -1;
+      }
+      else {
+        return $a['balance'] > $b['balance']
+          ? -1
+          : 1;
+      }
     });
 
+    if (!empty($_GET['groupby'])) {
+      $account_data_by_dep = [];
+      foreach ($account_data as $uid => $item) {
+        $account = user_load($uid);
+        $aw = entity_metadata_wrapper('user', $account);
+
+        if ($department_tid = $aw->field_department->getIdentifier()) {
+          $account_data_by_dep[$department_tid][$uid] = $item;
+          $account_data_by_dep[$department_tid][$uid]['group'] = $aw->field_department->value()->name;
+        }
+      }
+
+      uksort($account_data_by_dep, function($a, $b) use($departament_scores) {
+        if ($departament_scores[$a] == $departament_scores[$b]) {
+          return 0;
+        }
+
+        if (!$departament_scores[$a]) return 1;
+        if (!$departament_scores[$b]) return -1;
+
+        if (!empty($_GET['sort_order'])) {
+          return $departament_scores[$a] > $departament_scores[$b]
+            ? 1
+            : -1;
+        }
+        else {
+          return $departament_scores[$a] > $departament_scores[$b]
+            ? -1
+            : 1;
+        }
+      });
+
+      $account_data = [];
+      foreach ($account_data_by_dep as $group) {
+        foreach ($group as $uid => $user_data) {
+          $account_data[$uid] = $user_data;
+        }
+      }
+    }
+    
     foreach ($account_data as $key => &$item) {
       $class = $item['balance'] ? 'active' : 'grayscale';
+
+      $group = !empty($item['group']) ? $item['group'] : NULL;
 
       $item = [
         'uid' => $item['uid'],
@@ -999,6 +1163,9 @@ QUERY;
           ['html' => TRUE]
         )
       ];
+
+      if ($group) $item['group'] = $group;
+
     }
 
     $storage[$currency_tid] = $account_data;
@@ -1081,17 +1248,82 @@ function somi_get_departament_tid_from_panel_args($args) {
 }
 
 function somi_get_rfid_pcd_node_by_id($id) {
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'node');
-  $query->fieldCondition('field_rfid_node_id', 'value', $id, '=')
-    ->range(0, 1);
+  $storage = &drupal_static(__FUNCTION__, []);
 
-  $result = $query->execute();
+  if (!isset($storage[$id])) {
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', 'node');
+    $query->fieldCondition('field_rfid_node_id', 'value', $id, '=')
+      ->range(0, 1);
 
-  if (isset($result['node'])) {
-    return node_load(reset($result['node'])->nid);
+    $result = $query->execute();
+
+    if (isset($result['node'])) {
+      $storage[$id] = node_load(reset($result['node'])->nid);
+    }
+    else {
+      $storage[$id] = FALSE;
+    }
   }
 
-  return FALSE;
+  return $storage[$id];
+}
+
+/**
+ * Form callback.
+ */
+function somi_group_order_board_form($form, &$form_state) {
+  $form = [
+    '#method' => 'GET',
+    'groupby' => [
+      '#title' => 'Группировка',
+      '#description' => 'По департаменту',
+      '#single' => TRUE,
+      '#type' => 'radios',
+      '#options' => ['отсутствует', 'департамен', 'нода'],
+      '#default_value' => !empty($_GET['groupby']) ? $_GET['groupby'] : 0,
+    ],
+    'sort_order' => [
+      '#title' => 'Порядок',
+      '#type' => 'select',
+      '#options' => ['DESC', 'ASC'],
+      '#default_value' => !empty($_GET['sort_order']) ? $_GET['sort_order'] : 0,
+    ],
+    'submit' => [
+      '#type' => 'submit',
+      '#value' => t('ok'),
+    ]
+  ];
+
+  return $form;
+}
+
+/**
+ * Form callback.
+ */
+function somi_group_order_score_board_form($form, &$form_state) {
+  $form = [
+    '#method' => 'GET',
+    'groupby' => [
+      '#title' => 'Группировка',
+      '#description' => 'По департаменту',
+      '#single' => TRUE,
+      '#type' => 'radios',
+      '#options' => ['отсутствует', 'департамен'],
+      '#default_value' => !empty($_GET['groupby']) ? $_GET['groupby'] : 0,
+    ],
+    'sort_order' => [
+      '#title' => 'Порядок',
+      '#type' => 'select',
+      '#options' => ['DESC', 'ASC'],
+      '#default_value' => !empty($_GET['sort_order']) ? $_GET['sort_order'] : 0,
+    ],
+    'submit' => [
+      '#type' => 'submit',
+      '#value' => t('ok'),
+    ]
+  ];
+
+  return $form;
 }

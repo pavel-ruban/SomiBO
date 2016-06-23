@@ -782,6 +782,14 @@ div.color-swatch {
   border: 1px solid black;
 }
 
-h3.departament {
+h3.board-group {
   text-align: center;
+}
+
+div.form-item.form-type-radios.form-item-groupby {
+  width: 101px;
+}
+
+div.form-item.form-type-select.form-item-sort-order select {
+  width: 100%;
 }
