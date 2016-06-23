@@ -1,4 +1,3 @@
-<h1><?php echo $title; ?></h1>
 
 <div>
   <?php if (!empty($departament_links)): ?>
@@ -19,7 +18,9 @@
   <?php $group = NULL; ?>
   <?php $v = reset($data); ?>
   <div class="board-tables">
-  <?php if (!empty($v['group'])): ?>
+    <h1><?php echo $title; ?></h1>
+
+    <?php if (!empty($v['group'])): ?>
     <h3 class="board-group"><?php echo $v['group']; ?></h3>
   <?php endif; ?>
   <table class="somi-board">

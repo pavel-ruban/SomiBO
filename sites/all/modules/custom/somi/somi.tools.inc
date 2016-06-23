@@ -1056,13 +1056,23 @@ INNER JOIN taxonomy_term_data td ON fd.field_department_target_id = td.tid
 WHERE status = 1 AND fd.field_department_target_id = $department_tid;
 QUERY;
       $uids = db_query($query)->fetchCol();
+
+      $all_dep_uids = db_query('select uid from users WHERE status = 1')->fetchCol();
     } else {
       $uids = db_query('select uid from users WHERE status = 1')->fetchCol();
     }
 
     $users = user_load_multiple($uids);
 
-    foreach ($users as $uid => $account) {
+    if (!empty($all_dep_uids)) {
+      $all_dep_users = user_load_multiple($all_dep_uids);
+      unset($all_dep_uids);
+    }
+    else {
+      $all_dep_users = $users;
+    }
+
+    foreach ($all_dep_users as $uid => $account) {
       $balance = somi_get_user_account_balance($account->uid, $currency_tid);
 
       $uw = entity_metadata_wrapper('user', $account);
@@ -1073,6 +1083,12 @@ QUERY;
 
         $departament_scores[$dep->tid] += $balance;
       }
+    }
+
+    unset($all_dep_users);
+
+    foreach ($users as $uid => $account) {
+      $balance = somi_get_user_account_balance($account->uid, $currency_tid);
 
       $account_data[$account->uid] = array(
         'uid' => $account->uid,
