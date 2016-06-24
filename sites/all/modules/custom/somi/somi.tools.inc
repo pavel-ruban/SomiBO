@@ -1028,7 +1028,7 @@ function somi_get_departaments_filter($path, $dep_scores = NULL) {
     else {
       $x = -1; $y = 1;
     }
-    
+
     if (!empty($dep_scores[$a]) && !empty($dep_scores[$b])) {
       return $dep_scores[$a] > $dep_scores[$b] ? $x : $y;
     }
