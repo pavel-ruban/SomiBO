@@ -67,7 +67,7 @@ function somi_logs_content_type_render($subtype, $conf, $panel_args, $context) {
 
   foreach ($result as $row) {
     if (($account = $users[$row->uid]) && !empty($rfids[$row->id])) {
-      $events_data[$account->uid] = array(
+      $events_data[] = array(
         'uid' => $account->uid,
         'time' => $row->access,
         'id' => $row->id,
