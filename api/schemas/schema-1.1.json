@@ -325,5 +325,88 @@
       }
     }
   },
+  "users/info/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": { "type": "string" },
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "image": { "type": "string" },
+              "role": { "type": "string" },
+              "departament": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "number" },
+                  "name": { "type": "string" }
+                }
+              },
+              "accounts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "balance": { "type" : "number"}
+                  }
+                }
+              },
+              "devices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "account/%uid/%aid/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "device/info/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "color": { "type": "string" },
+        "image": { "type": "string" },
+        "icon": { "type": "string" },
+        "status": { "type": "number" }
+      }
+    }
+  },
   "": {}
 }

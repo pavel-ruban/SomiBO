@@ -636,7 +636,7 @@ QUERY;
           'name' => $account->name,
           'access' => 0,
           'sort' => 0,
-          'image_url' => "http://www.gravatar.com/avatar/" . md5($account->mail),
+          'image_url' => somi_get_gravatar_image_url_by_mail($account->mail),
           'image_class' => 'grayscale',
         );
       }
@@ -1349,4 +1349,51 @@ function somi_group_order_score_board_form($form, &$form_state) {
   ];
 
   return $form;
+}
+
+/**
+ * @param $mail
+ * @return string
+ */
+function somi_get_gravatar_image_url_by_mail($mail) {
+  return "http://www.gravatar.com/avatar/" . md5($mail);
+}
+
+/**
+ * @param $id
+ * @return bool|string
+ */
+function somi_get_device_image_by_id($id) {
+  if ($d = node_load(($id))) {
+    $w = entity_metadata_wrapper('node', $d);
+    $device_view = node_view($d, 'teaser');
+
+    if (!empty($device_view['field_image'])) {
+      return image_style_url($device_view['field_image'][0]['#image_style'], $device_view['field_image'][0]['#item']['uri']);
+    }
+
+    $type = $w->field_type->value();
+
+    $type_view = taxonomy_term_view($type, 'teaser');
+    if (!empty($type_view['field_image'])) {
+      return image_style_url($type_view['field_image'][0]['#image_style'], $type_view['field_image'][0]['#item']['uri']);
+    }
+  }
+}
+
+/**
+ * @param $id
+ * @return bool|string
+ */
+function somi_get_device_icon_by_id($id) {
+  if ($d = node_load(($id))) {
+    $w = entity_metadata_wrapper('node', $d);
+
+    $type = $w->field_type->value();
+
+    $type_view = taxonomy_term_view($type, 'icon');
+    if (!empty($type_view['field_icon'])) {
+      return image_style_url($type_view['field_icon'][0]['#image_style'], $type_view['field_icon'][0]['#item']['uri']);
+    }
+  }
 }

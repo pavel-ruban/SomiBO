@@ -106,6 +106,18 @@ function api_methods() {
         'callback' => 'api_create_history',
         'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
       ) + $base,
+    'users/info/get' => array(
+        'callback' => 'api_users_info_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+      ) + $base,
+    'account/%uid/%aid/get' => array(
+        'callback' => 'api_user_account_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'device/info/get' => array(
+        'callback' => 'api_device_info_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
   );
 
   // @TODO: Remove dependency from campuz_export.
@@ -1027,6 +1039,147 @@ function api_user_account_balance_add_post() {
   }
 
   return $response;
+}
+
+/**
+ * Get discussions of user or device.
+ */
+function api_users_info_get() {
+  global $user;
+
+  if (!empty($user->uid)) {
+    $response = array('items' => array());
+
+    $query = db_select('users', 'u');
+    $query->addField('u', 'uid');
+    $query->condition('status', 1);
+    $uids = $query->execute()->fetchCol();
+
+    if (($accounts = user_load_multiple($uids))) {
+      foreach ($accounts as $account) {
+        if ($account->uid == 1) continue;
+
+        $roles = $account->roles;
+
+        switch (TRUE) {
+          case array_search('top', $roles) !== FALSE:
+            $role = 'top';
+            break;
+
+          case array_search('core', $roles) !== FALSE:
+            $role = 'core';
+            break;
+
+          case array_search('active', $roles) !== FALSE:
+            $role = 'active';
+            break;
+
+          default:
+            $role = 'authenticated user';
+        }
+
+        $user_data = array(
+          'uid' => $account->uid,
+          'name' => $account->name,
+          'email' => $account->mail,
+          'role' => $role,
+          'image' => somi_get_gravatar_image_url_by_mail($account->mail),
+          'departament' => [],
+          'accounts' => [],
+          'devices' => [],
+        );
+
+        if (!empty($account->field_department['und'][0]['target_id'])) {
+          $dep = taxonomy_term_load($account->field_department['und'][0]['target_id']);
+          $user_data['departament'] = [
+            'id' => $account->field_department['und'][0]['target_id'],
+            'name' => $dep->name,
+          ];
+        }
+
+        $currencies = somi_get_currencies();
+
+        foreach ($currencies as $currency) {
+          $currency_tid = somi_get_currency_tid($currency);
+          $account_value = somi_get_user_account_balance($account->uid, $currency_tid);
+          $user_data['accounts'][] = [
+            'id' => $currency_tid,
+            'balance' => $account_value,
+          ];
+        }
+
+        $w = entity_metadata_wrapper('user', $account);
+        $rfids = $w->field_rfid_tags->value();
+        foreach ($rfids as $rfid) {
+          $user_data['devices'][] = [
+            'id' => $rfid->title,
+          ];
+        }
+
+        $response['items'][] = $user_data;
+      }
+    }
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+
+  return $response;
+}
+
+/**
+ * Get discussions of user or device.
+ */
+function api_user_account_get($type, $uid, $account_id) {
+  global $user;
+
+  if (!empty($user->uid)) {
+
+    switch (TRUE) {
+      case !($account = user_load($uid)):
+        throw new ApiException("Wrong user id.");
+
+      case !($currency_term = taxonomy_term_load($account_id)):
+        throw new ApiException("Wrong account id.");
+    }
+
+    return array(
+      'id' => $currency_term->tid,
+      'currency' => $currency_term->name,
+      'image' => preg_replace('/\bapi\/\b/', '', image_style_url('thumbnail', $currency_term->field_image['und'][0]['uri'])),
+      'balance' => somi_get_user_account_balance($account->uid, $currency_term->tid),
+    );
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+}
+
+/**
+ * Get discussions of user or device.
+ */
+function api_device_info_get() {
+  global $user;
+
+  if (!empty($user->uid)) {
+
+    switch (TRUE) {
+      case empty($_GET['id']) || !($rfid = somi_get_rfid_by_id($_GET['id'])):
+        throw new ApiException("Wrong device id.");
+    }
+
+    return array(
+      'id' => $rfid->title,
+      'type' => somi_get_device_type_by_nid($rfid->nid, TRUE),
+      'color' => somi_get_device_color_by_nid($rfid->nid, TRUE),
+      'image' => preg_replace('/\bapi\/\b/', '', somi_get_device_image_by_id($rfid->nid)),
+      'icon' => preg_replace('/\bapi\/\b/', '', somi_get_device_icon_by_id($rfid->nid)),
+      'status' => $rfid->status,
+    );
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
 }
 
 /**
