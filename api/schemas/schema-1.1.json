@@ -394,6 +394,34 @@
       }
     }
   },
+  "accounts/%uid/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "balance": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "device/info/get": {
     "type": "regular",
     "schema": {

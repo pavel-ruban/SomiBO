@@ -114,6 +114,10 @@ function api_methods() {
         'callback' => 'api_user_account_get',
         'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
     ) + $base,
+    'accounts/%uid/get' => array(
+        'callback' => 'api_user_accounts_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
     'device/info/get' => array(
         'callback' => 'api_device_info_get',
         'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
@@ -1149,6 +1153,40 @@ function api_user_account_get($type, $uid, $account_id) {
       'image' => preg_replace('/\bapi\/\b/', '', image_style_url('thumbnail', $currency_term->field_image['und'][0]['uri'])),
       'balance' => somi_get_user_account_balance($account->uid, $currency_term->tid),
     );
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+}
+
+/**
+ * Get discussions of user or device.
+ */
+function api_user_accounts_get($type, $uid) {
+  global $user;
+
+  if (!empty($user->uid)) {
+
+    switch (TRUE) {
+      case !($account = user_load($uid)):
+        throw new ApiException("Wrong user id.");
+    }
+
+    $accounts = [];
+
+    foreach (somi_get_currencies() as $currency) {
+      $currency_tid = somi_get_currency_tid($currency);
+      $currency_term = taxonomy_term_load($currency_tid);
+
+      $accounts[] = array(
+        'id' => $currency_tid,
+        'currency' => $currency,
+        'image' => preg_replace('/\bapi\/\b/', '', image_style_url('thumbnail', $currency_term->field_image['und'][0]['uri'])),
+        'balance' => somi_get_user_account_balance($account->uid, $currency_tid),
+      );
+    }
+
+    return ['items' => $accounts];
   }
   else {
     throw new ApiException("User is not authorized.");
