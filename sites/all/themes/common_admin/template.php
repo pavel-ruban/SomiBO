@@ -561,6 +561,9 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
   if (!empty($_GET['order'])) return;
 
   $sorted_rows = $vars['rows'];
+  $vars['row_classes'] = array_map(function ($a) {
+    return array();
+  }, $vars['row_classes']);
 
   uksort($sorted_rows, function ($ak, $bk) use(&$vars) {
     $a = $vars['result'][$ak];
@@ -592,8 +595,8 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
     $b_current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $bbt));
 
     if ($a_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
-      if (!isset($a->brith_class)) {
-        $a->brith_class = TRUE;
+      if (!isset($a->birth_class)) {
+        $a->birth_class = TRUE;
 
         $now = new DateTime('now');
         $birth = new DateTime($current_year . '-' . date('m-d', $abt));
@@ -616,8 +619,8 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
     }
 
     if ($b_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
-      if (!isset($b->brith_class)) {
-        $b->brith_class = TRUE;
+      if (!isset($b->birth_class)) {
+        $b->birth_class = TRUE;
 
         $now = new DateTime('now');
         $birth = new DateTime($current_year . '-' . date('m-d', $bbt));
@@ -652,6 +655,21 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
   });
 
   $vars['rows'] = $sorted_rows;
+
+  $i = 0;
+  foreach ($sorted_rows as $key => $v) {
+    if (!$i) {
+      $vars['row_classes'][$key][] = 'first';
+    }
+    ++$i;
+
+    if ($i % 2 === 0) {
+      $vars['row_classes'][$key][] = 'odd';
+    }
+    else {
+      $vars['row_classes'][$key][] = 'even';
+    }
+  }
 }
 
 /**
