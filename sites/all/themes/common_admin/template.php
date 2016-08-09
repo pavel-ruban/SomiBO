@@ -545,6 +545,113 @@ function common_admin_preprocess_views_view_table(&$vars) {
       $function($vars);
     }
   }
+  if (!empty($vars['view']->display_handler->display->id)) {
+    $function = 'common_admin_preprocess_' . $vars['theme_hook_original']
+      . '__' . $vars['view']->name . '__' . $vars['view']->display_handler->display->id;
+
+    if (function_exists($function)) {
+      $function($vars);
+    }
+  }
+}
+/**
+ * Process variables for views-view.tpl.php.
+ */
+function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
+  if (!empty($_GET['order'])) return;
+
+  $sorted_rows = $vars['rows'];
+
+  uksort($sorted_rows, function ($ak, $bk) use(&$vars) {
+    $a = $vars['result'][$ak];
+    $b = $vars['result'][$bk];
+
+    if (!empty($a->field_field_birth_date[0]['raw']['value'])) {
+      $abt = strtotime($a->field_field_birth_date[0]['raw']['value']);
+    }
+    else {
+      return 1;
+    }
+
+    if (!empty($b->field_field_birth_date[0]['raw']['value'])) {
+      $bbt = strtotime($b->field_field_birth_date[0]['raw']['value']);
+    }
+    else {
+      return -1;
+    }
+
+    $current_year = date('Y');
+
+    $ab_birth_year = date('Y', $abt);
+    $bb_birth_year = date('Y', $bbt);
+
+    $a_years = $current_year - $ab_birth_year;
+    $b_years = $current_year - $bb_birth_year;
+
+    $a_current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $abt));
+    $b_current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $bbt));
+
+    if ($a_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+      if (!isset($a->brith_class)) {
+        $a->brith_class = TRUE;
+
+        $now = new DateTime('now');
+        $birth = new DateTime($current_year . '-' . date('m-d', $abt));
+        $diff = $birth->diff($now);
+
+        if (!$diff->d) {
+          $vars['row_classes'][$ak][] = 'today';
+        }
+        elseif ($diff->d <= 14) {
+          $vars['row_classes'][$ak][] = 'upcoming';
+        }
+      }
+
+      $a_sort = $a_current_sort_birthdate;
+      $a_current = TRUE;
+    }
+    else {
+      $a_sort = strtotime(($current_year + 1) . '-' . date('m-d', $abt));
+      $a_current = FALSE;
+    }
+
+    if ($b_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+      if (!isset($b->brith_class)) {
+        $b->brith_class = TRUE;
+
+        $now = new DateTime('now');
+        $birth = new DateTime($current_year . '-' . date('m-d', $bbt));
+        $diff = $birth->diff($now);
+
+        if (!$diff->d) {
+          $vars['row_classes'][$bk][] = 'today';
+        }
+        elseif ($diff->d <= 14) {
+          $vars['row_classes'][$bk][] = 'upcoming';
+        }
+      }
+
+      $b_sort = $b_current_sort_birthdate;
+      $b_current = TRUE;
+    }
+    else {
+      $b_sort = strtotime(($current_year + 1) . '-' . date('m-d', $bbt));
+      $b_current = FALSE;
+    }
+
+    if ($b_current && $a_current) {
+      return $a_sort > $b_sort ? 1 : -1;
+    }
+    elseif (!$b_current && !$a_current) {
+      return $a_sort > $b_sort ? 1 : -1;
+    }
+    else {
+      if ($a_current) return -1;
+      else return 1;
+    }
+  });
+
+  $vars['rows'] = $sorted_rows;
 }
 
 /**

@@ -14,5 +14,6 @@ files[] = views/handlers/somi_views_handler_field_gravatar_image.inc
 files[] = views/handlers/somi_views_handler_field_device_image.inc
 files[] = views/handlers/somi_views_handler_field_user_crystalls.inc
 files[] = views/handlers/somi_views_handler_field_user_debet_crystalls.inc
+files[] = views/handlers/somi_views_handler_sort_birthdate.inc
 
 

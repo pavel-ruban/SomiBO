@@ -797,3 +797,16 @@ div.form-item.form-type-select.form-item-sort-order select {
 div.board-tables {
   margin-left: 135px;
 }
+
+body.page-admin .view-users table tr.today  {
+  background: #e5ffe5;
+}
+
+body.page-admin .view-users table tr.upcoming {
+  background: #fffde8;
+}
+
+body.page-admin .view-users table tr.today td,
+body.page-admin .view-users table tr.upcoming td {
+  background: none;
+}
