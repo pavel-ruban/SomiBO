@@ -602,7 +602,7 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
         if (!$diff->d) {
           $vars['row_classes'][$ak][] = 'today';
         }
-        elseif ($diff->d <= 14) {
+        elseif (!$diff->m && $diff->d <= 14) {
           $vars['row_classes'][$ak][] = 'upcoming';
         }
       }
@@ -626,7 +626,7 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
         if (!$diff->d) {
           $vars['row_classes'][$bk][] = 'today';
         }
-        elseif ($diff->d <= 14) {
+        elseif (!$diff->m && $diff->d <= 14) {
           $vars['row_classes'][$bk][] = 'upcoming';
         }
       }
