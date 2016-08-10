@@ -107,15 +107,14 @@ function drush_somi_check_birthdays_batch(&$context) {
           $dep_name = $dep->name;
         }
       }
-
       if ($is_birthday === 'today') {
         somi_sent_custom_message_trigger(
           [
             'uid' => $account->uid,
             'image' => somi_get_gravatar_image_url_by_mail($account->mail),
-            'icon' => image_style_url('thumbnail', $logo->field_image[LANGUAGE_NONE][0]['uri']),
+            'icon' => image_style_url('thumbnail', $logo->field_icon[LANGUAGE_NONE][0]['uri']),
             'header' => t('Поздравляем с днём рождения!'),
-            'channel' => 'general',
+            'channel' => 'p_gamefy_currency',
             'color' => '#daf6ff',
             'text' => t(
               'Сегодня у @name @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
