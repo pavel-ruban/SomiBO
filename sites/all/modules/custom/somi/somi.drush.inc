@@ -115,7 +115,7 @@ function drush_somi_check_birthdays_batch(&$context) {
             'image' => somi_get_gravatar_image_url_by_mail($account->mail),
             'icon' => image_style_url('thumbnail', $logo->field_image[LANGUAGE_NONE][0]['uri']),
             'header' => t('Поздравляем с днём рождения!'),
-            'channel' => 'bot_tests',
+            'channel' => 'general',
             'color' => '#daf6ff',
             'text' => t(
               'Сегодня у @name @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
