@@ -461,5 +461,101 @@
       }
     }
   },
+  "users/time/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "sort": { "type": "string" },
+        "groupby": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "first_access": {
+                "type": "string"
+              },
+              "last_access": {
+                "type": "string"
+              },
+              "work_time": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "group": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "users/activity/%id/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "sort": { "type": "string" },
+        "groupby": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "last_access": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "group": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "users/activity/get": {
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "sort": { "type": "string" },
+        "groupby": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "last_access": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "group": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "": {}
 }

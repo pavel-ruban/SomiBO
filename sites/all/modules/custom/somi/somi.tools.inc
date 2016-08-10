@@ -728,7 +728,7 @@ QUERY;
  * Get availability data.
  * @throws \Exception
  */
-function somi_get_time_of_arrival_data($department_tid = NULL) {
+function somi_get_time_of_arrival_data($department_tid = NULL, $plain = NULL) {
   $storage = &drupal_static(__FUNCTION__);
 
   if (!isset($storage)) {
@@ -840,7 +840,6 @@ QUERY;
       }
     });
 
-
     if (!empty($department_tid)) {
       $query = <<<QUERY
       SELECT * FROM users u
@@ -872,6 +871,8 @@ QUERY;
         $availability_data[$account->uid]['name'] = $account->name;
       }
     }
+
+    if (!empty($plain)) return $availability_data;
 
     if (!empty($_GET['groupby'])) {
       switch ($_GET['groupby']) {

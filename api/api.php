@@ -126,6 +126,18 @@ function api_methods() {
         'callback' => 'api_device_info_get',
         'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
     ) + $base,
+    'users/time/get' => array(
+        'callback' => 'api_users_time_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'users/activity/%id/get' => array(
+        'callback' => 'api_users_activity_by_dep_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'users/activity/get' => array(
+        'callback' => 'api_users_activity_get',
+        'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
   );
 
   // @TODO: Remove dependency from campuz_export.
@@ -1126,6 +1138,186 @@ function api_users_info_get() {
 
         $response['items'][] = $user_data;
       }
+    }
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+
+  return $response;
+}
+
+/**
+ * Get discussions of user or device.
+ */
+function api_users_time_get() {
+  global $user;
+
+  if (!empty($user->uid)) {
+    $data = somi_get_time_of_arrival_data();
+
+    switch (TRUE) {
+      case empty($_GET['sort']):
+        $sort = 'access';
+        break;
+
+      case $_GET['sort'] == 1:
+        $sort = 'last_access';
+        break;
+
+      case $_GET['sort'] == 2:
+        $sort = 'average';
+        break;
+
+      default:
+        $sort = 'access';
+        break;
+    }
+
+    $groupby = '';
+    if (!empty($_GET['groupby'])) {
+      switch ($_GET['groupby']) {
+        case 1:
+          $groupby = 'departament';
+          break;
+
+        case 2;
+          $groupby = 'node';
+          break;
+
+        default:
+          $groupby = '';
+          break;
+      }
+    }
+
+    $response = array(
+      'sort' => $sort,
+      'groupby' => $groupby,
+      'items' => array(),
+    );
+
+    foreach ($data as $item) {
+      $response['items'][] = [
+        'id' => $item['uid'],
+        'first_access' => $item['sub_info'],
+        'last_access' => $item['info'],
+        'work_time' => $item['top_info'],
+        'class' => $item['class'],
+        'group' => !empty($item['group']) ? $item['group'] : '',
+      ];
+    }
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+
+  return $response;
+}
+
+/**
+ * Get users activity.
+ */
+function api_users_activity_by_dep_get() {
+  global $user;
+
+  if (!empty($user->uid)) {
+    if (!preg_match('/^v1\/users\/activity\/([0-9]+)\b/', $_GET['q'], $matches)) {
+      throw new ApiException("Departament id is wrong");
+    }
+
+    $data = somi_get_availability_data($matches[1]);
+
+    if (!empty($_GET['sort_order'])) {
+      $sort = 'reverse';
+    } else {
+      $sort = 'default';
+    }
+
+    $groupby = '';
+    if (!empty($_GET['groupby'])) {
+      switch ($_GET['groupby']) {
+        case 1:
+          $groupby = 'departament';
+          break;
+
+        case 2;
+          $groupby = 'node';
+          break;
+
+        default:
+          $groupby = '';
+          break;
+      }
+    }
+
+    $response = array(
+      'sort' => $sort,
+      'groupby' => $groupby,
+      'items' => array(),
+    );
+
+    foreach ($data as $item) {
+      $response['items'][] = [
+        'id' => $item['uid'],
+        'last_access' => $item['info'],
+        'class' => $item['class'],
+        'group' => !empty($item['group']) ? $item['group'] : '',
+      ];
+    }
+  }
+  else {
+    throw new ApiException("User is not authorized.");
+  }
+
+  return $response;
+}
+
+/**
+ * Get users activity.
+ */
+function api_users_activity_get() {
+  global $user;
+
+  if (!empty($user->uid)) {
+    $data = somi_get_availability_data();
+
+    if (!empty($_GET['sort_order'])) {
+      $sort = 'reverse';
+    } else {
+      $sort = 'default';
+    }
+
+    $groupby = '';
+    if (!empty($_GET['groupby'])) {
+      switch ($_GET['groupby']) {
+        case 1:
+          $groupby = 'departament';
+          break;
+
+        case 2;
+          $groupby = 'node';
+          break;
+
+        default:
+          $groupby = '';
+          break;
+      }
+    }
+
+    $response = array(
+      'sort' => $sort,
+      'groupby' => $groupby,
+      'items' => array(),
+    );
+
+    foreach ($data as $item) {
+      $response['items'][] = [
+        'id' => $item['uid'],
+        'last_access' => $item['info'],
+        'class' => $item['class'],
+        'group' => !empty($item['group']) ? $item['group'] : '',
+      ];
     }
   }
   else {
