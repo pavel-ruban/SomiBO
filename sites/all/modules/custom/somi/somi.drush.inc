@@ -117,10 +117,11 @@ function drush_somi_check_birthdays_batch(&$context) {
             'icon' => 'http://somibo.qajedi.ru/sites/default/files/styles/thumbnail/public/notification_icons/logo-i20_1.png?itok=9rhuI33A',
 //            'icon' => image_style_url('thumbnail', $logo->field_icon[LANGUAGE_NONE][0]['uri']),
             'header' => t('Поздравляем с днём рождения!'),
-            'channel' => 'general',
+//            'channel' => 'general',
+            'channel' => 'smartoffice-logs',
             'color' => '#daf6ff',
             'text' => t(
-              'Сегодня у @name @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
+              'Сегодня у <http://somiboqajedi.ru/admin/birthdays|@name> @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
               [
                 '@name' => $account->name,
                 '@dep' => !empty($dep_name) ? "из отдела $dep_name" : ''
