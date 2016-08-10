@@ -121,7 +121,7 @@ function drush_somi_check_birthdays_batch(&$context) {
             'channel' => 'smartoffice-logs',
             'color' => '#daf6ff',
             'text' => t(
-              'Сегодня у <http://somiboqajedi.ru/admin/birthdays|@name> @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
+              'Сегодня у <http://somibo.qajedi.ru/admin/birthdays|@name> @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
               [
                 '@name' => $account->name,
                 '@dep' => !empty($dep_name) ? "из отдела $dep_name" : ''
