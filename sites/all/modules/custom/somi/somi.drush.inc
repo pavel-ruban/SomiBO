@@ -117,7 +117,7 @@ function drush_somi_check_birthdays_batch(&$context) {
             //'icon' => image_style_url('thumbnail', $logo->field_icon[LANGUAGE_NONE][0]['uri']),
             'header' => t('Поздравляем с днём рождения!'),
 //            'channel' => 'bot_tests',
-            'channel' => 'test_crystals',
+            'channel' => 'smartoffice-logs',
             'color' => '#daf6ff',
             'text' => t(
               'Сегодня у @name @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
