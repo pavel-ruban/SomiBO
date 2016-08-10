@@ -1397,3 +1397,36 @@ function somi_get_device_icon_by_id($id) {
     }
   }
 }
+
+/**
+ * @param $account
+ * @return bool|string
+ */
+function somi_is_birthday_upcoming($account) {
+  if (!empty($account->field_birth_date[LANGUAGE_NONE][0]['value'])) {
+    $bt = strtotime($account->field_birth_date[LANGUAGE_NONE][0]['value']);
+  }
+  else {
+    return FALSE;
+  }
+
+  $current_year = date('Y');
+  $birth_year = date('Y', $bt);
+  $years = $current_year - $birth_year;
+  $current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $bt));
+
+  if ($current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+    $now = new DateTime('now');
+    $birth = new DateTime($current_year . '-' . date('m-d', $bt));
+    $diff = $birth->diff($now);
+
+    if (!$diff->d) {
+      return 'today';
+    }
+    elseif (!$diff->m && $diff->d <= 14) {
+      return 'upcoming';
+    }
+  }
+
+  return FALSE;
+}

@@ -19,6 +19,10 @@ function somi_drush_command() {
     'description' => dt('Resets All Users Debet Accounts According Month Limits Settings.'),
   );
 
+  $items['somi-check-birthdays'] = array(
+    'description' => dt('Checks birthdays and note slack channel about upcoming events.'),
+  );
+
   return $items;
 }
 
@@ -44,6 +48,92 @@ function somi_log_event($context, $access) {
 
   somi_realtime_board_trigger($context);
   somi_slack_webhook_trigger($context['uid'], $context, $access);
+}
+
+/**
+ * Logs somi events.
+ * @param $context
+ * @param $access
+ */
+function drush_somi_check_birthdays() {
+  // Set the batch operations.
+  $batch = array(
+    'title' => dt('Checking users birthdays'),
+    'operations' => array(
+      array(
+        'drush_somi_check_birthdays_batch',
+        array()
+      ),
+    ),
+  );
+  batch_set($batch);
+  drush_backend_batch_process();
+}
+
+/**
+ * Logs somi events.
+ * @param $context
+ * @param $access
+ */
+function drush_somi_check_birthdays_batch(&$context) {
+  if (!isset($context['results']['uids'])) {
+    $query = db_select('users', 'u');
+    $query->addField('u', 'uid');
+    $query->condition('status', 1);
+    $uids = $query->execute()->fetchCol();
+
+    $context['results']['uids'] = $uids;
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($uids);
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+
+    $context['message'] = 'Preparing data for operations, found ' . $context['sandbox']['max'] . ' active users.';
+
+    return;
+  }
+
+  $chunk = array_slice($context['results']['uids'], $context['sandbox']['progress'], 30);
+  static $logo = NULL;
+
+  if (!$logo) $logo = taxonomy_term_load(41);
+
+  foreach ($chunk as $uid) {
+    if (!empty($uid) && $uid != 1 && is_numeric($uid) && ($account = user_load($uid))) {
+      $is_birthday = somi_is_birthday_upcoming($account);
+
+      if (!empty($account->field_department[LANGUAGE_NONE][0]['target_id'])) {
+        if ($dep = taxonomy_term_load($account->field_department[LANGUAGE_NONE][0]['target_id'])) {
+          $dep_name = $dep->name;
+        }
+      }
+
+      if ($is_birthday === 'today') {
+        somi_sent_custom_message_trigger(
+          [
+            'uid' => $account->uid,
+            'image' => somi_get_gravatar_image_url_by_mail($account->mail),
+            'icon' => image_style_url('thumbnail', $logo->field_image[LANGUAGE_NONE][0]['uri']),
+            'header' => t('Поздравляем с днём рождения!'),
+            'channel' => 'bot_tests',
+            'color' => '#daf6ff',
+            'text' => t(
+              'Сегодня у @name @dep день рождения! Поздравляем и желаем успехов во всех начинаниях!',
+              [
+                '@name' => $account->name,
+                '@dep' => !empty($dep_name) ? "из отдела $dep_name" : ''
+              ]
+            ),
+          ]
+        );
+      }
+    }
+
+    $context['sandbox']['progress']++;
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = 'Checking users birthdays (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+  }
 }
 
 /**
@@ -390,6 +480,71 @@ function somi_realtime_board_trigger($context) {
   }
 
   if (function_exists('pcntl_fork')) {
+    exit;
+  }
+}
+
+/**
+ * Slack Integration.
+ */
+function somi_sent_custom_message_trigger($context) {
+  // PHP apache doesn't able deal with pcntl functions, only CDG or CLI modes.
+  // so do it in the same process for web request access login in :'C.
+  if (0 && function_exists('pcntl_fork')) {
+    $pid = pcntl_fork();
+
+    // Parent process should immediately response to hardware.
+    if ($pid === -1 || $pid > 0) {
+      return;
+    }
+
+    // Allow parent process (udpsrv to response avr MCU immediately without waiting curl delay).
+    fclose(STDIN);
+    fclose(STDOUT);
+    fclose(STDERR);
+  }
+
+  // Child process continues HTTP Slack API invocation.
+  $node_js_url = array(
+    "http://127.0.0.1:" . SOMI_NODEJS_HTTP_SERVER_PORT,
+  );
+
+  $nodejs_payload = array(
+    'id' => $context['uid'],
+    'image' => $context['image'],
+    'icon' => $context['icon'],
+    'header' => $context['header'],
+    'color' => $context['color'],
+    'text' => $context['text'],
+    'action' => 'notification',
+    'channel' => $context['channel'],
+    'type' => 'birthday',
+  );
+
+  $data_string = json_encode($nodejs_payload);
+  // Send event to all listeners.
+  foreach ($node_js_url as $nodejs_url) {
+    $defaults = array(
+      CURLOPT_URL => $nodejs_url,
+      CURLOPT_POST => TRUE,
+      CURLOPT_POSTFIELDS => $data_string,
+    );
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, $defaults);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-type: application/json',
+      'Content-Length: ' . strlen($data_string),
+    ));
+
+    curl_exec($ch);
+    curl_close($ch);
+  }
+
+  if (0 && function_exists('pcntl_fork')) {
     exit;
   }
 }
