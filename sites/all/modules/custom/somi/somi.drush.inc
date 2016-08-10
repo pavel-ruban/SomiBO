@@ -107,13 +107,16 @@ function drush_somi_check_birthdays_batch(&$context) {
           $dep_name = $dep->name;
         }
       }
+
       if ($is_birthday === 'today') {
         somi_sent_custom_message_trigger(
           [
             'uid' => $account->uid,
             'image' => somi_get_gravatar_image_url_by_mail($account->mail),
-            'icon' => image_style_url('thumbnail', $logo->field_icon[LANGUAGE_NONE][0]['uri']),
+            'icon' => 'http://www.freeiconspng.com/uploads/birthday-icon-9.png',
+            //'icon' => image_style_url('thumbnail', $logo->field_icon[LANGUAGE_NONE][0]['uri']),
             'header' => t('Поздравляем с днём рождения!'),
+//            'channel' => 'bot_tests',
             'channel' => 'test_crystals',
             'color' => '#daf6ff',
             'text' => t(
