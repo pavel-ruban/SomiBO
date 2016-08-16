@@ -1421,7 +1421,7 @@ function somi_is_birthday_upcoming($account) {
     $birth = new DateTime($current_year . '-' . date('m-d', $bt));
     $diff = $birth->diff($now);
 
-    if (!$diff->d) {
+    if (!$diff->d && !$diff->m) {
       return 'today';
     }
     elseif (!$diff->m && $diff->d <= 14) {

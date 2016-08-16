@@ -602,7 +602,7 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
         $birth = new DateTime($current_year . '-' . date('m-d', $abt));
         $diff = $birth->diff($now);
 
-        if (!$diff->d) {
+        if (!$diff->d && !$diff->m) {
           $vars['row_classes'][$ak][] = 'today';
         }
         elseif (!$diff->m && $diff->d <= 14) {
