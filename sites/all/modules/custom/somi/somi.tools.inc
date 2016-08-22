@@ -1414,14 +1414,14 @@ function somi_is_birthday_upcoming($account) {
   $current_year = date('Y');
   $birth_year = date('Y', $bt);
   $years = $current_year - $birth_year;
-  $current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $bt));
+  $current_sort_birthdate = strtotime(date('d-m-', $bt) . $current_year);
 
-  if ($current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+  if ($current_sort_birthdate >= time() || time() - $current_sort_birthdate < (60 * 60 * 23.9)) {
     $now = new DateTime('now');
-    $birth = new DateTime($current_year . '-' . date('m-d', $bt));
+    $birth = new DateTime(date('d-m-', $bt) . $current_year);
     $diff = $birth->diff($now);
 
-    if (!$diff->d && !$diff->m) {
+    if ((!$diff->d && !$diff->m) && ($current_sort_birthdate < time())) {
       return 'today';
     }
     elseif (!$diff->m && $diff->d <= 14) {

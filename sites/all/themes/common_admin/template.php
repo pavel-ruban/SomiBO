@@ -591,18 +591,18 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
     $a_years = $current_year - $ab_birth_year;
     $b_years = $current_year - $bb_birth_year;
 
-    $a_current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $abt));
-    $b_current_sort_birthdate = strtotime($current_year . '-' . date('m-d', $bbt));
+    $a_current_sort_birthdate = strtotime(date('d-m-', $abt) . $current_year);
+    $b_current_sort_birthdate = strtotime(date('d-m-', $bbt) . $current_year);
 
-    if ($a_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+    if ($a_current_sort_birthdate >= time() || (time() - $a_current_sort_birthdate) < (60 * 60 * 24)) {
       if (!isset($a->birth_class)) {
         $a->birth_class = TRUE;
 
         $now = new DateTime('now');
-        $birth = new DateTime($current_year . '-' . date('m-d', $abt));
+        $birth = new DateTime(date('d-m-', $abt) . $current_year);
         $diff = $birth->diff($now);
 
-        if (!$diff->d && !$diff->m) {
+        if ((!$diff->d && !$diff->m) && ($a_current_sort_birthdate < time())) {
           $vars['row_classes'][$ak][] = 'today';
         }
         elseif (!$diff->m && $diff->d <= 14) {
@@ -614,22 +614,22 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
       $a_current = TRUE;
     }
     else {
-      $a_sort = strtotime(($current_year + 1) . '-' . date('m-d', $abt));
+      $a_sort = strtotime(date('d-m-', $abt) . ($current_year + 1));
       $a_current = FALSE;
     }
 
-    if ($b_current_sort_birthdate + (60 * 60 * 23.9) >= time()) {
+    if ($b_current_sort_birthdate >= time() || (time() - $b_current_sort_birthdate) < (60 * 60 * 24)) {
       if (!isset($b->birth_class)) {
         $b->birth_class = TRUE;
 
         $now = new DateTime('now');
-        $birth = new DateTime($current_year . '-' . date('m-d', $bbt));
+        $birth = new DateTime(date('d-m-', $bbt) . $current_year);
         $diff = $birth->diff($now);
 
-        if (!$diff->d) {
+        if ((!$diff->d && !$diff->m) && ($b_current_sort_birthdate < time())) {
           $vars['row_classes'][$bk][] = 'today';
         }
-        elseif (!$diff->m && $diff->d <= 14) {
+        elseif (!$diff->m && ($diff->d <= 14)) {
           $vars['row_classes'][$bk][] = 'upcoming';
         }
       }
@@ -638,7 +638,7 @@ function common_admin_preprocess_views_view_table__users__birthdays(&$vars) {
       $b_current = TRUE;
     }
     else {
-      $b_sort = strtotime(($current_year + 1) . '-' . date('m-d', $bbt));
+      $b_sort = strtotime(date('d-m-', $bbt) . ($current_year + 1));
       $b_current = FALSE;
     }
 
