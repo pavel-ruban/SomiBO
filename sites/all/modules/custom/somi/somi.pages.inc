@@ -206,14 +206,16 @@ function somi_accounts_csv_export_batch($filters, &$context) {
   foreach ($transactions as $t) {
     if (empty($t)) continue;
 
+    $recipient = user_load($t['entity_id']);
+    $initiator = user_load($t['uid']);
+
     if (!empty($filters['totals'])) {
-      $key = "$t[entity_id]-$t[value_type]";
+      $key = (!empty($recipient->name)
+        ? $recipient->name
+        : $t['entity_id']) ."-$t[value_type]";
     } else {
       $key = "$t[timestamp]-$t[entity_id]-$t[value_type]-$t[uid]";
     }
-
-    $recipient = user_load($t['entity_id']);
-    $initiator = user_load($t['uid']);
 
     if (!isset($context['sandbox']['rows_array'][$key])) {
       if (!empty($filters['totals'])) {
