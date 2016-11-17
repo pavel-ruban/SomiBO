@@ -64,6 +64,19 @@
     clearInterval(tid);
   }
 
+  function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
   Drupal.behaviors.somi = {
     attach: function (context, settings) {
       $('input#track-rfids').once('somi-manage', function () {
@@ -91,6 +104,21 @@
           });
         });
       });
+
+      if (typeof 'Drupal' !== undefined && Drupal.settings
+        && Drupal.settings.csv_file_awaits_download && Drupal.settings.csv_filename) {
+
+        $.ajax({
+          url: "/admin/content/accounts?getCsv=true",
+          success: function(data) {
+            download(Drupal.settings.csv_filename, data);
+
+            // Avoid downloading file again if you get back with browser back button that would get the data from
+            // browser cache.
+            window.location.replace(window.location.pathname);
+          }
+        });
+      }
     }
   }
 

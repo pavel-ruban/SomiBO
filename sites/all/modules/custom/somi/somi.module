@@ -23,7 +23,6 @@ const SOMI_VOCABULARY_CURRENCIES = 'currencies';
 
 const SOMI_TRANSACTION_FAILED_OPS_QUEUE_NAME = 'somi_transaction_failed_ops';
 
-
 require_once DRUPAL_ROOT . '/sites/all/libraries/rabbitmq/vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -56,6 +55,14 @@ function somi_menu() {
     'title' => t('Somi open door'),
     'page callback' => 'somi_open_node',
     'page arguments' => [1],
+    'access arguments' => array('manage somi door'),
+    'file' => 'somi.pages.inc',
+  );
+
+  $items['admin/content/accounts/export'] = array(
+    'title' => t('Выгрузить все данные по валютам в CSV'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['somi_accounts_csv_export_form'],
     'access arguments' => array('manage somi door'),
     'file' => 'somi.pages.inc',
   );
@@ -352,6 +359,33 @@ function somi_get_recent_account_events() {
 }
 
 /**
+ * @return array
+ */
+function somi_get_filtered_account_events($users = [], $currencies = []) {
+  $criteria = array(
+    'entity_type' => 'user',
+  );
+
+  if (!empty($users)) {
+    $criteria['entity_id'] = $users;
+  }
+  if (!empty($currencies)) {
+    $criteria['value_type'] = $currencies;
+  }
+
+  $account_events = votingapi_select_votes(
+    $criteria,
+    0
+  );
+
+  usort($account_events, function ($a, $b) {
+    return $a['timestamp'] > $b['timestamp'] ? -1 : 1;
+  });
+
+  return $account_events;
+}
+
+/**
  * Check access to page.
  */
 function somi_taxonomy_add_page_access() {
@@ -601,6 +635,14 @@ function somi_library() {
 }
 
 /**
+ * Check if current request is AJAX.
+ */
+function somi_is_ajax() {
+  return isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+  && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+}
+
+/**
  * Redirects to user login form.
  */
 function somi_init() {
@@ -611,6 +653,30 @@ function somi_init() {
   }
 
   drupal_add_library('somi', 'spectrum');
+
+  if (!empty($_SESSION['csv_export_filename'])) {
+    if (somi_is_ajax() && !empty($_GET['getCsv'])) {
+      ob_clean();
+
+      if ($csv = file_get_contents($_SESSION['csv_export_filename'])) {
+        echo $csv;
+      }
+
+      @unlink($_SESSION['csv_export_filename']);
+      unset($_SESSION['csv_export_filename']);
+
+      drupal_exit();
+
+    } else {
+      drupal_add_js(
+        [
+          'csv_file_awaits_download' => TRUE,
+          'csv_filename' => basename($_SESSION['csv_export_filename']),
+        ],
+        ['type' => 'setting']
+      );
+    }
+  }
 }
 
 /**

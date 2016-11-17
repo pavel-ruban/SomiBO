@@ -153,3 +153,13 @@ function somi_update_7008($context) {
     db_add_field('log', 'node_id', $spec);
   }
 }
+
+/**
+ * Adjust voting api settings. Enable entityreference_autocomplete module.
+ * @param $context
+ */
+function somi_update_7009($context) {
+  module_enable(['entityreference_autocomplete']);
+
+  variable_set('votingapi_user_window', -1);
+}
