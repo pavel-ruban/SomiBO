@@ -9,7 +9,6 @@ define('SOMI_MODULE_PATH', drupal_get_path('module', 'somi'));
 const SOMI_WEB_REQUEST_RFID_TYPE_TID = 14;
 
 const SOMI_SERVER_HOST = 'somibo.qajedi.ru';
-const SOMI_SERVER_IP = '195.211.7.205';
 const SOMI_SERVER_PORT = '36208';
 const SOMI_NODEJS_HTTP_SERVER_PORT = '48858';
 

@@ -19,6 +19,10 @@ function somi_drush_command() {
     'description' => dt('Resets All Users Debet Accounts According Month Limits Settings.'),
   );
 
+  $items['somi-year-reset-user-accounts'] = array(
+    'description' => dt('Resets All Users Debet Accounts According Year Results.'),
+  );
+
   $items['somi-check-birthdays'] = array(
     'description' => dt('Checks birthdays and note slack channel about upcoming events.'),
   );
@@ -158,6 +162,24 @@ function drush_somi_month_reset_user_accounts() {
 }
 
 /**
+ * A command callback.
+ */
+function drush_somi_year_reset_user_accounts() {
+  // Set the batch operations.
+  $batch = array(
+    'title' => dt('Updating users debet accounts'),
+    'operations' => array(
+      array(
+        'somi_year_reset_user_accounts_batch',
+        array()
+      ),
+    ),
+  );
+  batch_set($batch);
+  drush_backend_batch_process();
+}
+
+/**
  * @param $context
  */
 function somi_month_reset_user_accounts_batch(&$context) {
@@ -217,6 +239,60 @@ function somi_month_reset_user_accounts_batch(&$context) {
           }
           elseif ($balance > $limit) {
             $new_amount = -1 * ($balance - $limit);
+          }
+
+          if (!empty($new_amount)) {
+            somi_add_user_account_balance($account->uid, $new_amount, $account_tid, $account_msg, $source_uid);
+            unset($new_amount);
+          }
+        }
+      }
+    }
+
+    $context['sandbox']['progress']++;
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = 'Updating Users Debet Accounts (' . $context['sandbox']['progress'] . ' of ' . $context['sandbox']['max'] . ' users).';
+  }
+}
+
+/**
+ * Reset account
+ * @param $context
+ */
+function somi_year_reset_user_accounts_batch(&$context) {
+  if (!isset($context['results']['uids'])) {
+    $query = db_select('users', 'u');
+    $query->addField('u', 'uid');
+    $query->condition('status', 1);
+    $uids = $query->execute()->fetchCol();
+
+    $context['results']['uids'] = $uids;
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($uids);
+
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+
+    $context['message'] = 'Preparing data for operations, found ' . $context['sandbox']['max'] . ' active users.';
+
+    return;
+  }
+
+  $chunk = array_slice($context['results']['uids'], $context['sandbox']['progress'], 30);
+  $source_uid = 1;
+
+  foreach ($chunk as $uid) {
+    if ($account = user_load($uid)) {
+      foreach ([SOMI_CRYSTALLS_CURRENCY_TID] as $account_tid) {
+        if ($currency = taxonomy_term_load($account_tid)->name) {
+          $account_msg = "Ежегодное обналичивание пользовательского счета $currency";
+          $balance = somi_get_user_account_balance($account->uid, $account_tid);
+
+          if ($balance > 0) {
+            $new_amount = -1 * $balance;
+          }
+          elseif ($balance < 0) {
+            $new_amount = abs($balance);
           }
 
           if (!empty($new_amount)) {
