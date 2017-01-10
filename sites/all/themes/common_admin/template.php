@@ -79,11 +79,9 @@ function common_admin_preprocess_page(&$vars) {
   );
 
   if (user_is_logged_in()) {
-    $vars['secondary_menu'] = array(
-      'my_account' => array(
-        'href' => "user/{$user->uid}/edit",
-        'title' => t('My profile'),
-      ),
+    $vars['secondary_menu']['my_account'] = array(
+      'href' => "user/{$user->uid}/edit",
+      'title' => t('My profile'),
     );
   }
 
