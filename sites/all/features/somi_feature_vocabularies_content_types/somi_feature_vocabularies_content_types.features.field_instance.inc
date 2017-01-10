@@ -2247,6 +2247,61 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
   );
 
+  // Exported field_instance: 'user-user-field_birth_date'.
+  $field_instances['user-user-field_birth_date'] = array(
+    'bundle' => 'user',
+    'deleted' => 0,
+    'description' => 'Дата рождения',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'date',
+        'settings' => array(
+          'format_type' => 'long',
+          'fromto' => 'both',
+          'multiple_from' => '',
+          'multiple_number' => '',
+          'multiple_to' => '',
+          'show_remaining_days' => FALSE,
+        ),
+        'type' => 'date_default',
+        'weight' => 2,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_birth_date',
+    'label' => 'Дата рождения',
+    'required' => 1,
+    'settings' => array(
+      'default_value' => 'now',
+      'default_value2' => 'same',
+      'default_value_code' => '',
+      'default_value_code2' => '',
+      'user_register_form' => 1,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'date',
+      'settings' => array(
+        'increment' => 15,
+        'input_format' => 'm/d/Y - H:i:s',
+        'input_format_custom' => '',
+        'label_position' => 'above',
+        'no_fieldset' => 0,
+        'text_parts' => array(),
+        'year_range' => '1900:+0',
+      ),
+      'type' => 'date_popup',
+      'weight' => 2,
+    ),
+  );
+
   // Exported field_instance: 'user-user-field_department'.
   $field_instances['user-user-field_department'] = array(
     'bundle' => 'user',
@@ -2272,10 +2327,10 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
     'entity_type' => 'user',
     'field_name' => 'field_department',
-    'label' => 'Department',
-    'required' => 1,
+    'label' => 'Департамент',
+    'required' => 0,
     'settings' => array(
-      'user_register_form' => 1,
+      'user_register_form' => 0,
     ),
     'widget' => array(
       'active' => 1,
@@ -2317,7 +2372,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
     ),
     'entity_type' => 'user',
     'field_name' => 'field_rfid_tags',
-    'label' => 'rfid_tags',
+    'label' => 'RFID устройства',
     'required' => 0,
     'settings' => array(
       'user_register_form' => 0,
@@ -2335,7 +2390,47 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 7,
+      'weight' => 6,
+    ),
+  );
+
+  // Exported field_instance: 'user-user-field_wish_list'.
+  $field_instances['user-user-field_wish_list'] = array(
+    'bundle' => 'user',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Это поле - список желаемых подарков пользователя которые он бы хотел чтобы ему подарили на день рождения. Должен заполняться самим пользователем',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 3,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_wish_list',
+    'label' => 'Wish List',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => 0,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 1,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 3,
     ),
   );
 
@@ -2350,12 +2445,12 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('CORE');
   t('Color');
   t('Comment');
-  t('Department');
   t('Header message');
   t('Icon');
   t('Image');
   t('Notifications term');
   t('REGULAR');
+  t('RFID устройства');
   t('React on');
   t('Rfid ID');
   t('Slack Op');
@@ -2364,6 +2459,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('Type of the device proving rfid interface (card, trinket, wristband etc)');
   t('Webhook url');
   t('Webhooks');
+  t('Wish List');
   t('active account');
   t('currencies');
   t('emoticon');
@@ -2372,10 +2468,11 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('op_id');
   t('op_msg');
   t('passive account');
-  t('rfid_tags');
   t('Выводит сообщение об ошибке в слак, токет !qty');
   t('Выводится на доске наличия (score board)');
   t('Дата выдачи устройства');
+  t('Дата рождения');
+  t('Департамент');
   t('Идентификатор PCD который устройство сообщает серверу при считывании карты или другого устройства');
   t('Лимит');
   t('Лимит Операции');
@@ -2392,6 +2489,7 @@ function somi_feature_vocabularies_content_types_field_default_field_instances()
   t('Счета');
   t('Узлы');
   t('Эти счета будут обновляться кронов каждый месяц 1го числа согласно установленным лимитам');
+  t('Это поле - список желаемых подарков пользователя которые он бы хотел чтобы ему подарили на день рождения. Должен заполняться самим пользователем');
   t('Это поле используется пока только для op "event_channel" позволяет задавать альтернативное сообщение (в этом op\'е оно используется для двух случаев когда награждается 1 человек и 2ой случай когда награждается 2 или более лиц)');
   t('Это счет с которого происходит списание, каждому реципиенту нельзя будет переводить больше чем сумма указанная в соответствующей роли.');
   t('Этот лимит ограничивает баланс пассивного счета пользователя, который обновляется ежемесячно');
