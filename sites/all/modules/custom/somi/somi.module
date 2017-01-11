@@ -35,8 +35,6 @@ function somi_menu() {
   $items['manager'] = array(
     'title' => 'Manager',
     'page callback' => 'somi_manager',
-//    'theme callback' => 'ajax_base_page_theme',
-//    'delivery callback' => 'ajax_deliver',
     'access callback' => TRUE,
     'description' => 'Ajax callback for view loading.',
     'type' => MENU_CALLBACK,

@@ -810,3 +810,7 @@ body.page-admin .view-users table tr.today td,
 body.page-admin .view-users table tr.upcoming td {
   background: none;
 }
+
+#users-wish-lists h2 {
+  margin-bottom: 20px;
+}
