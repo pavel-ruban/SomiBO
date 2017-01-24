@@ -897,7 +897,15 @@ function api_account_op_validate_post() {
       $account_tid = somi_api_account_currencies_mapping()[$data->user->currency]['active'];
       $passive_account_tid = somi_api_account_currencies_mapping()[$data->user->currency]['passive'];
 
-      $initiator = user_load_by_mail($data->user->email);
+      if (!($initiator = user_load_by_mail($data->user->email))) {
+        throw new ApiException(
+          t(
+            'Пользователь с почтой @mail не может быть найден в Drupal API',
+            ['@mail' => $data->user->email]
+          )
+        );
+      }
+
       $transaction_amount = somi_get_user_account_balance($initiator->uid, $passive_account_tid);
       // Checking beetles quantity for one transaction depending on user`s role.
       $restrictions = somi_get_transaction_limit_settings($passive_account_tid);
