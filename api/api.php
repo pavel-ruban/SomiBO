@@ -957,7 +957,7 @@ function api_account_op_validate_post() {
           ];
         }
         else {
-          throw new ApiException("Пользователь с адресом $recipient_email не может быть найден в Drupal API.");
+          throw new ApiException("Пользователь с почтой $recipient_email не может быть найден в Drupal API.");
         }
       }
     }
