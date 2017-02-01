@@ -26,6 +26,22 @@ function api_methods() {
       'callback' => 'api_auth_post',
       'access callback' => 'api_user_is_anonymous',
     ) + $base,
+    'node/access/get' => array(
+      'callback' => 'api_node_access_get',
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'node/time-sync/post' => array(
+      'callback' => 'api_node_time_sync_post',
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'node/event/post' => array(
+      'callback' => 'api_node_event_post',
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
+    'node/call/post' => array(
+      'callback' => 'api_node_call_post',
+      'bootstrap' => DRUPAL_BOOTSTRAP_FULL,
+    ) + $base,
     'auth/put' => array(
       'callback' => 'api_auth_put',
       'access callback' => 'api_user_is_anonymous',
@@ -1569,4 +1585,282 @@ function api_create_history() {
   if (function_exists('pcntl_fork')) {
     exit;
   }
+}
+
+/**
+ * Manages headers requirements between server & PCD nodes.
+ */
+function api_node_prepare_headers() {
+  $headers = [
+    'HTTP_DESTINATION',
+    'HTTP_ACTION',
+    'HTTP_NODE_ID',
+    'HTTP_TIME',
+    'HTTP_UID',
+    'HTTP_PCD_NUMBER',
+    'HTTP_ACCESS',
+    'HTTP_CACHED',
+  ];
+
+  foreach ($headers as $header) {
+    if (!empty($_SERVER[$header])) {
+      switch ($header) {
+        case 'HTTP_DESTINATION':
+          if (empty($_SERVER['HTTP_NODE_ID'])) continue 2;
+          $value = $_SERVER['HTTP_NODE_ID'];
+          break;
+
+        case 'HTTP_NODE_ID':
+          if (empty($_SERVER['HTTP_DESTINATION'])) continue 2;
+          $value = $_SERVER['HTTP_DESTINATION'];
+          break;
+
+        default:
+          $value = $_SERVER[$header];
+          break;
+      }
+
+      if (!empty($value)) {
+        $header = strtolower(preg_replace('/HTTP_/', '', $header));
+        $header = preg_replace('/_/', '-', $header);
+
+        header(
+          $header . ': ' . $value
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Checks needed headers.
+ *
+ * @param $endpoint
+ * @throws \ApiAuthException
+ */
+function api_node_header_validation($endpoint) {
+  // If no path is provided by the user, set our default path.
+  $rank = '[0-9ABCDEF]{2,2}';
+  $validate_pattern = "/$rank:$rank:$rank:$rank/";
+
+  switch ($endpoint) {
+    case 'api_node_time_sync_post':
+      switch (TRUE) {
+        case empty($_SERVER['HTTP_DESTINATION']):
+        case empty($_SERVER['HTTP_ACTION']):
+        case empty($_SERVER['HTTP_NODE_ID']):
+        case empty($_SERVER['HTTP_TIME']):
+          throw new ApiAuthException(
+            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
+            , 24
+          );
+          break;
+      }
+      break;
+
+    case 'api_node_access_get':
+      switch (TRUE) {
+        case empty($_SERVER['HTTP_DESTINATION']):
+        case empty($_SERVER['HTTP_ACTION']):
+        case empty($_SERVER['HTTP_NODE_ID']):
+        case empty($_SERVER['HTTP_TIME']):
+        case empty($_SERVER['HTTP_UID']):
+        case empty($_SERVER['HTTP_PCD_NUMBER']):
+          throw new ApiAuthException(
+            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
+            , 24
+          );
+          break;
+
+        case !preg_match($validate_pattern, $_SERVER['HTTP_UID']):
+          throw new ApiAuthException(
+            'UID has invalid format it should be like "FF:FF:FF:FF"'
+            , 25
+          );
+          break;
+      }
+      break;
+
+    case 'api_node_event_post':
+      switch (TRUE) {
+        case empty($_SERVER['HTTP_DESTINATION']):
+        case empty($_SERVER['HTTP_ACTION']):
+        case empty($_SERVER['HTTP_NODE_ID']):
+        case empty($_SERVER['HTTP_TIME']):
+        case empty($_SERVER['HTTP_UID']):
+        case empty($_SERVER['HTTP_PCD_NUMBER']):
+        case empty($_SERVER['HTTP_CACHED']):
+        case empty($_SERVER['HTTP_ACCESS']):
+          throw new ApiAuthException(
+            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
+            , 24
+          );
+          break;
+
+        case !preg_match($validate_pattern, $_SERVER['HTTP_UID']):
+          throw new ApiAuthException(
+            'UID has invalid format it should be like "FF:FF:FF:FF"'
+            , 25
+          );
+          break;
+      }
+      break;
+  }
+
+  // Common validation cases.
+  switch (TRUE) {
+    case !is_numeric($_SERVER['HTTP_NODE_ID']):
+      throw new ApiAuthException(
+        'NODE ID should be numeric'
+        , 26
+      );
+      break;
+  }
+}
+
+/**
+ * Keep track with difference of time in seconds with PCD node.
+ */
+function api_node_time_sync_post() {
+  // Check that request has all needed input data.
+  api_node_header_validation(__FUNCTION__);
+
+  $synced_times = variable_get('somi_api_nodes_time_sync', []);
+
+  // Time that comes from PCD (hardware) is time in milliseconds sice device boot (ticks).
+  // so we keep track of the time of the events that device sends by
+  // calculating the time of the device boot & using it during event log ops.
+  $synced_times[$_SERVER['HTTP_NODE_ID']] = time() - round($_SERVER['HTTP_TIME'] / 1000);
+  variable_set('somi_api_nodes_time_sync', $synced_times);
+
+  api_node_prepare_headers();
+
+  header('time: ' . $synced_times[$_SERVER['HTTP_NODE_ID']]);
+
+  return ['status' => 'time is synced'];
+}
+
+/**
+ * Checks whether requested card has access to PCD node.
+ */
+function api_node_access_get() {
+  // Check that request has all needed input data.
+  api_node_header_validation(__FUNCTION__);
+
+  $time = time();
+  $id = $_SERVER['HTTP_UID'];
+
+  module_load_include('inc', 'somi', 'somi.pages');
+  module_load_include('inc', 'somi', 'somi.drush');
+
+  $account = somi_get_user_by_rfid($id);
+  $rfid = somi_get_rfid_by_id($id);
+  $access = somi_access_handler($id);
+
+  $rfid_node = $_SERVER['HTTP_NODE_ID'];
+
+  if (variable_get('node requests debug', FALSE)) {
+    watchdog(WATCHDOG_DEBUG, "card:$id node:$rfid_node");
+  }
+
+  if ($account && $rfid) {
+    $context = array(
+      'uid' => $account->uid,
+      'rfid' => $rfid->nid,
+      'rfid_node' => $rfid_node,
+      'name' => $account->name,
+      'time' => $time,
+      'mail' => $account->mail,
+      'card' => $id,
+    );
+
+    somi_log_event($context, $access);
+  }
+
+  api_node_prepare_headers();
+
+  header('access: ' . (!empty($access) ? 'granted' : 'denied'));
+
+  return ['status' => 'check performed'];
+}
+
+/**
+ * Syncs events from PCD nodes.
+ */
+function api_node_event_post() {
+  // Check that request has all needed input data.
+  api_node_header_validation(__FUNCTION__);
+
+  $synced_times = variable_get('somi_api_nodes_time_sync', []);
+  if (empty($synced_times[$_SERVER['HTTP_NODE_ID']])) {
+    throw new ApiAuthException(
+      sprintf(
+        "Node's time with ID %d is not synced",
+        $_SERVER['HTTP_NODE_ID']
+      )
+      , 27
+    );
+  }
+
+  // Synced times stores timestamp of the moment when device was boot. Device
+  // has ticks (milliseconds). So device knows how much ticks have passed since
+  // boot but don't know the real time. The server keep tracks of the boot time
+  // & adds seconds since device boot to the event.
+  $time = $synced_times[$_SERVER['HTTP_NODE_ID']]
+    + round($_SERVER['HTTP_TIME'] / 1000);
+
+  $id = $_SERVER['HTTP_UID'];
+
+  module_load_include('inc', 'somi', 'somi.pages');
+  module_load_include('inc', 'somi', 'somi.drush');
+
+  if (!($rfid = somi_get_rfid_by_id($id))) {
+    throw new ApiAuthException('No device with such UID can be found.', 28);
+  }
+
+  if (!($account = somi_get_user_by_rfid($id))) {
+    throw new ApiAuthException('RFID does not belong to any user .', 29);
+  }
+
+  $access = somi_access_handler($id);
+
+  // PCD access has currently these cases: 0 (denied), 1 (granted), 4 (unknown).
+  $pcd_access = (int) $_SERVER['HTTP_ACCESS'];
+
+  // If PCD sends event which has state that differs from access granted
+  // or denied  state we throws the error.
+  if ($pcd_access > 1) {
+    throw new ApiAuthException(
+      'Syncing event has not known access value'
+      , 30
+    );
+  }
+
+  $rfid_node = $_SERVER['HTTP_NODE_ID'];
+
+  if (variable_get('node requests debug', FALSE)) {
+    watchdog(WATCHDOG_DEBUG, "card:$id node:$rfid_node");
+  }
+
+  $context = array(
+    'uid' => $account->uid,
+    'rfid' => $rfid->nid,
+    'rfid_node' => $rfid_node,
+    'name' => $account->name,
+    'time' => $time,
+    'mail' => $account->mail,
+    'card' => $id,
+  );
+
+  somi_log_event($context, $pcd_access);
+
+  api_node_prepare_headers();
+
+  header('access: ' . (!empty($access) ? 'granted' : 'denied'));
+
+  return [
+    'status' => 'event synced',
+    'invalidate' => (int) $access !== $pcd_access,
+    'access' => (int) $access,
+  ];
 }

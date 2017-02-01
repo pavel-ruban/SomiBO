@@ -30,6 +30,38 @@
       }
     }
   },
+  "node/access/get": {
+    "@comment": "Check whether requested card can access PCD node",
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"}
+      }
+    }
+  },
+  "node/event/post": {
+    "@comment": "Syncs events from PCD nodes",
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "invalidate": {"type": "number"},
+        "access": {"type": "number"}
+      }
+    }
+  },
+  "node/time-sync/post": {
+    "@comment": "Sync time with PCD node",
+    "type": "regular",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"}
+      }
+    }
+  },
   "auth/put": {
     "@comment": "Refresh the user auth data",
     "type": "regular",
