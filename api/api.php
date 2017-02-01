@@ -1646,10 +1646,10 @@ function api_node_header_validation($endpoint) {
   switch ($endpoint) {
     case 'api_node_time_sync_post':
       switch (TRUE) {
-        case empty($_SERVER['HTTP_DESTINATION']):
-        case empty($_SERVER['HTTP_ACTION']):
-        case empty($_SERVER['HTTP_NODE_ID']):
-        case empty($_SERVER['HTTP_TIME']):
+        case !isset($_SERVER['HTTP_DESTINATION']):
+        case !isset($_SERVER['HTTP_ACTION']):
+        case !isset($_SERVER['HTTP_NODE_ID']):
+        case !isset($_SERVER['HTTP_TIME']):
           throw new ApiAuthException(
             'Request has no needed headers to perform event sync (please check APIARY for required headers)'
             , 24
@@ -1660,12 +1660,12 @@ function api_node_header_validation($endpoint) {
 
     case 'api_node_access_get':
       switch (TRUE) {
-        case empty($_SERVER['HTTP_DESTINATION']):
-        case empty($_SERVER['HTTP_ACTION']):
-        case empty($_SERVER['HTTP_NODE_ID']):
-        case empty($_SERVER['HTTP_TIME']):
-        case empty($_SERVER['HTTP_UID']):
-        case empty($_SERVER['HTTP_PCD_NUMBER']):
+        case !isset($_SERVER['HTTP_DESTINATION']):
+        case !isset($_SERVER['HTTP_ACTION']):
+        case !isset($_SERVER['HTTP_NODE_ID']):
+        case !isset($_SERVER['HTTP_TIME']):
+        case !isset($_SERVER['HTTP_UID']):
+        case !isset($_SERVER['HTTP_PCD_NUMBER']):
           throw new ApiAuthException(
             'Request has no needed headers to perform event sync (please check APIARY for required headers)'
             , 24
@@ -1683,14 +1683,14 @@ function api_node_header_validation($endpoint) {
 
     case 'api_node_event_post':
       switch (TRUE) {
-        case empty($_SERVER['HTTP_DESTINATION']):
-        case empty($_SERVER['HTTP_ACTION']):
-        case empty($_SERVER['HTTP_NODE_ID']):
-        case empty($_SERVER['HTTP_TIME']):
-        case empty($_SERVER['HTTP_UID']):
-        case empty($_SERVER['HTTP_PCD_NUMBER']):
-        case empty($_SERVER['HTTP_CACHED']):
-        case empty($_SERVER['HTTP_ACCESS']):
+        case !isset($_SERVER['HTTP_DESTINATION']):
+        case !isset($_SERVER['HTTP_ACTION']):
+        case !isset($_SERVER['HTTP_NODE_ID']):
+        case !isset($_SERVER['HTTP_TIME']):
+        case !isset($_SERVER['HTTP_UID']):
+        case !isset($_SERVER['HTTP_PCD_NUMBER']):
+        case !isset($_SERVER['HTTP_CACHED']):
+        case !isset($_SERVER['HTTP_ACCESS']):
           throw new ApiAuthException(
             'Request has no needed headers to perform event sync (please check APIARY for required headers)'
             , 24
