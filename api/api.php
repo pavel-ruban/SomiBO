@@ -1715,7 +1715,7 @@ function api_node_time_sync_post() {
   // Check that request has all needed input data.
   api_node_header_validation(__FUNCTION__);
 
-  $synced_times = variable_get('somi_api_nodes_time_sync', []);
+  $synced_times = (array) variable_get('somi_api_nodes_time_sync', []);
 
   // Time that comes from PCD (hardware) is time in milliseconds sice device boot (ticks).
   // so we keep track of the time of the events that device sends by
