@@ -1712,6 +1712,8 @@ function api_node_header_validation($endpoint) {
  * Keep track with difference of time in seconds with PCD node.
  */
 function api_node_time_sync_post() {
+  api_node_prepare_headers();
+
   // Check that request has all needed input data.
   api_node_header_validation(__FUNCTION__);
 
@@ -1723,8 +1725,6 @@ function api_node_time_sync_post() {
   $synced_times[$_SERVER['HTTP_NODE_ID']] = time() - round($_SERVER['HTTP_TIME'] / 1000);
   variable_set('somi_api_nodes_time_sync', $synced_times);
 
-  api_node_prepare_headers();
-
   header('time: ' . $synced_times[$_SERVER['HTTP_NODE_ID']]);
 
   return ['status' => 'time is synced'];
@@ -1734,6 +1734,8 @@ function api_node_time_sync_post() {
  * Checks whether requested card has access to PCD node.
  */
 function api_node_access_get() {
+  api_node_prepare_headers();
+
   // Check that request has all needed input data.
   api_node_header_validation(__FUNCTION__);
 
@@ -1743,15 +1745,21 @@ function api_node_access_get() {
   module_load_include('inc', 'somi', 'somi.pages');
   module_load_include('inc', 'somi', 'somi.drush');
 
-  $account = somi_get_user_by_rfid($id);
-  $rfid = somi_get_rfid_by_id($id);
+  if (!($rfid = somi_get_rfid_by_id($id))) {
+    throw new ApiAuthException('No device with such UID can be found.', 28);
+  }
+
+  if (!($account = somi_get_user_by_rfid($id))) {
+    throw new ApiAuthException('RFID does not belong to any user .', 29);
+  }
+
   $access = somi_access_handler($id);
 
   $pcd_node_hash = $_SERVER['HTTP_NODE_ID'];
 
   if (!($pcd_node = somi_get_pcd_node_by_hash($pcd_node_hash))) {
     throw new ApiAuthException(
-      'PCD with requested hash could no be found.',
+      'Node with requested hash could no be found.',
       32
     );
   }
@@ -1774,8 +1782,6 @@ function api_node_access_get() {
     somi_log_event($context, $access);
   }
 
-  api_node_prepare_headers();
-
   header('access: ' . (!empty($access) ? 'granted' : 'denied'));
 
   return ['status' => 'check performed'];
@@ -1785,6 +1791,8 @@ function api_node_access_get() {
  * Syncs events from PCD nodes.
  */
 function api_node_event_post() {
+  api_node_prepare_headers();
+
   // Check that request has all needed input data.
   api_node_header_validation(__FUNCTION__);
 
@@ -1837,7 +1845,7 @@ function api_node_event_post() {
 
   if (!($pcd_node = somi_get_pcd_node_by_hash($pcd_node_hash))) {
     throw new ApiAuthException(
-      'PCD with requested hash could no be found.',
+      'Node with requested hash could no be found.',
       32
     );
   }
@@ -1857,8 +1865,6 @@ function api_node_event_post() {
   );
 
   somi_log_event($context, $pcd_access);
-
-  api_node_prepare_headers();
 
   header('access: ' . (!empty($access) ? 'granted' : 'denied'));
 

@@ -88,7 +88,8 @@ var SOMI = SOMI || {};
 
   // Получить полноценный tcp туннель для работы в обе стороны, протокол websocket.
   //var socket = io.connect('http://somibo.qajedi.ru:8080');
-  var socket = io.connect('http://127.0.0.1:8080');
+  //var socket = io.connect('http://127.0.0.1:8080');
+  var socket = io.connect('http://192.168.1.151:8080');
 
   // Функция которая сработает когда нам по туннелю через протокол websocket
   // отправят данные как и в случае с ajax.
