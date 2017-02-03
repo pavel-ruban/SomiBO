@@ -131,6 +131,43 @@ function somi_get_rfid_by_id($id) {
 }
 
 /**
+ * @param $hash
+ * @return mixed
+ */
+function somi_get_pcd_node_by_hash($hash) {
+  $storage = &drupal_static(__FUNCTION__);
+
+  if (!isset($storage[$hash])) {
+    $query = db_select('node', 'i');
+    $query->addField('i', 'nid', 'id');
+
+    $query->condition('i.type', 'node');
+
+    $query->innerJoin(
+      'field_data_field_rfid_node_id',
+      'pn',
+      "pn.entity_id = i.nid AND pn.entity_type = 'node' AND pn.deleted = 0 AND pn.bundle = 'node'"
+    );
+
+    $query->condition('pn.field_rfid_node_id_value', trim($hash));
+
+    if ($nids = $query->execute()->fetchCol()) {
+      $nid = array_shift($nids);
+
+      if ($pcd_node = node_load($nid)) {
+        $storage[$hash] = $pcd_node;
+      }
+    }
+
+    if (!isset($storage[$hash])) {
+      $storage[$hash] = FALSE;
+    }
+  }
+
+  return $storage[$hash];
+}
+
+/**
  * @param $id
  * @return mixed
  */

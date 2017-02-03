@@ -42,10 +42,12 @@ function somi_feature_common_views_default_views() {
     'name' => 'name',
     'field_color_picker' => 'field_color_picker',
     'field_image' => 'field_color_picker',
+    'field_icon' => 'field_icon',
     'machine_name' => 'machine_name',
     'name_1' => 'name_1',
     'delete_term' => 'delete_term',
     'edit_term' => 'edit_term',
+    'field_color_picker_1' => 'field_color_picker',
     'field_related_color' => 'field_color_picker',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
@@ -76,6 +78,13 @@ function somi_feature_common_views_default_views() {
       'separator' => '',
       'empty_column' => 0,
     ),
+    'field_icon' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
     'machine_name' => array(
       'sortable' => 1,
       'default_sort_order' => 'asc',
@@ -99,6 +108,13 @@ function somi_feature_common_views_default_views() {
       'align' => '',
       'separator' => '',
       'empty_column' => 1,
+    ),
+    'field_color_picker_1' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
     ),
     'field_related_color' => array(
       'sortable' => 1,
@@ -182,6 +198,10 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['query']['options']['distinct'] = TRUE;
   $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Field: Color (field_color) */
+  $handler->display->display_options['relationships']['field_color_tid']['id'] = 'field_color_tid';
+  $handler->display->display_options['relationships']['field_color_tid']['table'] = 'field_data_field_color';
+  $handler->display->display_options['relationships']['field_color_tid']['field'] = 'field_color_tid';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Bulk operations: Taxonomy term */
   $handler->display->display_options['fields']['views_bulk_operations']['id'] = 'views_bulk_operations';
@@ -242,6 +262,16 @@ function somi_feature_common_views_default_views() {
     'image_style' => 'slack_thumb',
     'image_link' => '',
   );
+  /* Field: Taxonomy term: Icon */
+  $handler->display->display_options['fields']['field_icon']['id'] = 'field_icon';
+  $handler->display->display_options['fields']['field_icon']['table'] = 'field_data_field_icon';
+  $handler->display->display_options['fields']['field_icon']['field'] = 'field_icon';
+  $handler->display->display_options['fields']['field_icon']['label'] = 'Иконка';
+  $handler->display->display_options['fields']['field_icon']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_icon']['settings'] = array(
+    'image_style' => 'icon',
+    'image_link' => '',
+  );
   /* Field: Taxonomy vocabulary: Machine name */
   $handler->display->display_options['fields']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['fields']['machine_name']['table'] = 'taxonomy_vocabulary';
@@ -267,11 +297,19 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['label'] = 'Изменить';
   $handler->display->display_options['fields']['edit_term']['text'] = 'изменить';
   /* Field: Taxonomy term: Color */
+  $handler->display->display_options['fields']['field_color_picker_1']['id'] = 'field_color_picker_1';
+  $handler->display->display_options['fields']['field_color_picker_1']['table'] = 'field_data_field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker_1']['field'] = 'field_color_picker';
+  $handler->display->display_options['fields']['field_color_picker_1']['relationship'] = 'field_color_tid';
+  $handler->display->display_options['fields']['field_color_picker_1']['type'] = 'color_field_swatch';
+  $handler->display->display_options['fields']['field_color_picker_1']['settings'] = array(
+    'width' => '15',
+    'height' => '15',
+  );
+  /* Field: Taxonomy term: Color */
   $handler->display->display_options['fields']['field_related_color']['id'] = 'field_related_color';
   $handler->display->display_options['fields']['field_related_color']['table'] = 'field_data_field_related_color';
   $handler->display->display_options['fields']['field_related_color']['field'] = 'field_related_color';
-  $handler->display->display_options['fields']['field_related_color']['label'] = '';
-  $handler->display->display_options['fields']['field_related_color']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_related_color']['type'] = 'entityreference_entity_view';
   $handler->display->display_options['fields']['field_related_color']['settings'] = array(
     'view_mode' => 'icon',
@@ -1238,7 +1276,7 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['mail']['table'] = 'users';
   $handler->display->display_options['fields']['mail']['field'] = 'mail';
   $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
-  /* Field: User: rfid_tags */
+  /* Field: User: RFID устройства */
   $handler->display->display_options['fields']['field_rfid_tags']['id'] = 'field_rfid_tags';
   $handler->display->display_options['fields']['field_rfid_tags']['table'] = 'field_data_field_rfid_tags';
   $handler->display->display_options['fields']['field_rfid_tags']['field'] = 'field_rfid_tags';
@@ -1352,17 +1390,16 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['mail']['table'] = 'users';
   $handler->display->display_options['fields']['mail']['field'] = 'mail';
   $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
-  /* Field: User: Department */
+  /* Field: User: Департамент */
   $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
   $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
   $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
-  $handler->display->display_options['fields']['field_department']['label'] = 'Департамент';
   $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
   $handler->display->display_options['fields']['field_department']['settings'] = array(
     'view_mode' => 'icon',
     'links' => 1,
   );
-  /* Field: User: rfid_tags */
+  /* Field: User: RFID устройства */
   $handler->display->display_options['fields']['field_rfid_tags']['id'] = 'field_rfid_tags';
   $handler->display->display_options['fields']['field_rfid_tags']['table'] = 'field_data_field_rfid_tags';
   $handler->display->display_options['fields']['field_rfid_tags']['field'] = 'field_rfid_tags';
@@ -1487,11 +1524,10 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['name']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['name']['link_to_user'] = FALSE;
-  /* Field: User: Department */
+  /* Field: User: Департамент */
   $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
   $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
   $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
-  $handler->display->display_options['fields']['field_department']['label'] = 'Департамент';
   $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
   $handler->display->display_options['fields']['field_department']['settings'] = array(
     'view_mode' => 'icon',
@@ -1504,6 +1540,273 @@ function somi_feature_common_views_default_views() {
   $handler->display->display_options['fields']['rid']['label'] = 'Роль';
   $handler->display->display_options['fields']['rid']['type'] = 'ol';
   $handler->display->display_options['path'] = 'admin/content/accounts';
+
+  /* Display: blocked users */
+  $handler = $view->new_display('page', 'blocked users', 'blocked_users');
+  $handler->display->display_options['defaults']['access'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'administer users';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: User: Uid */
+  $handler->display->display_options['fields']['uid']['id'] = 'uid';
+  $handler->display->display_options['fields']['uid']['table'] = 'users';
+  $handler->display->display_options['fields']['uid']['field'] = 'uid';
+  /* Field: somi: Gravatar Image */
+  $handler->display->display_options['fields']['gravatar_image']['id'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['table'] = 'users';
+  $handler->display->display_options['fields']['gravatar_image']['field'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['label'] = 'Изображение';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['label'] = 'Имя';
+  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
+  /* Field: User: E-mail */
+  $handler->display->display_options['fields']['mail']['id'] = 'mail';
+  $handler->display->display_options['fields']['mail']['table'] = 'users';
+  $handler->display->display_options['fields']['mail']['field'] = 'mail';
+  $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
+  /* Field: User: Департамент */
+  $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
+  $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_department']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
+  /* Field: User: RFID устройства */
+  $handler->display->display_options['fields']['field_rfid_tags']['id'] = 'field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['table'] = 'field_data_field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['field'] = 'field_rfid_tags';
+  $handler->display->display_options['fields']['field_rfid_tags']['label'] = 'Устройства';
+  $handler->display->display_options['fields']['field_rfid_tags']['type'] = 'somi_devices';
+  $handler->display->display_options['fields']['field_rfid_tags']['settings'] = array(
+    'view_mode' => 'teaser',
+    'links' => 1,
+  );
+  $handler->display->display_options['fields']['field_rfid_tags']['delta_offset'] = '0';
+  /* Field: User: Active */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'users';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = 'Статус';
+  $handler->display->display_options['fields']['status']['type'] = 'unicode-yes-no';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: User: Roles */
+  $handler->display->display_options['fields']['rid']['id'] = 'rid';
+  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
+  $handler->display->display_options['fields']['rid']['field'] = 'rid';
+  $handler->display->display_options['fields']['rid']['label'] = 'Роль';
+  /* Field: User: Created date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'users';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = 'Дата создания';
+  $handler->display->display_options['fields']['created']['date_format'] = 'long';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
+  /* Field: User: Last login */
+  $handler->display->display_options['fields']['login']['id'] = 'login';
+  $handler->display->display_options['fields']['login']['table'] = 'users';
+  $handler->display->display_options['fields']['login']['field'] = 'login';
+  $handler->display->display_options['fields']['login']['label'] = 'Дата последнего посещения';
+  $handler->display->display_options['fields']['login']['date_format'] = 'long';
+  $handler->display->display_options['fields']['login']['second_date_format'] = 'long';
+  /* Field: User: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'users';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  /* Field: User: Activate link */
+  $handler->display->display_options['fields']['activate_user']['id'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['table'] = 'users';
+  $handler->display->display_options['fields']['activate_user']['field'] = 'activate_user';
+  $handler->display->display_options['fields']['activate_user']['label'] = 'Активировать';
+  $handler->display->display_options['fields']['activate_user']['text'] = 'активировать';
+  /* Field: User: Block link */
+  $handler->display->display_options['fields']['block_user']['id'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['table'] = 'users';
+  $handler->display->display_options['fields']['block_user']['field'] = 'block_user';
+  $handler->display->display_options['fields']['block_user']['label'] = 'Заблокировать';
+  $handler->display->display_options['fields']['block_user']['text'] = 'заблокировать';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: User: Active */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'users';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '0';
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: User: Name */
+  $handler->display->display_options['filters']['uid']['id'] = 'uid';
+  $handler->display->display_options['filters']['uid']['table'] = 'users';
+  $handler->display->display_options['filters']['uid']['field'] = 'uid';
+  $handler->display->display_options['filters']['uid']['value'] = '';
+  $handler->display->display_options['filters']['uid']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['uid']['expose']['operator_id'] = 'uid_op';
+  $handler->display->display_options['filters']['uid']['expose']['label'] = 'Имя';
+  $handler->display->display_options['filters']['uid']['expose']['operator'] = 'uid_op';
+  $handler->display->display_options['filters']['uid']['expose']['identifier'] = 'uid';
+  $handler->display->display_options['filters']['uid']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+    6 => 0,
+  );
+  $handler->display->display_options['path'] = 'admin/blocked-users';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'blocked users';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: birthdays */
+  $handler = $view->new_display('page', 'birthdays', 'birthdays');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'День рождения';
+  $handler->display->display_options['defaults']['pager'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '0';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'uid' => 'uid',
+    'gravatar_image' => 'gravatar_image',
+    'name' => 'name',
+    'field_birth_date' => 'field_birth_date',
+    'mail' => 'mail',
+    'field_department' => 'field_department',
+    'rid' => 'rid',
+    'edit_node' => 'edit_node',
+  );
+  $handler->display->display_options['style_options']['default'] = '-1';
+  $handler->display->display_options['style_options']['info'] = array(
+    'uid' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'gravatar_image' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'name' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'field_birth_date' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'mail' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'field_department' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'rid' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+    'edit_node' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
+  );
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: User: Uid */
+  $handler->display->display_options['fields']['uid']['id'] = 'uid';
+  $handler->display->display_options['fields']['uid']['table'] = 'users';
+  $handler->display->display_options['fields']['uid']['field'] = 'uid';
+  /* Field: somi: Gravatar Image */
+  $handler->display->display_options['fields']['gravatar_image']['id'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['table'] = 'users';
+  $handler->display->display_options['fields']['gravatar_image']['field'] = 'gravatar_image';
+  $handler->display->display_options['fields']['gravatar_image']['label'] = 'Изображение';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['label'] = 'Имя';
+  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
+  /* Field: User: Дата рождения */
+  $handler->display->display_options['fields']['field_birth_date']['id'] = 'field_birth_date';
+  $handler->display->display_options['fields']['field_birth_date']['table'] = 'field_data_field_birth_date';
+  $handler->display->display_options['fields']['field_birth_date']['field'] = 'field_birth_date';
+  $handler->display->display_options['fields']['field_birth_date']['settings'] = array(
+    'format_type' => 'short',
+    'fromto' => 'both',
+    'multiple_number' => '',
+    'multiple_from' => '',
+    'multiple_to' => '',
+    'show_remaining_days' => 1,
+  );
+  /* Field: User: E-mail */
+  $handler->display->display_options['fields']['mail']['id'] = 'mail';
+  $handler->display->display_options['fields']['mail']['table'] = 'users';
+  $handler->display->display_options['fields']['mail']['field'] = 'mail';
+  $handler->display->display_options['fields']['mail']['label'] = 'Электронная почта';
+  /* Field: User: Департамент */
+  $handler->display->display_options['fields']['field_department']['id'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['table'] = 'field_data_field_department';
+  $handler->display->display_options['fields']['field_department']['field'] = 'field_department';
+  $handler->display->display_options['fields']['field_department']['type'] = 'entityreference_entity_view';
+  $handler->display->display_options['fields']['field_department']['settings'] = array(
+    'view_mode' => 'icon',
+    'links' => 1,
+  );
+  /* Field: User: Roles */
+  $handler->display->display_options['fields']['rid']['id'] = 'rid';
+  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
+  $handler->display->display_options['fields']['rid']['field'] = 'rid';
+  $handler->display->display_options['fields']['rid']['label'] = 'Роль';
+  /* Field: User: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'users';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Изменить';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['text'] = 'изменить';
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  /* Sort criterion: User: Дата рождения (field_birth_date) */
+  $handler->display->display_options['sorts']['field_birth_date_value']['id'] = 'field_birth_date_value';
+  $handler->display->display_options['sorts']['field_birth_date_value']['table'] = 'field_data_field_birth_date';
+  $handler->display->display_options['sorts']['field_birth_date_value']['field'] = 'field_birth_date_value';
+  $handler->display->display_options['sorts']['field_birth_date_value']['order'] = 'DESC';
+  $handler->display->display_options['path'] = 'admin/birthdays';
   $export['users'] = $view;
 
   return $export;

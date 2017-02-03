@@ -1706,16 +1706,6 @@ function api_node_header_validation($endpoint) {
       }
       break;
   }
-
-  // Common validation cases.
-  switch (TRUE) {
-    case !is_numeric($_SERVER['HTTP_NODE_ID']):
-      throw new ApiAuthException(
-        'NODE ID should be numeric'
-        , 26
-      );
-      break;
-  }
 }
 
 /**
@@ -1757,17 +1747,24 @@ function api_node_access_get() {
   $rfid = somi_get_rfid_by_id($id);
   $access = somi_access_handler($id);
 
-  $rfid_node = $_SERVER['HTTP_NODE_ID'];
+  $pcd_node_hash = $_SERVER['HTTP_NODE_ID'];
+
+  if (!($pcd_node = somi_get_pcd_node_by_hash($pcd_node_hash))) {
+    throw new ApiAuthException(
+      'PCD with requested hash could no be found.',
+      32
+    );
+  }
 
   if (variable_get('node requests debug', FALSE)) {
-    watchdog(WATCHDOG_DEBUG, "card:$id node:$rfid_node");
+    watchdog(WATCHDOG_DEBUG, "card:$id node:{$pcd_node->nid}");
   }
 
   if ($account && $rfid) {
     $context = array(
       'uid' => $account->uid,
       'rfid' => $rfid->nid,
-      'rfid_node' => $rfid_node,
+      'rfid_node' => $pcd_node->nid,
       'name' => $account->name,
       'time' => $time,
       'mail' => $account->mail,
@@ -1795,10 +1792,10 @@ function api_node_event_post() {
   if (empty($synced_times[$_SERVER['HTTP_NODE_ID']])) {
     throw new ApiAuthException(
       sprintf(
-        "Node's time with ID %d is not synced",
+        "Node's time with ID %s is not synced",
         $_SERVER['HTTP_NODE_ID']
-      )
-      , 27
+      ),
+      27
     );
   }
 
@@ -1836,16 +1833,23 @@ function api_node_event_post() {
     );
   }
 
-  $rfid_node = $_SERVER['HTTP_NODE_ID'];
+  $pcd_node_hash = $_SERVER['HTTP_NODE_ID'];
+
+  if (!($pcd_node = somi_get_pcd_node_by_hash($pcd_node_hash))) {
+    throw new ApiAuthException(
+      'PCD with requested hash could no be found.',
+      32
+    );
+  }
 
   if (variable_get('node requests debug', FALSE)) {
-    watchdog(WATCHDOG_DEBUG, "card:$id node:$rfid_node");
+    watchdog(WATCHDOG_DEBUG, "card:$id node:{$pcd_node->nid}");
   }
 
   $context = array(
     'uid' => $account->uid,
     'rfid' => $rfid->nid,
-    'rfid_node' => $rfid_node,
+    'rfid_node' => $pcd_node->nid,
     'name' => $account->name,
     'time' => $time,
     'mail' => $account->mail,
