@@ -1598,7 +1598,6 @@ function api_node_prepare_headers() {
     'HTTP_TIME',
     'HTTP_UID',
     'HTTP_PCD_NUMBER',
-    'HTTP_ACCESS',
     'HTTP_CACHED',
   ];
 
@@ -1630,6 +1629,8 @@ function api_node_prepare_headers() {
       }
     }
   }
+
+  header('access:  denied');
 }
 
 /**
