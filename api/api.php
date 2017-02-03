@@ -1651,8 +1651,8 @@ function api_node_header_validation($endpoint) {
         case !isset($_SERVER['HTTP_NODE_ID']):
         case !isset($_SERVER['HTTP_TIME']):
           throw new ApiAuthException(
-            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
-            , 24
+            'Request has no needed headers to perform operation (please check APIARY for required headers)',
+            24
           );
           break;
       }
@@ -1667,15 +1667,15 @@ function api_node_header_validation($endpoint) {
         case !isset($_SERVER['HTTP_UID']):
         case !isset($_SERVER['HTTP_PCD_NUMBER']):
           throw new ApiAuthException(
-            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
-            , 24
+            'Request has no needed headers to perform operation (please check APIARY for required headers)',
+            24
           );
           break;
 
         case !preg_match($validate_pattern, $_SERVER['HTTP_UID']):
           throw new ApiAuthException(
-            'UID has invalid format it should be like "FF:FF:FF:FF"'
-            , 25
+            'UID has invalid format it should be like "FF:FF:FF:FF"',
+            25
           );
           break;
       }
@@ -1692,15 +1692,15 @@ function api_node_header_validation($endpoint) {
         case !isset($_SERVER['HTTP_CACHED']):
         case !isset($_SERVER['HTTP_ACCESS']):
           throw new ApiAuthException(
-            'Request has no needed headers to perform event sync (please check APIARY for required headers)'
-            , 24
+            'Request has no needed headers to perform operation (please check APIARY for required headers)',
+            24
           );
           break;
 
         case !preg_match($validate_pattern, $_SERVER['HTTP_UID']):
           throw new ApiAuthException(
-            'UID has invalid format it should be like "FF:FF:FF:FF"'
-            , 25
+            'UID has invalid format it should be like "FF:FF:FF:FF"',
+            25
           );
           break;
       }
